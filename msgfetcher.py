@@ -30,16 +30,30 @@ def main():
 
     bf = cv2.BFMatcher()
     matches = bf.knnMatch(des1,des2, k=2)
-    
-    print(matches[0])
 
     # Apply ratio test
     good = []
+
+    print(len(matches))
+    count=0
+
+    #only works for k=2 ( m,n are 2 variables)
     for m,n in matches:
+
+        #se a distancia entre os descritores mais proximos e os segundos mais proximo for grande o suficiente (25% menor)
         if m.distance < 0.75*n.distance:
-            good.append([m])
-    # cv.drawMatchesKnn expects list of lists as matches.
-    img3 = cv2.drawMatchesKnn(cv_rgb1,kp1,cv_rgb2,kp2,good)
+            good.append(m) #was  good.append([m]) 1.0
+
+    print(good)
+    #for m  in good:
+    #    print(m.distance)
+
+    
+    # cv2.drawMatchesKnn expects list of lists as matches.
+    img3 = cv2.drawMatchesKnn(cv_rgb1,kp1,cv_rgb2,kp2,good,None,flags=2) #was drawMatchesKnn 1.0
+        
+
+
     plt.imshow(img3),plt.show()
     
 
