@@ -2,6 +2,7 @@
 
 from sensor_msgs.msg import Image
 import rospy
+import numpy as np
 import cv2
 from cv_bridge import CvBridge
 from matplotlib import pyplot as plt
@@ -15,7 +16,11 @@ def main():
 
     
     cv_rgb1 = br.imgmsg_to_cv2(rgb, desired_encoding="passthrough")
-    cv_depth = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
+    cv_depth1 = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
+
+    cv_depth1 = np.array(cv_depth1)
+    cv_depth1 = cv_depth1/1000.0 #from mm to m
+
 
     kp1,des1 = SIFTer(cv_rgb1,"abretesesamo")
 
@@ -24,37 +29,58 @@ def main():
     
     
     cv_rgb2 = br.imgmsg_to_cv2(rgb, desired_encoding="passthrough")
-    cv_depth = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
+    cv_depth2 = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
+
+    cv_depth2 = np.array(cv_depth1)
+    cv_depth2 = cv_depth2/1000.0 #from mm to m
 
     kp2,des2 = SIFTer(cv_rgb2,"ervilhamigalhas")
 
     bf = cv2.BFMatcher()
     matches = bf.knnMatch(des1,des2, k=2)
 
+    #128 feature descriptor
+
     # Apply ratio test
     good = []
 
-    print(len(matches))
-    count=0
+    
+    differenceRatio = 0.75  #is supposed to be around 0.25
 
     #only works for k=2 ( m,n are 2 variables)
     for m,n in matches:
 
         #se a distancia entre os descritores mais proximos e os segundos mais proximo for grande o suficiente (25% menor)
-        if m.distance < 0.75*n.distance:
+        if m.distance < (1-differenceRatio)*n.distance:
             good.append(m) #was  good.append([m]) 1.0
 
-    print(good)
-    #for m  in good:
-    #    print(m.distance)
+    #cv2.DMatch
+    #queryIdx - The index or row of the kp1 interest point matrix that matches
+    #trainIdx - The index or row of the kp2 interest point matrix that matches
+    
+    x ,y = kp1[500].pt
+    print(x,y)
+    x=int(round(x))
+    y=int(round(y)) #just doing int would floor instead of round
 
+    print(cv_depth1[x][y])
     
     # cv2.drawMatchesKnn expects list of lists as matches.
-    img3 = cv2.drawMatchesKnn(cv_rgb1,kp1,cv_rgb2,kp2,good,None,flags=2) #was drawMatchesKnn 1.0
-        
+    img3 = cv2.drawMatches(cv_rgb1,kp1,cv_rgb2,kp2,good,None,flags=2) #was drawMatchesKnn 1.0
+    
+            
 
+ 
 
-    plt.imshow(img3),plt.show()
+    
+    #fig = plt.figure()
+    #plt.imshow(img3)
+    #plt.show()
+    #plt.draw()
+    #plt.pause(2) # <-------
+    #raw_input("<Hit Enter To Close>")
+    #plt.close(fig)
+    
     
 
 def SIFTer(img,name="bigchungus",debug=False):
