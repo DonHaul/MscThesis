@@ -11,63 +11,80 @@ from matplotlib import pyplot as plt
 import open3d
 import converter
 
+import scipy
+
+
 def main():
+
+
+
+    rgb = {}
+    rgbline = {}
+    depth = {}
+    kp = {}
+    des = {}
+    XYZ = {}
+    PClouds = {}
 
     cameraNames=["abretesesamo","ervilhamigalhas"]
 
+    #bridge to convert ROS image into numpy array
     br = CvBridge()
 
-    #make the message fetch syncrhonous, it inst right now
-    rgb,depth = FetchDepthRegisteredRGB(cameraNames[0])
-
-    
-    cv_rgb1 = br.imgmsg_to_cv2(rgb, desired_encoding="passthrough")
-    cv_depth1 = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
-
-    cv_depth1 = np.array(cv_depth1)
-    
-    kp1,des1 = SIFTer(cv_rgb1,cameraNames[0])
-
-    #make the message fetch syncrhonous, it inst right now
-    rgb,depth = FetchDepthRegisteredRGB(cameraNames[1])
-    
-    
-    cv_rgb2 = br.imgmsg_to_cv2(rgb, desired_encoding="passthrough")
-    cv_depth2 = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
-
-    cv_depth2 = np.array(cv_depth2)
-
-    kp2,des2 = SIFTer(cv_rgb2,cameraNames[1])
-
-    bf = cv2.BFMatcher()
-    matches = bf.knnMatch(des1,des2, k=2)
-
+    #fetches K of rgb cam - shouldnt it be DEPTH?????????????? - ros doenst give it
     topicRGBInfo = "/rgb/camera_info"
+    rospy.init_node('my_name_is_jeff', anonymous=True)
     camInfo = rospy.wait_for_message("/ervilhamigalhas/rgb/camera_info", CameraInfo)
+
+    #camera 0 ==
+
+    #fetches ROS Rgb and depth image
+    rgbros,depthros = FetchDepthRegisteredRGB(cameraNames[0])
+
+    #converts ros img to numpy array
+    rgb[cameraNames[0]] = br.imgmsg_to_cv2(rgbros, desired_encoding="passthrough")
+    depth[cameraNames[0]] = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
+      
+    #camera 1 ==
+
+    #fetches ROS Rgb and depth image
+    rgbros,depthros = FetchDepthRegisteredRGB(cameraNames[1])
     
+    #converts ros img to numpy array
+    rgb[cameraNames[1]] = br.imgmsg_to_cv2(rgbros, desired_encoding="passthrough")
+    depth[cameraNames[1]] = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
 
-    xyz1 = depthimg2xyz(cv_depth1,camInfo.K)
-    xyz2 = depthimg2xyz(cv_depth2,camInfo.K)
-    
-    xyz1 = xyz1.reshape(640*480,-1)
 
-    print(xyz1.shape)
 
-    pcd = open3d.PointCloud()
-    pcd.points = open3d.Vector3dVector(xyz1)
+    #convert depth image to 3D vector
+    for name in cameraNames:
 
-    topicPC ="/depth_registered/points"   
-    pcmsg = rospy.wait_for_message(cameraNames[0] + topicPC, PointCloud2)
+        #fetches kps and descriptors of camera 1
+        kp[name], des[name]  = SIFTer(rgb,name)
 
-    truecloud = converter.PC2toOpen3DPC(pcmsg)
+        #converts into 3d points
+        XYZ[name] = depthimg2xyz(depth[name],camInfo.K)
 
-    open3d.draw_geometries([truecloud,pcd])
+        #reshape - straighten vectors
+        XYZ[name] = XYZ[name].reshape(640*480,-1)
+        rgbline[name] = rgb[name].reshape(640*480,-1)
+            
+        #make point cloud    
+        PClouds[name] = open3d.PointCloud()
+        PClouds[name].points = open3d.Vector3dVector(XYZ)
+        PClouds[name].colors = open3d.Vector3dVector(rgbline/256.0) #range is 0-1 hence the division
+   
+
+    #initializes bruteforce matcher 
+    bf = cv2.BFMatcher()
+
+    #finds 2 nearest results(k=2)
+    matches = bf.knnMatch( des[cameraNames[0]], des[cameraNames[1]], k=2)
     
     print("Transformation Done")
 
     # Apply ratio test
     good = []
-
     
     differenceRatio = 0.75  #is supposed to be around 0.25
 
@@ -78,19 +95,27 @@ def main():
         if m.distance < (1-differenceRatio)*n.distance:
             good.append(m) #was  good.append([m]) 1.0
 
-    #cv2.DMatch
+
     #queryIdx - The index or row of the kp1 interest point matrix that matches
     #trainIdx - The index or row of the kp2 interest point matrix that matches
     
-    x ,y = kp1[500].pt
-    print(x,y)
+    #RANSAC Loop
+
+    #only works for 2 cameras starting here
+
+
+    #fetch 4 points from each camera
+
+    #Procrustes
+
+    #x ,y = kp1[500].pt
+    #print(x,y)
     x=int(round(x))
     y=int(round(y)) #just doing int would floor instead of round
 
-    print(cv_depth1[x][y])
-    
+   
     # cv2.drawMatchesKnn expects list of lists as matches.
-    img3 = cv2.drawMatches(cv_rgb1,kp1,cv_rgb2,kp2,good,None,flags=2) #was drawMatchesKnn 1.0
+    #img3 = cv2.drawMatches(cv_rgb1,kp1,cv_rgb2,kp2,good,None,flags=2) #was drawMatchesKnn 1.0
     
             
 
@@ -109,11 +134,17 @@ def depthimg2xyz(depthimg,K):
 
     fx=K[0]
     fy=K[4]
+    cx=K[2]
+    cy=K[5]
+    
     print(fx,fy)
 
     depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
 
     u,v =np.indices((480,640))
+    
+    u=u-cx
+    v=v-cy
 
     depthcoords[:,:,2]= depthimg/1000.0
     depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
