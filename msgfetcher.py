@@ -1,45 +1,69 @@
 #!/usr/bin/env python
 
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo
+from sensor_msgs.msg import PointCloud2
 import rospy
 import numpy as np
 import cv2
 from cv_bridge import CvBridge
 from matplotlib import pyplot as plt
+import open3d
+import converter
 
 def main():
+
+    cameraNames=["abretesesamo","ervilhamigalhas"]
 
     br = CvBridge()
 
     #make the message fetch syncrhonous, it inst right now
-    rgb,depth = FetchDepthRegisteredRGB("/abretesesamo")
+    rgb,depth = FetchDepthRegisteredRGB(cameraNames[0])
 
     
     cv_rgb1 = br.imgmsg_to_cv2(rgb, desired_encoding="passthrough")
     cv_depth1 = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
 
     cv_depth1 = np.array(cv_depth1)
-    cv_depth1 = cv_depth1/1000.0 #from mm to m
-
-
-    kp1,des1 = SIFTer(cv_rgb1,"abretesesamo")
+    
+    kp1,des1 = SIFTer(cv_rgb1,cameraNames[0])
 
     #make the message fetch syncrhonous, it inst right now
-    rgb,depth = FetchDepthRegisteredRGB("/ervilhamigalhas")
+    rgb,depth = FetchDepthRegisteredRGB(cameraNames[1])
     
     
     cv_rgb2 = br.imgmsg_to_cv2(rgb, desired_encoding="passthrough")
     cv_depth2 = br.imgmsg_to_cv2(depth, desired_encoding="passthrough")
 
-    cv_depth2 = np.array(cv_depth1)
-    cv_depth2 = cv_depth2/1000.0 #from mm to m
+    cv_depth2 = np.array(cv_depth2)
 
-    kp2,des2 = SIFTer(cv_rgb2,"ervilhamigalhas")
+    kp2,des2 = SIFTer(cv_rgb2,cameraNames[1])
 
     bf = cv2.BFMatcher()
     matches = bf.knnMatch(des1,des2, k=2)
 
-    #128 feature descriptor
+    topicRGBInfo = "/rgb/camera_info"
+    camInfo = rospy.wait_for_message("/ervilhamigalhas/rgb/camera_info", CameraInfo)
+    
+
+    xyz1 = depthimg2xyz(cv_depth1,camInfo.K)
+    xyz2 = depthimg2xyz(cv_depth2,camInfo.K)
+    
+    xyz1 = xyz1.reshape(640*480,-1)
+
+    print(xyz1.shape)
+
+    pcd = open3d.PointCloud()
+    pcd.points = open3d.Vector3dVector(xyz1)
+
+    topicPC ="/depth_registered/points"   
+    pcmsg = rospy.wait_for_message(cameraNames[0] + topicPC, PointCloud2)
+
+    truecloud = converter.PC2toOpen3DPC(pcmsg)
+
+    open3d.draw_geometries([truecloud,pcd])
+    
+    print("Transformation Done")
 
     # Apply ratio test
     good = []
@@ -81,7 +105,21 @@ def main():
     #raw_input("<Hit Enter To Close>")
     #plt.close(fig)
     
-    
+def depthimg2xyz(depthimg,K):
+
+    fx=K[0]
+    fy=K[4]
+    print(fx,fy)
+
+    depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
+
+    u,v =np.indices((480,640))
+
+    depthcoords[:,:,2]= depthimg/1000.0
+    depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
+    depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
+
+    return depthcoords
 
 def SIFTer(img,name="bigchungus",debug=False):
 
