@@ -125,13 +125,13 @@ def main():
     goodkp1 = np.rint(goodkp1)
     goodkp2 = np.rint(goodkp2)
 
-    goodkp1 = goodkp1.astype(int)
-    goodkp2 = goodkp2.astype(int)
+    goodkp1 = goodkp1.astype(int) #nmpy round to int
+    goodkp2 = goodkp2.astype(int) #nmpy round to int
 
     
     #apenas usa pontos emparelhados
-    XYZ1 = XYZ[cameraNames[0]][goodkp1] #nmpy round to int
-    XYZ2 = XYZ[cameraNames[1]][goodkp2] #nmpy round to int
+    XYZ1 = XYZ[cameraNames[0]][goodkp1] 
+    XYZ2 = XYZ[cameraNames[1]][goodkp2]
     
     
     #inicializa highscore
@@ -152,11 +152,17 @@ def main():
 
     _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
     rot = proctf["rotation"]
-    XYZ2in1=np.dot(XYZ2,rot.transpose())+   (np.ones([len(XYZ2),1])*proctf["translation"])
-    
-    
+    XYZ2in1 = applyTransformation(XYZ2,rot,proctf["translation"])
+
     temp = XYZ2in1 - XYZ1
     norms = np.linalg.norm(temp,axis=1)
+    Points2Cloud(XYZ1)
+    open3d.draw_geometries([Points2Cloud(XYZ1),Points2Cloud(XYZ2in1)])
+
+
+    XYZ22in1 = applyTransformation(XYZ[cameraNames[1]],rot,proctf["translation"])
+
+    open3d.draw_geometries([Points2Cloud(XYZ[cameraNames[0]],rgbline[cameraNames[0]]),Points2Cloud(XYZ22in1,rgbline[cameraNames[1]])])
 
     print(norms)
     #fig = plt.figure()
@@ -166,7 +172,20 @@ def main():
     #plt.pause(2) # <-------
     #raw_input("<Hit Enter To Close>")
     #plt.close(fig)
-    
+
+def applyTransformation(points,R,T):
+    return  np.dot(points,R) + (np.ones([len(points),1])*T)
+
+def Points2Cloud(points,rgb=None):
+    #make point cloud    
+    cloud = open3d.PointCloud()
+    cloud.points = open3d.Vector3dVector(points)
+
+    if(rgb is not None):
+        cloud.colors = open3d.Vector3dVector(rgb/255.0) #range is 0-1 hence the division
+
+    return cloud
+
 def depthimg2xyz(depthimg,K):
 
     fx=K[0]
