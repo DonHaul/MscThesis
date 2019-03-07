@@ -10,8 +10,10 @@ from cv_bridge import CvBridge
 from matplotlib import pyplot as plt
 import open3d
 import converter
+import procrustes as proc
+import time
 
-import scipy
+from scipy import spatial
 
 
 def main():
@@ -54,25 +56,25 @@ def main():
     rgb[cameraNames[1]] = br.imgmsg_to_cv2(rgbros, desired_encoding="passthrough")
     depth[cameraNames[1]] = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
 
-
+   
 
     #convert depth image to 3D vector
     for name in cameraNames:
 
         #fetches kps and descriptors of camera 1
-        kp[name], des[name]  = SIFTer(rgb,name)
+        kp[name], des[name]  = SIFTer(rgb[name],name)
 
         #converts into 3d points
         XYZ[name] = depthimg2xyz(depth[name],camInfo.K)
-
+        
         #reshape - straighten vectors
         XYZ[name] = XYZ[name].reshape(640*480,-1)
         rgbline[name] = rgb[name].reshape(640*480,-1)
             
         #make point cloud    
         PClouds[name] = open3d.PointCloud()
-        PClouds[name].points = open3d.Vector3dVector(XYZ)
-        PClouds[name].colors = open3d.Vector3dVector(rgbline/256.0) #range is 0-1 hence the division
+        PClouds[name].points = open3d.Vector3dVector(XYZ[name])
+        PClouds[name].colors = open3d.Vector3dVector(rgbline[name]/256.0) #range is 0-1 hence the division
    
 
     #initializes bruteforce matcher 
@@ -81,47 +83,82 @@ def main():
     #finds 2 nearest results(k=2)
     matches = bf.knnMatch( des[cameraNames[0]], des[cameraNames[1]], k=2)
     
-    print("Transformation Done")
+ 
+
+    #only works for 2 cameras starting here
+
 
     # Apply ratio test
-    good = []
+    match1 = []
+    match2 = []
     
-    differenceRatio = 0.75  #is supposed to be around 0.25
+    differenceRatio = 0.25  #is supposed to be around 0.25
 
     #only works for k=2 ( m,n are 2 variables)
     for m,n in matches:
 
         #se a distancia entre os descritores mais proximos e os segundos mais proximo for grande o suficiente (25% menor)
         if m.distance < (1-differenceRatio)*n.distance:
-            good.append(m) #was  good.append([m]) 1.0
+            match1.append(m.queryIdx) #was  good.append([m]) 1.0   was  good.append(m) 1.2
+            match2.append(m.trainIdx)
 
 
     #queryIdx - The index or row of the kp1 interest point matrix that matches
     #trainIdx - The index or row of the kp2 interest point matrix that matches
     
+    #this section is super slow make this matricial stuff
+
+    goodkp1 = []
+
+    #convert 2D map to array map
+    for m in match1:
+        x, y =  kp[cameraNames[0]][m].pt
+        goodkp1.append(y*480+x)  #MIGHT NOT BE RIGHT
+
+    
+    goodkp2 = []
+    #convert 2D map to array map
+    for m in match2:
+        x, y =  kp[cameraNames[1]][m].pt
+        goodkp2.append(y*480+x) #MIGHT NOT BE RIGHT
+
+    goodkp1 = np.rint(goodkp1)
+    goodkp2 = np.rint(goodkp2)
+
+    goodkp1 = goodkp1.astype(int)
+    goodkp2 = goodkp2.astype(int)
+
+    
+    #apenas usa pontos emparelhados
+    XYZ1 = XYZ[cameraNames[0]][goodkp1] #nmpy round to int
+    XYZ2 = XYZ[cameraNames[1]][goodkp2] #nmpy round to int
+    
+    
+    #inicializa highscore
+    high_score_inliers = 0
+
     #RANSAC Loop
 
-    #only works for 2 cameras starting here
-
-
-    #fetch 4 points from each camera
+    
 
     #Procrustes
+    perm = np.random.permutation(len(match1))
+    perm = perm[0:4]
 
-    #x ,y = kp1[500].pt
-    #print(x,y)
-    x=int(round(x))
-    y=int(round(y)) #just doing int would floor instead of round
 
-   
-    # cv2.drawMatchesKnn expects list of lists as matches.
-    #img3 = cv2.drawMatches(cv_rgb1,kp1,cv_rgb2,kp2,good,None,flags=2) #was drawMatchesKnn 1.0
+    #fetch 4  3D points from each camera
+    P1 = XYZ1[perm,:]
+    P2 = XYZ2[perm,:]
+
+    _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
+    rot = proctf["rotation"]
+    XYZ2in1=np.dot(XYZ2,rot.transpose())+   (np.ones([len(XYZ2),1])*proctf["translation"])
     
-            
-
- 
-
     
+    temp = XYZ2in1 - XYZ1
+    norms = np.linalg.norm(temp,axis=1)
+
+    print(norms)
     #fig = plt.figure()
     #plt.imshow(img3)
     #plt.show()
@@ -137,8 +174,6 @@ def depthimg2xyz(depthimg,K):
     cx=K[2]
     cy=K[5]
     
-    print(fx,fy)
-
     depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
 
     u,v =np.indices((480,640))
