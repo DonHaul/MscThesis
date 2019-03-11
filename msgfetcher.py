@@ -108,7 +108,7 @@ def main():
 
     goodmatch = []
     
-    differenceRatio = 0.75  #is supposed to be around 0.25
+    differenceRatio = 0.25  #is supposed to be around 0.25
 
     #only works for k=2 ( m,n are 2 variables)
     for m,n in matches:
@@ -177,8 +177,11 @@ def main():
     high_score_inliers = 0
 
     #RANSAC Loop
+    ransac_iter = 100
 
-    
+    for i in range(0,100):
+        print("existence is pain")
+        
 
     #Procrustes
     perm = np.random.permutation(len(match1))
@@ -205,72 +208,22 @@ def main():
 
     P1 = np.asarray(P1)
     P2 = np.asarray(P2)
-    
 
-    pc1 = Points2Cloud(XYZline[cameraNames[0]],rgbline[cameraNames[0]])
-    pc2 = Points2Cloud(XYZline[cameraNames[1]],rgbline[cameraNames[1]])
-    pc3 = Points2Cloud(P1)
-    pc4 = Points2Cloud(P2)
 
-    print("p1",P1)
-    print("p2",P2)
-    
-
-    #pc1.paint_uniform_color([1, 0.706, 0])
-    #pc2.paint_uniform_color([0, 0.651, 0.929])
-    pc3.paint_uniform_color([1, 0, 1])
-    pc4.paint_uniform_color([1, 0, 0])
-     
-    
-    #open3d.draw_geometries([pc3,pc4])
-
-    mesh_sphere = open3d.create_mesh_sphere(radius = 0.3)
-    mesh_sphere2 = open3d.create_mesh_sphere(radius = 0.3)
-    mesh_sphere.paint_uniform_color([1, 0, 0])
-    mesh_sphere2.paint_uniform_color([0, 1, 0])
-    
-    print("PPPP\n",P1[1,:])
-
-    print("PPP2P\n",mesh_sphere.vertices)    
-
-        
-    #mesh_sphere.vertices =   open3d.Vector3dVector(P1[1,:]) + open3d.Vector3dVector(P1[1,:])
-    #mesh_sphere2.vertices = mesh_sphere2.vertices + P2[1,:]
-
-    mesh_sphere = open3d.geometry.create_mesh_coordinate_frame(origin=P1[2,:])
-    mesh_sphere.paint_uniform_color([1, 0, 1])
-
-    mesh_sphere2 = open3d.geometry.create_mesh_coordinate_frame(origin=P2[2,:])
-    mesh_sphere2.paint_uniform_color([1, 0, 0])
-
-    #print(mesh_sphere2.vertices=)
-    open3d.draw_geometries([pc1,pc2,mesh_sphere,mesh_sphere2])
-
-    '''
-    print("Let\'s draw a cubic using LineSet")
-    points = [P1,P2]
-    lines = [[0,1],[0,2],[1,3],[2,3],
-             [4,5],[4,6],[5,7],[6,7],
-             [0,4],[1,5],[2,6],[3,7]]
-    colors = [[1, 0, 0] for i in range(len(lines))]
-    line_set = open3d.LineSet()
-    line_set.points = open3d.Vector3dVector(points)
-    line_set.lines = open3d.Vector2iVector(lines)
-    line_set.colors = open3d.Vector3dVector(colors)
-    open3d.draw_geometries([line_set])
-    '''
-    
-    #VERIFIED UNTIL NOW
+    #TODO  CHECKED UNTIL NOW
 
     print("Procrusted points",(P1.shape,P2))
   
     _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
+    
     rot = proctf["rotation"]
-    XYZ2in1 = applyTransformation(XYZ2,rot,proctf["translation"])
+    t = proctf["translation"]
+    
+    XYZ2in1 = applyTransformation(XYZ2,rot,t)
 
     temp = XYZ2in1 - XYZ1
     norms = np.linalg.norm(temp,axis=1)
-    Points2Cloud(XYZ1)
+    
     #open3d.draw_geometries([Points2Cloud(XYZ1),Points2Cloud(XYZ2in1)])
 
 
@@ -278,10 +231,11 @@ def main():
 
 
 
-    sio.savemat('np_vector.mat', {'rgb1':rgb[cameraNames[0]] ,'rgb2':rgb[cameraNames[1]] ,'XYZ1':XYZ[cameraNames[0]],'XYZ2':XYZ[cameraNames[1]], 'XYZ1emp':XYZ1,'XYZ2emp':XYZ2,'R':rot,'T':proctf["translation"],'P1':P1,'P2':P2})
+    #sio.savemat('np_vector.mat', {'rgb1':rgb[cameraNames[0]] ,'rgb2':rgb[cameraNames[1]] ,'XYZ1':XYZ[cameraNames[0]],'XYZ2':XYZ[cameraNames[1]], 'XYZ1emp':XYZ1,'XYZ2emp':XYZ2,'R':rot,'T':proctf["translation"],'P1':P1,'P2':P2})
 
     XYZ22in1 = applyTransformation(XYZline[cameraNames[1]],rot,proctf["translation"])
 
+    #open3d.draw_geometries([Points2Cloud(XYZline[cameraNames[0]],rgbline[cameraNames[0]]),Points2Cloud(XYZline[cameraNames[1]],rgbline[cameraNames[1]])])
     #open3d.draw_geometries([Points2Cloud(XYZline[cameraNames[0]],rgbline[cameraNames[0]]),Points2Cloud(XYZ22in1,rgbline[cameraNames[1]])])
 
     print(norms)
