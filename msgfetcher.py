@@ -14,6 +14,8 @@ import procrustes as proc
 import time
 import scipy.io as sio
 
+import pickler as pickle
+
 from scipy import spatial
 #mat_contents = sio.loadmat('octave_a.mat')
 
@@ -163,8 +165,8 @@ def main():
  
     
 
-    print("good1",goodkp1)
-    print("good2",goodkp2)
+    #print("good1",goodkp1)
+    #print("good2",goodkp2)
 
     
     
@@ -178,74 +180,92 @@ def main():
 
     #RANSAC Loop
     ransac_iter = 100
+    ransac_threshold = 0.4
 
-    for i in range(0,100):
-        print("existence is pain")
+    best_inliers = []
+
+
+    for i in range(0,ransac_iter):
         
-
-    #Procrustes
-    perm = np.random.permutation(len(match1))
+        #Procrustes
+        perm = np.random.permutation(len(match1))
    
-    print("perm",perm)
+        #print("perm",perm)
 
 
-    #fetch 4  3D points from each camera
-    #P1 = XYZ1[perm,:]
-    #P2 = XYZ2[perm,:]
+        #fetch 4  3D points from each camera
+        #P1 = XYZ1[perm,:]
+        #P2 = XYZ2[perm,:]
 
-    P1 = []
-    P2 = []
-    i=0
+        P1 = []
+        P2 = []
+        i=0
 
-    #remove invalid depth readings (the ones that are 0,0,0)
-    while len(P1) < 4 and i<len(perm):
+        #remove invalid depth readings (the ones that are 0,0,0)
+        while len(P1) < 4 and i<len(perm):
 
-        if np.count_nonzero(XYZ1[perm[i],:])!=0 and np.count_nonzero(XYZ2[perm[i],:])!=0 :
-            P1.append(XYZ1[perm[i],:])
-            P2.append(XYZ2[perm[i],:])
+            if np.count_nonzero(XYZ1[perm[i],:])!=0 and np.count_nonzero(XYZ2[perm[i],:])!=0 :
+                P1.append(XYZ1[perm[i],:])
+                P2.append(XYZ2[perm[i],:])
 
-        i=i+1
+            i=i+1
 
-    P1 = np.asarray(P1)
-    P2 = np.asarray(P2)
+        P1 = np.asarray(P1)
+        P2 = np.asarray(P2)
 
 
-    #TODO  CHECKED UNTIL NOW
+        #TODO  CHECKED UNTIL NOW
 
-    print("Procrusted points",(P1.shape,P2))
-  
-    _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
+        #print("Procrusted points",(P1.shape,P2))
+        print("p1p2",P1,P2)
+        datdata={}
+        datdata["P1"]=P1
+        datdata["P2"]=P2
+        pickle.In("data.pickle",datdata)
+        disdata = pickle.Out("data.pickle")
+        print("disdata",disdata)
+        _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
+        
+        rot = proctf["rotation"]
+        t = proctf["translation"]
+        
+        XYZ2in1 = applyTransformation(XYZ2,rot,t)
+
+        temp = XYZ2in1 - XYZ1
+        norms = np.linalg.norm(temp,axis=1)
+        
+        inliers = np.where(norms<ransac_threshold)
+
+        score = len(inliers)
+
+        if score>high_score_inliers:
+            print("new highscore found", score)
+            high_score_inliers=score
+            best_inliers = inliers
+
+        #open3d.draw_geometries([Points2Cloud(XYZ1),Points2Cloud(XYZ2in1)])
+
+        #sio.savemat('np_vector.mat', {'rgb1':rgb[cameraNames[0]] ,'rgb2':rgb[cameraNames[1]] ,'XYZ1':XYZ[cameraNames[0]],'XYZ2':XYZ[cameraNames[1]], 'XYZ1emp':XYZ1,'XYZ2emp':XYZ2,'R':rot,'T':proctf["translation"],'P1':P1,'P2':P2})
     
+    print("aashape",XYZ1.shape)
+
+    P1= XYZ1[best_inliers,:].squeeze()
+    P2 = XYZ2[best_inliers,:].squeeze()
+
+    print("shape",P1.shape)
+    print("shape2",P2.shape)
+
+    _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
+            
     rot = proctf["rotation"]
     t = proctf["translation"]
-    
-    XYZ2in1 = applyTransformation(XYZ2,rot,t)
 
-    temp = XYZ2in1 - XYZ1
-    norms = np.linalg.norm(temp,axis=1)
-    
-    #open3d.draw_geometries([Points2Cloud(XYZ1),Points2Cloud(XYZ2in1)])
+    XYZ22in1 = applyTransformation(XYZline[cameraNames[1]],rot,t)
 
-
-    
+    open3d.draw_geometries([Points2Cloud(XYZline[cameraNames[0]],rgbline[cameraNames[0]]),Points2Cloud(XYZ22in1,rgbline[cameraNames[1]])])
 
 
 
-    #sio.savemat('np_vector.mat', {'rgb1':rgb[cameraNames[0]] ,'rgb2':rgb[cameraNames[1]] ,'XYZ1':XYZ[cameraNames[0]],'XYZ2':XYZ[cameraNames[1]], 'XYZ1emp':XYZ1,'XYZ2emp':XYZ2,'R':rot,'T':proctf["translation"],'P1':P1,'P2':P2})
-
-    XYZ22in1 = applyTransformation(XYZline[cameraNames[1]],rot,proctf["translation"])
-
-    #open3d.draw_geometries([Points2Cloud(XYZline[cameraNames[0]],rgbline[cameraNames[0]]),Points2Cloud(XYZline[cameraNames[1]],rgbline[cameraNames[1]])])
-    #open3d.draw_geometries([Points2Cloud(XYZline[cameraNames[0]],rgbline[cameraNames[0]]),Points2Cloud(XYZ22in1,rgbline[cameraNames[1]])])
-
-    print(norms)
-    #fig = plt.figure()
-    #plt.imshow(img3)
-    #plt.show()
-    #plt.draw()
-    #plt.pause(2) # <-------
-    #raw_input("<Hit Enter To Close>")
-    #plt.close(fig)
 
 def Float2Int(f):
 

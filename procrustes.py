@@ -1,8 +1,26 @@
 import numpy as np
 
+
+def procrustes(X,Y):
+    muX = X.mean(0)
+    muY = Y.mean(0)
+
+    X0 = X - muX
+    Y0 = Y - muY
+
+    # optimum rotation matrix of Y
+    H = np.dot(X0.T, Y0)
+    U,s,Vt = np.linalg.svd(H)
+    V = Vt.T
+    R = np.dot(V, U.T)
+    t = muX - np.dot(muY, R)
+
+
+    return R, t
+
 #copy of matlab procrustes function
 #https://stackoverflow.com/questions/18925181/procrustes-analysis-with-numpy
-def procrustes(X, Y, scaling=True, reflection='best'):
+def procrustesMatlab(X, Y, scaling=True, reflection='best'):
     """
     A port of MATLAB's `procrustes` function to Numpy.
 
