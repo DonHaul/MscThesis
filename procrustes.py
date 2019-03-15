@@ -12,8 +12,17 @@ def procrustes(X,Y):
     H = np.dot(X0.T, Y0)
     U,s,Vt = np.linalg.svd(H)
     V = Vt.T
+
+
+    if np.linalg.det(R) == -1:
+        b = V[:,-1]
+        b= b*-1
+        V[:,-1] = b
+
+
     R = np.dot(V, U.T)
     t = muX - np.dot(muY, R)
+
 
 
     return R, t
