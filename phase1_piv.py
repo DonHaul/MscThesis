@@ -50,7 +50,10 @@ def main():
     #converts ros img to numpy array
     rgb[cameraNames[0]] = br.imgmsg_to_cv2(rgbros, desired_encoding="passthrough")
     depth[cameraNames[0]] = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
-      
+    
+
+    rgb[cameraNames[0]]= rgbmatrixfix(rgb[cameraNames[0]])
+
     #camera 1 ==
 
     #fetches ROS Rgb and depth image
@@ -61,8 +64,15 @@ def main():
 
     print(255 -rgb[cameraNames[0]])
     plotImg(rgb[cameraNames[0]] )
+    
 
+    rgb[cameraNames[1]]= rgbmatrixfix(rgb[cameraNames[1]])
 
+    print(rgb[cameraNames[1]].shape)
+
+    plotImg(rgb[cameraNames[1]] )
+
+    quit()
     
     
     depth[cameraNames[1]] = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
@@ -124,6 +134,9 @@ def main():
             goodmatch.append(m)
 
     img3 = cv2.drawMatches(rgb[cameraNames[0]],kp[cameraNames[0]],rgb[cameraNames[1]],kp[cameraNames[1]],goodmatch[:],None,**draw_params)
+
+ 
+    
 
     plotImg(img3)
     
@@ -256,7 +269,7 @@ def main():
     print("shape",P1.shape)
     print("shape2",P2.shape)
 
-    _,_,proctf = proc.procrustes(P1,P2,scaling=False,reflection=False)            
+    _,_,proctf = proc.procrustes(P1,P2)            
             
     rot = proctf["rotation"]
     t = proctf["translation"]
@@ -317,6 +330,22 @@ def depthimg2xyz(depthimg,K):
     depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
 
     return depthcoords
+
+def rgbmatrixfix(rgb):
+
+
+    r=rgb[:,:,0]
+
+    g=rgb[:,:,1]
+
+    b=rgb[:,:,2]
+
+    newrgb = np.array([b,g,r])
+
+    newrgb = np.transpose(newrgb,[1,2,0])
+
+    return newrgb
+
 
 def SIFTer(img,name="bigchungus",debug=False):
 
