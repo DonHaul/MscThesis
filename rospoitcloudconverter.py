@@ -63,9 +63,9 @@ for i in range(0, msg.height*msg.width):
     #print("fetched",boi)
 
        
-    r.append(ord(rgb[0])) #com ou sem 255-
-    g.append(ord(rgb[1]))
-    b.append(ord(rgb[2]))
+    r.append(255 -  ord(rgb[0])) #com ou sem 255-
+    g.append(255 -  ord(rgb[1]))
+    b.append(255 - ord(rgb[2]))
     alpha.append(ord(rgb[3   ]))
 
     #count=count+1

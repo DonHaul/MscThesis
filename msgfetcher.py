@@ -59,7 +59,8 @@ def main():
     #converts ros img to numpy array
     rgb[cameraNames[1]] = br.imgmsg_to_cv2(rgbros, desired_encoding="passthrough")
 
-    #plotImg(rgb[cameraNames[1]] )
+    print(255 -rgb[cameraNames[0]])
+    plotImg(rgb[cameraNames[0]] )
 
 
     
