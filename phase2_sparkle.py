@@ -3,58 +3,82 @@
 import numpy as np
 import cv2
 
+import pickler as pickle
+
+import datetime
+
+import aruco
+
+import Tkinter as tkinter
+import PIL.Image, PIL.ImageTk
+
+import matplotlib
+from matplotlib import pyplot as plt
+matplotlib.use('Agg')
 ## Simple talker demo that listens to std_msgs/Strings published 
 ## to the 'chatter' topic
 
 import rospy
 
 from sensor_msgs.msg import CameraInfo
+from sensor_msgs.msg import Image
 import rosinterface as roscv
 import visu
 
+import time
 
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
+def callback(data,args):
+
+    K=args[0]
+    D=args[1]
+
+    print(time.time())
+    #rospy.loginfo(rospy.get_caller_id() + 'I heard it')
+    imagem = roscv.rosImg2RGB(data)
+    
+    det_corners, ids, rejected = aruco.FindMarkers(imagem, K)
+
+    hello = imagem.astype(np.uint8).copy() 
+    hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+
+    rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
+
+    print(img)
+    print("hi")
+    #cv2.imshow("wow",img)
+
+    #time.sleep(10)
+    
+
+    
 
 def main():
+
+    datdata={}
 
     cameraName = "camera"
     rgb=0
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
     camInfo = rospy.wait_for_message("/camera/rgb/camera_info", CameraInfo)
-    #print(camInfo)
-    rgb,depth = roscv.GetRGBD(cameraName)
-    #asdasd
-    # fx 0  cx
-    # 0  fy cy
-    # 0  0  1
-
+        
+    #rgb,depth = roscv.GetRGBD(cameraName)
+    
     K = np.asarray(camInfo.K).reshape((3,3))
 
-    print(K)
- 
-    #print(rgb)
+    #det_corners, ids, rejected = aruco.FindMarkers(rgb, K)
 
-    #visu.plotImg(rgb)
-    
-    adict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_ARUCO_ORIGINAL)
-    
-    print("Marker Size", adict.markerSize)
+    #hello = rgb.astype(np.uint8).copy() 
+    #hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
 
-    lolrgb = rgb.astype(np.uint8).copy() 
-    gray = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
-    det_corners, ids, rejected  = cv2.aruco.detectMarkers(gray,dictionary=adict,cameraMatrix=K)
-    hello = cv2.aruco.drawDetectedMarkers(lolrgb,det_corners,ids)
-    print(det_corners)
-    print(ids)   
-    visu.plotImg(hello)
+    #rots,tvecs,img = aruco.FindPoses(K,camInfo.D,det_corners,hello,len(ids))
+   
+    #visu.plotImg(img)
 
-    print("lol")
-    #rospy.Subscriber('chatter', String, callback)
+    rospy.Subscriber(cameraName+"/rgb/image_color", Image, callback,(K,camInfo.D))
 
     # spin() simply keeps python from exiting until this node is stopped
-    # rospy.spin()
+    rospy.spin()
 
 
 

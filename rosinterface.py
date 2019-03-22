@@ -33,6 +33,14 @@ def rgbmatrixfix(rgb):
 
     return newrgb
 
+def rosImg2RGB(rosimg):
+    br = CvBridge()
+
+    rgb = br.imgmsg_to_cv2(rosimg, desired_encoding="passthrough")
+
+    rgb= rgbmatrixfix(rgb)
+
+    return rgb
 
 def rosCam2RGB(rgbros,depthros):
     #bridge to convert ROS image into numpy array
