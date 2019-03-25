@@ -1,7 +1,8 @@
 import numpy as np
+import open3d
+import pickler as pickle
 
-a = np.array([[1,2,3],[1,2,3],[1,2,3]])
 
-print a
-
-print(np.dot(np.eye(3),a))
+ola = pickle.Out("pickles/obs25-03-2019 19-39-13.pickle")
+print "yo"
+print(ola)

@@ -5,7 +5,7 @@ import cv2
 import pickler as pickle
 import datetime
 import aruco
-import math
+import open3d
 
 
 ## Simple talker demo that listens to std_msgs/Strings published 
@@ -26,7 +26,8 @@ class InfoGetter(object):
     def __init__(self):
       
         self.count = 0
-        self.Nmarkers = 14 #marker maximo + 1
+        self.Nmarkers = 12#14 #marker maximo + 1 markers must be contiguous for this to work
+        self.markerIDoffset=-2
 
         self.C = np.zeros((self.Nmarkers *3,self.Nmarkers *3))
 
@@ -53,17 +54,20 @@ class InfoGetter(object):
 
         observations = []
         
+        #if more than one marker was detected
         if  ids is not None and len(ids)>1:
 
-
+            #finds rotations and vectors and draws referential
             rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
 
+            #squeeze
             ids = ids.squeeze()
 
             
             for i in range(0,len(ids)):                
                 for j in range(i+1,len(ids)):
-                    obs={"from":ids[i],"to":ids[j],"rot":np.dot(rots[i],rots[j].T)}
+                    #carefull with this line
+                    obs={"from":(ids[i]+self.markerIDoffset),"to":(ids[j]+self.markerIDoffset),"rot":np.dot(rots[i],rots[j].T)}
                     observations.append(obs)
 
             #creates the left matrix in the problem formulation
@@ -74,92 +78,45 @@ class InfoGetter(object):
                     
             cnt = 0
             for obs in observations:
-                #print(obs)
+                #fills the matrices according to the observed pairs
                 Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
                 A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot']
 
                 cnt=cnt+1
-                
+            
+    
             B = Ident - A
 
+            #calculates transpose
             self.C = self.C + np.dot(B.T,B)
 
-            #pickle.In("obs",ig.C)
-
-
-        
-        
-
-        #print(self.count)
-        #print(observations)
-        #if(len(observations)>0):
-        #    print(np.dot( rots[observations[0]['to']],rots[observations[0]['from']].T) )
+        #shows video
         cv2.imshow("Image window", hello)
         cv2.waitKey(3)
 
-# Checks if a matrix is a valid rotation matrix.
-def isRotationMatrix(R) :
-    Rt = np.transpose(R)
-    shouldBeIdentity = np.dot(Rt, R)
-    I = np.identity(3, dtype = R.dtype)
-    n = np.linalg.norm(I - shouldBeIdentity)
-    return n < 1e-6
- 
- 
-# Calculates rotation matrix to euler angles
-# The result is the same as MATLAB except the order
-# of the euler angles ( x and z are swapped ).
-def rotationMatrixToEulerAngles(R) :
- 
-    assert(isRotationMatrix(R))
-     
-    sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
-     
-    singular = sy < 1e-6
- 
-    if  not singular :
-        x = math.atan2(R[2,1] , R[2,2])
-        y = math.atan2(-R[2,0], sy)
-        z = math.atan2(R[1,0], R[0,0])
-    else :
-        x = math.atan2(-R[1,2], R[1,1])
-        y = math.atan2(-R[2,0], sy)
-        z = 0
- 
-    return np.array([x, y, z])
 
     
 
 def main():
 
-    global count
-    count = 0
-    datdata={}
-
     ig = InfoGetter()
 
     cameraName = "abretesesamo"
-    rgb=0
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
-    camInfo = rospy.wait_for_message("/"+cameraName + "/rgb/camera_info", CameraInfo)
-        
-    rgb,depth = roscv.GetRGBD(cameraName)
-    
+
+
+    #fetch intrinsic parameters
+    camInfo = rospy.wait_for_message("/"+cameraName + "/rgb/camera_info", CameraInfo)        
+
+    rgb,depth = roscv.GetRGBD(cameraName)    
+
     K = np.asarray(camInfo.K).reshape((3,3))
 
-    #det_corners, ids, rejected = aruco.FindMarkers(rgb, K)
-
-    #hello = rgb.astype(np.uint8).copy() 
-    #hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
-
-    #rots,tvecs,img = aruco.FindPoses(K,camInfo.D,det_corners,hello,len(ids))
-   
-    #visu.plotImg(img)
-
+    #subscribe
     rospy.Subscriber(cameraName+"/rgb/image_color", Image, ig.callback,(K,camInfo.D))
 
-    # spin() simply keeps python from exiting until this node is stopped
+
     try:
         rospy.spin()
     except KeyboardInterrupt:
@@ -167,9 +124,10 @@ def main():
 
     cv2.destroyAllWindows()
 
-        
+    pickle.In("obs","AtA",ig.C)
+
     
-    #pickle.In("AtA",ig.C)
+   
 
     print("No more observations being fetched.")
     #print(ig.C)
@@ -181,19 +139,58 @@ def main():
 
     solution = u[:,-3:]
 
+    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
     rotsols = []
     solsplit = np.split(solution,ig.Nmarkers)
 
+    #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
         r,t=proc.procrustes(np.eye(3),sol)
         rotsols.append(r)
     
+    
+    rref = rotsols[0].T
+
+    frames =[]
+    counter = 0
+    #make ref 1 the reference and display rotations
     for r in rotsols:
-        angs = rotationMatrixToEulerAngles(r)
-        print(angs)
 
+        #r=np.dot(r,rref.T)
+        refe = open3d.create_mesh_coordinate_frame(size = 0.6, origin = [0, 0, 0])
 
+        trans = np.zeros((4,4))
+        trans[3,3]=1
+        trans[0,3]=counter #linha ,coluna
+        trans[0:3,0:3]=r
 
+        refe.transform(trans)
+        frames.append(refe)
+
+        counter = counter +1
+
+    
+    open3d.draw_geometries(frames)
+    print(ig.Nmarkers + ig.markerIDoffset)
+    Rrelations = [[]]*ig.Nmarkers
+
+    print("Mekie")
+    print(Rrelations)
+
+    #generate R between each things
+    for i in range(0,ig.Nmarkers):
+        for j in range(0,ig.Nmarkers):
+            Rrelations[i].append(np.dot(rotsols[j],rotsols[i].T))
+            print(i,j)
+
+ 
+
+    #for i in range(0,ig.Nmarkers):
+    #    for j in range(0,ig.Nmarkers):
+    #        print("Ok:",(i,j))
+    #        print(Rrelations[i][j])
+
+     
 
 if __name__ == '__main__':
     main()
