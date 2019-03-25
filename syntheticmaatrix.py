@@ -88,12 +88,30 @@ solv = changeMat(solv,rotrel[1][2],1,2)
 solv = changeMat(solv,rotrel[2][1],2,1)
 
 
+def LaGrange(x,A,lamb):
+        return np.linalg.multi_dot([x.T,solv.T,solv,x]) + lamb *( np.linalg.multi_dot([x.T,x])-1)
+
+
 print("===========")
 print(solv)
 
 print("===========")
-w,v = np.linalg.eig(solv)
+w,v = np.linalg.eig(np.dot(solv,solv.T))
+
+print(w,v)
+
+minval = LaGrange(v[:,0],solv,w[0])
+minindex=0
+
+for i in range(0,len(w)):
+
+        
+        val = LaGrange(v[:,i],solv,w[i])
+
+        if (val<minval):
+                minindex = w[i]
+                minval = val
+        
 
 
-print(w)
-print(v)
+print(v.shape)

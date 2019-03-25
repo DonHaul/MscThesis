@@ -2,24 +2,16 @@
 # Software License Agreement (BSD License)
 import numpy as np
 import cv2
-
 import pickler as pickle
-
 import datetime
-
 import aruco
 
-import Tkinter as tkinter
-import PIL.Image, PIL.ImageTk
 
-import matplotlib
-from matplotlib import pyplot as plt
-matplotlib.use('Agg')
 ## Simple talker demo that listens to std_msgs/Strings published 
 ## to the 'chatter' topic
 
 import rospy
-
+from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import Image
 import rosinterface as roscv
@@ -27,42 +19,69 @@ import visu
 
 import time
 
-def callback(data,args):
 
-    K=args[0]
-    D=args[1]
 
-    print(time.time())
-    #rospy.loginfo(rospy.get_caller_id() + 'I heard it')
-    imagem = roscv.rosImg2RGB(data)
+class InfoGetter(object):
+    def __init__(self):
+      
+        self.count = 0
+
+        
+
+
+    def callback(self,data,args):
+
+        K=args[0]
+        D=args[1]
+        
+        self.count = self.count +1
+
+        #print(time.time())
+        #rospy.loginfo(rospy.get_caller_id() + 'I heard it')
+        img = roscv.rosImg2RGB(data)
+        
+        det_corners, ids, rejected = aruco.FindMarkers(img, K)
+
+        hello = img.astype(np.uint8).copy() 
+        hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+
+        
+        if  ids is not None:
+            rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
+
     
-    det_corners, ids, rejected = aruco.FindMarkers(imagem, K)
 
-    hello = imagem.astype(np.uint8).copy() 
-    hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+        #cv2.imshow("Image window", img)
+        #cv2.waitKey(3)
+        #bridge = CvBridge()
 
-    rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
+        #try:
+        #  cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
+        #except CvBridgeError as e:
+        #  print(e)
 
-    print(img)
-    print("hi")
-    #cv2.imshow("wow",img)
+        print(self.count)
 
-    #time.sleep(10)
-    
+        cv2.imshow("Image window", hello)
+        cv2.waitKey(0)
 
     
 
 def main():
 
+    global count
+    count = 0
     datdata={}
 
-    cameraName = "camera"
+    ig = InfoGetter()
+
+    cameraName = "abretesesamo"
     rgb=0
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
-    camInfo = rospy.wait_for_message("/camera/rgb/camera_info", CameraInfo)
+    camInfo = rospy.wait_for_message("/"+cameraName + "/rgb/camera_info", CameraInfo)
         
-    #rgb,depth = roscv.GetRGBD(cameraName)
+    rgb,depth = roscv.GetRGBD(cameraName)
     
     K = np.asarray(camInfo.K).reshape((3,3))
 
@@ -75,10 +94,14 @@ def main():
    
     #visu.plotImg(img)
 
-    rospy.Subscriber(cameraName+"/rgb/image_color", Image, callback,(K,camInfo.D))
+    rospy.Subscriber(cameraName+"/rgb/image_color", Image, ig.callback,(K,camInfo.D))
 
     # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    cv2.destroyAllWindows()
 
 
 
