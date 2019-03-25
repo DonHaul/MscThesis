@@ -11,8 +11,10 @@ starttime = time.time()
 def callback(data):
 	#rospy.loginfo(rospy.get_caller_id() + "I Heard %s", data.data)
 
-	count = count +1
+	n_capture = n_capture - 1
 
+	if( n_capture==0)
+	
 	print("dif",time.time()-starttime)
 
 def listener():

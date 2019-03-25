@@ -5,6 +5,7 @@ import cv2
 import pickler as pickle
 import datetime
 import aruco
+import math
 
 
 ## Simple talker demo that listens to std_msgs/Strings published 
@@ -16,7 +17,7 @@ from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import Image
 import rosinterface as roscv
 import visu
-
+import procrustes as proc
 import time
 
 
@@ -25,6 +26,9 @@ class InfoGetter(object):
     def __init__(self):
       
         self.count = 0
+        self.Nmarkers = 14 #marker maximo + 1
+
+        self.C = np.zeros((self.Nmarkers *3,self.Nmarkers *3))
 
         
 
@@ -46,24 +50,83 @@ class InfoGetter(object):
         hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
 
         
-        if  ids is not None:
+
+        observations = []
+        
+        if  ids is not None and len(ids)>1:
+
+
             rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
 
-    
+            ids = ids.squeeze()
 
-        #cv2.imshow("Image window", img)
-        #cv2.waitKey(3)
-        #bridge = CvBridge()
+            
+            for i in range(0,len(ids)):                
+                for j in range(i+1,len(ids)):
+                    obs={"from":ids[i],"to":ids[j],"rot":np.dot(rots[i],rots[j].T)}
+                    observations.append(obs)
 
-        #try:
-        #  cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
-        #except CvBridgeError as e:
-        #  print(e)
+            #creates the left matrix in the problem formulation
+            Ident = np.zeros((len(observations)*3,self.Nmarkers*3))
 
-        print(self.count)
+            #creates the right matrix in the problem formulatin
+            A = np.zeros((len(observations)*3,self.Nmarkers*3))
+                    
+            cnt = 0
+            for obs in observations:
+                #print(obs)
+                Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
+                A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot']
 
+                cnt=cnt+1
+                
+            B = Ident - A
+
+            self.C = self.C + np.dot(B.T,B)
+
+            #pickle.In("obs",ig.C)
+
+
+        
+        
+
+        #print(self.count)
+        #print(observations)
+        #if(len(observations)>0):
+        #    print(np.dot( rots[observations[0]['to']],rots[observations[0]['from']].T) )
         cv2.imshow("Image window", hello)
-        cv2.waitKey(0)
+        cv2.waitKey(3)
+
+# Checks if a matrix is a valid rotation matrix.
+def isRotationMatrix(R) :
+    Rt = np.transpose(R)
+    shouldBeIdentity = np.dot(Rt, R)
+    I = np.identity(3, dtype = R.dtype)
+    n = np.linalg.norm(I - shouldBeIdentity)
+    return n < 1e-6
+ 
+ 
+# Calculates rotation matrix to euler angles
+# The result is the same as MATLAB except the order
+# of the euler angles ( x and z are swapped ).
+def rotationMatrixToEulerAngles(R) :
+ 
+    assert(isRotationMatrix(R))
+     
+    sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
+     
+    singular = sy < 1e-6
+ 
+    if  not singular :
+        x = math.atan2(R[2,1] , R[2,2])
+        y = math.atan2(-R[2,0], sy)
+        z = math.atan2(R[1,0], R[0,0])
+    else :
+        x = math.atan2(-R[1,2], R[1,1])
+        y = math.atan2(-R[2,0], sy)
+        z = 0
+ 
+    return np.array([x, y, z])
 
     
 
@@ -100,8 +163,34 @@ def main():
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print("Shutting down")
+        print("shut")
+
     cv2.destroyAllWindows()
+
+        
+    
+    #pickle.In("AtA",ig.C)
+
+    print("No more observations being fetched.")
+    #print(ig.C)
+
+
+    u, s, vh = np.linalg.svd(ig.C)
+    #print("Eigenfs")
+    #print(u.shape, s.shape, vh.shape)
+
+    solution = u[:,-3:]
+
+    rotsols = []
+    solsplit = np.split(solution,ig.Nmarkers)
+
+    for sol in solsplit:
+        r,t=proc.procrustes(np.eye(3),sol)
+        rotsols.append(r)
+    
+    for r in rotsols:
+        angs = rotationMatrixToEulerAngles(r)
+        print(angs)
 
 
 
