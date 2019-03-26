@@ -92,7 +92,7 @@ class InfoGetter(object):
 
         #shows video
         cv2.imshow("Image window", hello)
-        cv2.waitKey(3)
+        cv2.waitKey(0)
 
 
     
@@ -128,10 +128,6 @@ def main():
 
     
    
-
-    print("No more observations being fetched.")
-    #print(ig.C)
-
 
     u, s, vh = np.linalg.svd(ig.C)
     #print("Eigenfs")
@@ -170,26 +166,31 @@ def main():
         counter = counter +1
 
     
-    open3d.draw_geometries(frames)
-    print(ig.Nmarkers + ig.markerIDoffset)
-    Rrelations = [[]]*ig.Nmarkers
-
-    print("Mekie")
-    print(Rrelations)
+    #open3d.draw_geometries(frames)
+    #print(ig.Nmarkers + ig.markerIDoffset)
+    Rrelations = [[] for i in range(ig.Nmarkers)] #correct way to make 2d list
 
     #generate R between each things
     for i in range(0,ig.Nmarkers):
         for j in range(0,ig.Nmarkers):
             Rrelations[i].append(np.dot(rotsols[j],rotsols[i].T))
-            print(i,j)
+            #print(i,j)
+            #print(np.dot(rotsols[j],rotsols[i].T))
+        
+        #print(i)
+        #print(len(Rrelations[i]))
 
- 
+    for i in range(0,ig.Nmarkers):
+        print(len(Rrelations[i]))
+    
+    '''
+    for i in range(0,ig.Nmarkers):
+        for j in range(0,ig.Nmarkers):
+            print("Ok:",(i,j))
+            print(Rrelations[j][i])
+    '''
 
-    #for i in range(0,ig.Nmarkers):
-    #    for j in range(0,ig.Nmarkers):
-    #        print("Ok:",(i,j))
-    #        print(Rrelations[i][j])
-
+    pickle.In("obs","RelMarkerRotations",Rrelations)
      
 
 if __name__ == '__main__':

@@ -45,6 +45,13 @@ def rosImg2RGB(rosimg):
 
     return rgb
 
+def rosDepth2RGB(depthros):
+    br = CvBridge()
+
+    depth = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
+
+    return depth
+
 def rosCam2RGB(rgbros,depthros):
     #bridge to convert ROS image into numpy array
     br = CvBridge()
