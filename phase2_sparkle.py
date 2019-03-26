@@ -45,7 +45,8 @@ def callback(data,args):
 
     print(img)
     print("hi")
-    #cv2.imshow("wow",img)
+    print(img.shape)
+    #cv2.imshow("lol",img)
 
     #time.sleep(10)
     
@@ -53,6 +54,12 @@ def callback(data,args):
     
 
 def main():
+
+    img = np.random.rand(480,640,,3)
+
+
+    cv2.imshow('ImageWindow', img)
+    cv2.waitKey()
 
     datdata={}
 
