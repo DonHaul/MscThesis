@@ -34,8 +34,8 @@ counter = 0
 #make ref 1 the reference and display rotations
 for r in rotsols:
 
-    #r=np.dot(rref,r.T)
-    #r=np.dot(r,rref.T)
+    #r=np.dot(r.T,rref).T
+    #r=np.dot(rref.T,r)  #WHY IS THIS THE RIGHT OPERATION
     refe = open3d.create_mesh_coordinate_frame(size = 0.6, origin = [0, 0, 0])
 
     trans = np.zeros((4,4))
