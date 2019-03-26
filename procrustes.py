@@ -14,7 +14,7 @@ def procrustes(X,Y):
     V = Vt.T
 
 
-    if np.linalg.det(R) == -1:
+    if np.linalg.det(V) < 0: # == -1
         b = V[:,-1]
         b= b*-1
         V[:,-1] = b
