@@ -1,6 +1,6 @@
 import numpy as np
 
-
+#this is how wikipedia does it
 def procrustes(X,Y):
     muX = X.mean(0)
     muY = Y.mean(0)
@@ -21,6 +21,35 @@ def procrustes(X,Y):
 
 
     R = np.dot(V, U.T)
+    t = muX - np.dot(muY, R)
+
+
+
+    return R, t
+
+
+
+#same as procrustes 1 but arguments are inverted - (This is how it is done in  the paper - Estimating 3-D rigid body transformations: a comparison of four major algorithms)
+def procrustes2(X,Y):
+    muX = X.mean(0)
+    muY = Y.mean(0)
+
+    X0 = X - muX
+    Y0 = Y - muY
+
+    # optimum rotation matrix of Y
+    H = np.dot(X0.T, Y0)
+    U,s,Vt = np.linalg.svd(H)
+    V = Vt.T
+
+
+    if np.linalg.det(V) < 0: # == -1
+        b = V[:,-1]
+        b= b*-1
+        V[:,-1] = b
+
+
+    R = np.dot(U, Vt)
     t = muX - np.dot(muY, R)
 
 

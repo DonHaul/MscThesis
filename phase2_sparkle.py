@@ -26,7 +26,7 @@ class InfoGetter(object):
     def __init__(self):
       
         self.count = 0
-        self.Nmarkers = 12#14 #marker maximo + 1 markers must be contiguous for this to work
+        self.Nmarkers = 12 #marker maximo + 1 markers must be contiguous for this to work
         self.markerIDoffset=-2
 
         self.C = np.zeros((self.Nmarkers *3,self.Nmarkers *3))
@@ -92,24 +92,14 @@ class InfoGetter(object):
 
         #shows video
         cv2.imshow("Image window", hello)
-        cv2.waitKey(0)
+        cv2.waitKey(3)
 
 
     
 
 def main():
 
-<<<<<<< HEAD
-    img = np.random.rand(480,640,,3)
-
-
-    cv2.imshow('ImageWindow', img)
-    cv2.waitKey()
-
-    datdata={}
-=======
     ig = InfoGetter()
->>>>>>> c10e90785bca0e54bd276671f4ff38b53daa9d43
 
     cameraName = "abretesesamo"
 
@@ -162,7 +152,7 @@ def main():
     #make ref 1 the reference and display rotations
     for r in rotsols:
 
-        #r=np.dot(r,rref.T)
+        #r=np.dot(rref,r.T)
         refe = open3d.create_mesh_coordinate_frame(size = 0.6, origin = [0, 0, 0])
 
         trans = np.zeros((4,4))
@@ -176,7 +166,8 @@ def main():
         counter = counter +1
 
     
-    #open3d.draw_geometries(frames)
+    open3d.draw_geometries(frames)
+
     #print(ig.Nmarkers + ig.markerIDoffset)
     Rrelations = [[] for i in range(ig.Nmarkers)] #correct way to make 2d list
 
@@ -190,8 +181,7 @@ def main():
         #print(i)
         #print(len(Rrelations[i]))
 
-    for i in range(0,ig.Nmarkers):
-        print(len(Rrelations[i]))
+
     
     '''
     for i in range(0,ig.Nmarkers):

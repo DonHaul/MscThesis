@@ -29,7 +29,7 @@ class InfoGetter(object):
         self.active1=False
         self.active2=False
 
-        self.interval = 0.1
+        self.interval = 1
 
     def showIms(self):
 
@@ -37,7 +37,7 @@ class InfoGetter(object):
 
         cv2.imshow("yomamma2",self.c2)
 
-        cv2.waitKey(1)
+        cv2.waitKey(3)
 
         
 
@@ -48,21 +48,21 @@ class InfoGetter(object):
 
 
         self.c1=img
-        print ("c1",time.time())
         self.showIms()
         
-        rospy.sleep(self.interval)
+        #rospy.sleep(self.interval)
         
 
     def callback2(self,data):
         
-        img = roscv.rosDepth2RGB(data)
+        img = roscv.rosImg2RGB(data)
+
 
         self.c2=img
-        print ("c2",time.time())
-
         #self.showIms()
-        rospy.sleep(self.interval)
+        
+
+        #rospy.sleep(self.interval)
         
 
 
@@ -73,18 +73,26 @@ class InfoGetter(object):
 
 ig = InfoGetter()
 
-cameraName = "abretesesamo"
+cameraNames = ["abretesesamo","ervilhamigalhas"]
 rospy.init_node('my_name_is_jeff', anonymous=True)
 
 #subscribe
 
 
-rospy.Subscriber(cameraName+"/rgb/image_color", Image, ig.callback1)
+rospy.Subscriber(cameraNames[0]+"/rgb/image_color", Image, ig.callback1)
 
-rospy.Subscriber(cameraName+"/depth_registered/image_raw", Image, ig.callback2)
+rospy.Subscriber(cameraNames[1]+"/rgb/image_color", Image, ig.callback2)
 
 
 try:
     rospy.spin()
 except KeyboardInterrupt:
     print("shut")
+
+
+cv2.imshow("im1",ig.c1)
+cv2.imshow("im2",ig.c2)
+cv2.waitKey(0)
+
+
+print "ola"

@@ -15,7 +15,7 @@ def FindMarkers(img,K):
 def FindPoses(K,D,det_corners,img,n):
 
     #VVERIFY THAT VALUE TODO DANGER, MUST BE CORRECT LENGHT IN METERS 0.185
-    rvecs, tvecs, obj = cv2.aruco.estimatePoseSingleMarkers(det_corners,0.185,K,(0,0,0,0))
+    rvecs, tvecs, obj = cv2.aruco.estimatePoseSingleMarkers(det_corners,0.0875,K,(0,0,0,0))
 
     #for r in rvecs
     rots = []
