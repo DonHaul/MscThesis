@@ -1,65 +1,31 @@
+import pprint
 import numpy as np
-import open3d
+import Rtmat
 import pickler as pickle
-import procrustes as proc
-import open3d
 
+d = pickle.Out("pickles/TLS01-04-2019 20-28-02.pickle")
 
-ola = pickle.Out("pickles/obs26-03-2019 12-02-35.pickle")
-
-C=ola["AtA"]
-Nmarkers=12
-
-u, s, vh = np.linalg.svd(C)
-#print("Eigenfs")
-#print(u.shape, s.shape, vh.shape)
-
-solution = u[:,-3:]
-
-#split in 3x3 matrices, dat are close to the rotation matrices but not quite
-rotsols = []
-solsplit = np.split(solution,Nmarkers)
-
-#get actual rotation matrices by doing the procrustes
-for sol in solsplit:
-    r,t=proc.procrustes(np.eye(3),sol)
-    rotsols.append(r)
+haa  =  np.random.rand(5,5)
 
 
 
-rref = rotsols[0]
+a = np.dot(haa.T,haa)
 
-frames =[]
-counter = 0
-#make ref 1 the reference and display rotations
-for r in rotsols:
+#a= d['C']
 
-    #r=np.dot(r.T,rref).T
-    #r=np.dot(rref.T,r)  #WHY IS THIS THE RIGHT OPERATION
-    refe = open3d.create_mesh_coordinate_frame(size = 0.6, origin = [0, 0, 0])
-
-    trans = np.zeros((4,4))
-    trans[3,3]=1
-    trans[0,3]=counter #linha ,coluna
-    trans[0:3,0:3]=r#np.eye(3)
-
-    refe.transform(trans)
-    frames.append(refe)
-
-    counter = counter +1
+pprint.pprint(a)
 
 
-open3d.draw_geometries(frames)
+print(Rtmat.CheckSymmetric(a))
 
-#print(ig.Nmarkers + ig.markerIDoffset)
-Rrelations = [[] for i in range(Nmarkers)] #correct way to make 2d list
+u,s,vh = np.linalg.svd(a)
 
-#generate R between each things
-for i in range(0,Nmarkers):
-    for j in range(0,Nmarkers):
-        Rrelations[i].append(np.dot(rotsols[j],rotsols[i].T))
-        #print(i,j)
-        #print(np.dot(rotsols[j],rotsols[i].T))
-    
-    #print(i)
-    #print(len(Rrelations[i]))
+#print("matu")
+#pprint.pprint(u)
+
+#print("matvh")
+#pprint.pprint(vh)
+
+print("Howequal",abs(u-vh.T).max())
+
+

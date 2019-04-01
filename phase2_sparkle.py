@@ -6,6 +6,8 @@ import pickler as pickle
 import datetime
 import aruco
 import open3d
+import Rtmat
+import pprint
 
 
 ## Simple talker demo that listens to std_msgs/Strings published 
@@ -70,22 +72,10 @@ class InfoGetter(object):
                     obs={"from":(ids[i]+self.markerIDoffset),"to":(ids[j]+self.markerIDoffset),"rot":np.dot(rots[i],rots[j].T)}
                     observations.append(obs)
 
-            #creates the left matrix in the problem formulation
-            Ident = np.zeros((len(observations)*3,self.Nmarkers*3))
 
-            #creates the right matrix in the problem formulatin
-            A = np.zeros((len(observations)*3,self.Nmarkers*3))
-                    
-            cnt = 0
-            for obs in observations:
-                #fills the matrices according to the observed pairs
-                Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
-                A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot']
+            B = problemDef(observations,self.Nmarkers)
 
-                cnt=cnt+1
             
-    
-            B = Ident - A
 
             #calculates transpose
             self.C = self.C + np.dot(B.T,B)
@@ -95,7 +85,60 @@ class InfoGetter(object):
         cv2.waitKey(3)
 
 
+def problemDef(observations,N):
+
+    #creates the left matrix in the problem formulation
+    Ident = np.zeros((len(observations)*3,N*3))
+
+
+    #creates the right matrix in the problem formulatin
+    A = np.zeros((len(observations)*3,N*3))
+            
+    cnt = 0
+    for obs in observations:
+        #fills the matrices according to the observed pairs
+        Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
+        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot']
+
+        cnt=cnt+1
     
+    return Ident - A
+
+def TotalLeastSquares(C,Nleast,Nmarkers):
+    '''
+    ola
+    '''
+    a=C
+    pickle.In("TLS","C",C)
+        
+    print(Rtmat.CheckSymmetric(a))
+
+    u,s,vh = np.linalg.svd(a,full_matrices=False)
+
+    print("matu")
+    pprint.pprint(u)
+
+    print("matvh")
+    pprint.pprint(vh)
+
+    print("Howequal",abs(u-vh.T).max())
+
+    
+    solution = u[:,-Nleast:]
+
+    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
+    rotsols = []
+    solsplit = np.split(solution,Nmarkers)
+
+    #get actual rotation matrices by doing the procrustes
+    for sol in solsplit:
+        r,t=proc.procrustes(np.eye(3),sol)
+        rotsols.append(r)
+
+    return rotsols
+
+def check_symmetric(a, tol=1e-8):
+    return np.allclose(a, a.T, atol=tol)
 
 def main():
 
@@ -127,22 +170,9 @@ def main():
     pickle.In("obs","AtA",ig.C)
 
     
-   
+    rotsols = TotalLeastSquares(ig.C,3,ig.Nmarkers)
+    
 
-    u, s, vh = np.linalg.svd(ig.C)
-    #print("Eigenfs")
-    #print(u.shape, s.shape, vh.shape)
-
-    solution = u[:,-3:]
-
-    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
-    rotsols = []
-    solsplit = np.split(solution,ig.Nmarkers)
-
-    #get actual rotation matrices by doing the procrustes
-    for sol in solsplit:
-        r,t=proc.procrustes(np.eye(3),sol)
-        rotsols.append(r)
     
     
     rref = rotsols[0].T
@@ -168,20 +198,8 @@ def main():
     
     open3d.draw_geometries(frames)
 
-    #print(ig.Nmarkers + ig.markerIDoffset)
-    Rrelations = [[] for i in range(ig.Nmarkers)] #correct way to make 2d list
-
-    #generate R between each things
-    for i in range(0,ig.Nmarkers):
-        for j in range(0,ig.Nmarkers):
-            Rrelations[i].append(np.dot(rotsols[j],rotsols[i].T))
-            #print(i,j)
-            #print(np.dot(rotsols[j],rotsols[i].T))
-        
-        #print(i)
-        #print(len(Rrelations[i]))
-
-
+    
+    Rrel = Rtmat.genRotRel(rotsols)
     
     '''
     for i in range(0,ig.Nmarkers):
