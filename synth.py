@@ -14,12 +14,12 @@ def main():
 
     R,t = FakeAruco()
 
-    ViewRefs(R,t)
+    #ViewRefs(R,t)
 
    
     #obs = SampleGeneratorMin(R)
 
-    obs = SampleGenerator(R)
+    obs = SampleGenerator(R,noise=1)
     
     B = phase2.problemDef(obs,len(R))
 
@@ -38,7 +38,7 @@ def main():
 
     print("lol",rotSoles[0])
 
-    ViewRefs(rotSoles[0])
+    #ViewRefs(rotSoles[0])
 
 
 def SampleGeneratorMin(rot,noise = 1e-10):
@@ -47,7 +47,7 @@ def SampleGeneratorMin(rot,noise = 1e-10):
 
     for i in range(0,len(rot)-1):
         #SHOULDNT IT BE rot[i+1],rot[i+1].T)
-        obs.append({"from":i,"to":i+1,"rot":np.dot(rot[i+1],rot[i].T)+np.random.rand(3,3)*noise})   
+        obs.append({"from":i,"to":i+1,"rot":np.dot(np.dot(rot[i+1],rot[i].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})   
         #print(i,i+1)
 
     obs.append({"from":len(rot)-1,"to":0,"rot":np.dot(rot[0],rot[len(rot)-1].T)})  #delete this line after
@@ -74,7 +74,7 @@ def SampleGenerator(R,samples=1000,noise = 0.00001):
                 r2 = random.randint(0, len(R)-1)
 
             
-            obs.append({"from":r2,"to":r1,"rot":np.dot(R[r1],R[r2].T)+np.random.rand(3,3)*noise})            
+            obs.append({"from":r2,"to":r1,"rot":np.dot(np.dot(R[r1],R[r2].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})            
             
             r[r1]=1
             r[r2]=1
