@@ -13,30 +13,14 @@ def main():
     refs=[]
 
     R,t = FakeAruco()
+
+    #ViewRefs(R,t)
+
    
     #obs = SampleGeneratorMin(R)
+
+    obs = SampleGenerator(R,noise=10)
     
-    
-    obs = SampleGenerator(R,1000)
-    
-    
-    #print("R")
-    #ViewRefs(R)
-
-    #pprint.pprint(obs)
-    #rotrela = [d['rot'] for d in obs]
-
-    #print("rotrela")
-    #ViewRefs(rotrela)
-
-    
-
-    #pickle.In("synth","obs",obs)
-
-    #print(obs)
-
-    #pprint.pprint(obs)
-
     B = phase2.problemDef(obs,len(R))
 
     ola = np.dot(B.T,B)
@@ -45,21 +29,32 @@ def main():
 
     rotSols = phase2.TotalLeastSquares(ola,3,len(R))
 
-    #ViewRefs(rotSols)
+    
+    ViewRefs(rotSols)
 
-def SampleGeneratorMin(rot):
+    rotSoles = Rtmat.genRotRel(rotSols)
+
+    print("yo",rotSoles)
+
+    print("lol",rotSoles[0])
+
+    #ViewRefs(rotSoles[0])
+
+
+def SampleGeneratorMin(rot,noise = 1e-10):
 
     obs=[]
 
     for i in range(0,len(rot)-1):
-        obs.append({"from":i,"to":i+1,"rot":np.dot(rot[i+1],rot[i].T)})   
+        #SHOULDNT IT BE rot[i+1],rot[i+1].T)
+        obs.append({"from":i,"to":i+1,"rot":np.dot(rot[i+1],rot[i].T)+Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise]))})   
         #print(i,i+1)
 
     obs.append({"from":len(rot)-1,"to":0,"rot":np.dot(rot[0],rot[len(rot)-1].T)})  #delete this line after
     return obs
 
 
-def SampleGenerator(R,samples=1000,noise = 0):
+def SampleGenerator(R,samples=1000,noise = 0.00001):
 
     
     r = np.zeros([len(R),1])
@@ -79,7 +74,7 @@ def SampleGenerator(R,samples=1000,noise = 0):
                 r2 = random.randint(0, len(R)-1)
 
             
-            obs.append({"from":r2,"to":r1,"rot":np.dot(R[r1],R[r2].T)})            
+            obs.append({"from":r2,"to":r1,"rot":np.dot(R[r1],R[r2].T)+Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise]))})            
             
             r[r1]=1
             r[r2]=1
@@ -142,20 +137,20 @@ def FakeAruco():
     t=[]
 
     R.append(Rtmat.genRotMat([0,0,0]))
-    #R.append(Rtmat.genRotMat([0,0,0]))
-    #R.append(Rtmat.genRotMat([0,0,0]))
+    R.append(Rtmat.genRotMat([0,0,0]))
+    R.append(Rtmat.genRotMat([0,0,0]))
 
     R.append(Rtmat.genRotMat([0,90,0]))
-    #R.append(Rtmat.genRotMat([0,90,0]))
-    #R.append(Rtmat.genRotMat([0,90,0]))
+    R.append(Rtmat.genRotMat([0,90,0]))
+    R.append(Rtmat.genRotMat([0,90,0]))
     
     R.append(Rtmat.genRotMat([0,180,0]))
-    #R.append(Rtmat.genRotMat([0,180,0]))
-    #R.append(Rtmat.genRotMat([0,180,0]))
+    R.append(Rtmat.genRotMat([0,180,0]))
+    R.append(Rtmat.genRotMat([0,180,0]))
 
     R.append(Rtmat.genRotMat([0,270,0]))
-    #R.append(Rtmat.genRotMat([0,270,0]))
-    #R.append(Rtmat.genRotMat([0,270,0]))
+    R.append(Rtmat.genRotMat([0,270,0]))
+    R.append(Rtmat.genRotMat([0,270,0]))
     
     t.append([0,10,10])
     t.append([0,30,10])

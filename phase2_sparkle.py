@@ -108,21 +108,9 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
     '''
     ola
     '''
-    a=C
-    pickle.In("TLS","C",C)
-        
-    print(Rtmat.CheckSymmetric(a))
 
-    u,s,vh = np.linalg.svd(a,full_matrices=False)
 
-    print("matu")
-    pprint.pprint(u)
-
-    print("matvh")
-    pprint.pprint(vh)
-
-    print("Howequal",abs(u-vh.T).max())
-
+    u,s,vh = np.linalg.svd(C)
     
     solution = u[:,-Nleast:]
 
@@ -137,8 +125,6 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
 
     return rotsols
 
-def check_symmetric(a, tol=1e-8):
-    return np.allclose(a, a.T, atol=tol)
 
 def main():
 

@@ -3,29 +3,34 @@ import numpy as np
 import Rtmat
 import pickler as pickle
 
-d = pickle.Out("pickles/TLS01-04-2019 20-28-02.pickle")
 
-haa  =  np.random.rand(5,5)
+def main():
 
+    d = pickle.Out("pickles/TLS01-04-2019 20-28-02.pickle")
+    haa  =  np.random.rand(12,12)
+    a = np.dot(haa.T,haa)
 
+    b= d['C']
 
-a = np.dot(haa.T,haa)
+    print("a")
+    pprint.pprint(a)    
+    print("b")
+    pprint.pprint(b)    
 
-#a= d['C']
+    DoMatrixStuff(a)
 
-pprint.pprint(a)
-
-
-print(Rtmat.CheckSymmetric(a))
-
-u,s,vh = np.linalg.svd(a)
-
-#print("matu")
-#pprint.pprint(u)
-
-#print("matvh")
-#pprint.pprint(vh)
-
-print("Howequal",abs(u-vh.T).max())
+    DoMatrixStuff(b)
 
 
+def DoMatrixStuff(A):
+
+    print(A.shape)
+    print("How Symmetric 0 is better:",abs(A-A.T).max())
+
+    u,s,vh = np.linalg.svd(A)
+
+    print("Howequal",abs(u-vh.T).max())
+
+
+if __name__ == '__main__':
+    main()
