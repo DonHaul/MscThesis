@@ -8,6 +8,9 @@ import Rtmat
 import phase2_sparkle as phase2
 
 
+def FetchKeyArray(key,dictlist):
+    return [d[key] for d in dictlist]
+
 def main():
 
     refs=[]
@@ -16,18 +19,23 @@ def main():
 
     #ViewRefs(R,t)
 
+    
    
     #obs = SampleGeneratorMin(R)
 
-    obs = SampleGenerator(R,noise=1)
+    obsR,obst = SampleGenerator(R,t,noise=1)
     
-    B = phase2.problemDef(obs,len(R))
+
+    B = phase2.problemDef(obsR,len(R))
 
     ola = np.dot(B.T,B)
 
     #checked seen here
 
     rotSols = phase2.TotalLeastSquares(ola,3,len(R))
+    
+
+
 
     
     ViewRefs(rotSols)
@@ -38,8 +46,40 @@ def main():
 
     print("lol",rotSoles[0])
 
+        # TRANSLATION STUFF
+    B = problemDef2(obst,rotSoles,len(t))
+
+    ola = np.dot(B.T,B)
+
+
+    TotalLeastSquaresT(ola,1,len(R))
+    #################
+
+
     #ViewRefs(rotSoles[0])
 
+def problemDef2(observations,rotRel,N):
+
+    #creates the left matrix in the problem formulation
+    Ident = np.zeros((len(observations)*4,N*4))
+
+
+    #creates the right matrix in the problem formulatin
+    A = np.zeros((len(observations)*4,N*4))
+            
+    cnt = 0
+    for obs in observations:
+        #fills the matrices according to the observed pairs
+        Ident[cnt*4:cnt*4+4,obs['to']*4:obs['to']*4+4]= np.eye(4)
+        A[cnt*4:cnt*4+3,obs['from']*4:obs['from']*4+3]=  rotRel[obs['from']][obs['to']]
+
+        A[cnt*4+3,obs['from']*4+3]=1
+
+        A[cnt*4+3,obs['from']*4:obs['from']*4+3]= obs['trans']
+
+        cnt=cnt+1
+    
+    return Ident - A
 
 def SampleGeneratorMin(rot,noise = 1e-10):
 
@@ -54,14 +94,15 @@ def SampleGeneratorMin(rot,noise = 1e-10):
     return obs
 
 
-def SampleGenerator(R,samples=1000,noise = 0.00001):
+def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
     
     r = np.zeros([len(R),1])
 
     while True:
 
-        obs = []
+        obsR = []
+        obst = []
 
         for i in range(0,samples):
 
@@ -74,8 +115,9 @@ def SampleGenerator(R,samples=1000,noise = 0.00001):
                 r2 = random.randint(0, len(R)-1)
 
             
-            obs.append({"from":r2,"to":r1,"rot":np.dot(np.dot(R[r1],R[r2].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})            
-            
+            obsR.append({"from":r2,"to":r1,"rot":np.dot(np.dot(R[r1],R[r2].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})
+            obst.append({"from":r2,"to":r1,"trans":np.squeeze(t[0]-t[1] + np.random.rand(1,3)*noiset)})
+
             r[r1]=1
             r[r2]=1
 
@@ -84,7 +126,7 @@ def SampleGenerator(R,samples=1000,noise = 0.00001):
         if sum(r)==len(R):
             break
 
-    return obs
+    return obsR,obst
     
 
 
@@ -129,8 +171,22 @@ def GenReferential(angle,t):
 
     return refe
 
-    
 
+def TotalLeastSquaresT(C,Nleast,split):
+    '''
+    ola
+    '''
+
+    u,s,vh = np.linalg.svd(C)
+    
+    solution = u[:,-Nleast:]
+
+    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
+    rotsols = []
+    solsplit = np.split(solution,split)
+
+    return solsplit
+    
 def FakeAruco():
 
     R=[]
@@ -152,21 +208,21 @@ def FakeAruco():
     R.append(Rtmat.genRotMat([0,270,0]))
     R.append(Rtmat.genRotMat([0,270,0]))
     
-    t.append([0,10,10])
-    t.append([0,30,10])
-    t.append([0,50,10])
+    t.append(np.array([0,10,10]))
+    t.append(np.array([0,30,10]))
+    t.append(np.array([0,50,10]))
 
-    t.append([10,10,0])
-    t.append([10,30,0])
-    t.append([10,50,0])
+    t.append(np.array([10,10,0]))
+    t.append(np.array([10,30,0]))
+    t.append(np.array([10,50,0]))
 
-    t.append([0,10,-10])
-    t.append([0,30,-10])
-    t.append([0,50,-10])
+    t.append(np.array([0,10,-10]))
+    t.append(np.array([0,30,-10]))
+    t.append(np.array([0,50,-10]))
 
-    t.append([-10,10,0])
-    t.append([-10,30,0])
-    t.append([-10,50,0])
+    t.append(np.array([-10,10,0]))
+    t.append(np.array([-10,30,0]))
+    t.append(np.array([-10,50,0]))
 
     return R,t
 
