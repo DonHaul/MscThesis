@@ -17,6 +17,7 @@ def main():
 
     R,t = FakeAruco()
 
+
     #ViewRefs(R,t)
 
     
@@ -42,8 +43,8 @@ def main():
 
     rotSoles = Rtmat.genRotRel(rotSols)
 
-    for i in range(len(rotSoles)):
-        ViewRefs(rotSoles[i])
+    for i in range(len(rotSoles)/4):
+        ViewRefs(rotSoles[i*4])
 
     print("yo",rotSoles)
 
