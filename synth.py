@@ -42,6 +42,9 @@ def main():
 
     rotSoles = Rtmat.genRotRel(rotSols)
 
+    for i in range(len(rotSoles)):
+        ViewRefs(rotSoles[i])
+
     print("yo",rotSoles)
 
     print("lol",rotSoles[0])

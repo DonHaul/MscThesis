@@ -47,8 +47,9 @@ class InfoGetter(object):
       
         img,corners2, objp = calib.ChessCalib(img,(7,6),0.01225)
 
-        self.objectpoints.append(objp)
-        self.imagepoints.append(corners2)
+        if corners2 is not None:
+            self.objectpoints.append(objp)
+            self.imagepoints.append(corners2)
 
        
 
@@ -76,24 +77,25 @@ def main():
         print("shut")
 
 
-    print(ig)
-
-
-
     cv2.destroyAllWindows()
-    print(ig.imagePoints)
+    #print(ig.imagepoints)
 
     h = 480
     w = 640
 
-    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(ig.objectPoints,ig.imagePoints, (640,480),None,None)
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(ig.objectpoints,ig.imagepoints, (640,480),None,None)
 
     newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),0,(w,h))
     
-
+    print(roi)
 
     print(mtx)
-
+    print(newcameramtx)
+    print(dist)
+    print(rvecs)
+    print(tvecs)
+    pickle.In("CameraInfoCalibrated","K",mtx)
+    pickle.In("CameraInfoCalibrated","dist",dist) 
 
 
 if __name__ == '__main__':

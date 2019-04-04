@@ -17,8 +17,6 @@ objp = objp*chessSquareDim
 #objpoints = [] # 3d point in real world space
 #imgpoints = [] # 2d points in image plane.
 
-print("camCalib loaded")
-
 #images = glob.glob('./Samples/*.jpg')
 
 #print(cv2.CALIB_CB_ADAPTIVE_THRESH)

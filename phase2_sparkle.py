@@ -139,9 +139,11 @@ def main():
     camInfo = rospy.wait_for_message("/"+cameraName + "/rgb/camera_info", CameraInfo)        
 
     rgb,depth = roscv.GetRGBD(cameraName)    
-
+    #print(camInfo)
     K = np.asarray(camInfo.K).reshape((3,3))
-
+    #print(K)
+    #pickle.In("CameraInfo","K",K)
+    #pickle.In("CameraInfo","dist",camInfo.D) 
     #subscribe
     rospy.Subscriber(cameraName+"/rgb/image_color", Image, ig.callback,(K,camInfo.D))
 
