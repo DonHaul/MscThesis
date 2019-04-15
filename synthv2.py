@@ -24,7 +24,7 @@ def main():
 
 
     #correct
-    obsR,obst = SampleGenerator(R,t,noise=1)
+    obsR,obst = SampleGenerator(R,t,noise=0.1)
 
     '''
     for i in obsR:
