@@ -129,7 +129,7 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
     
     #split in 3x3 matrices, dat are close to the rotation matrices but not quite
     rotsols = []
-    solsplit = np.split(solution,Nmarkers)
+    solsplit = np.split(solution,Nmarkers)  
 
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
