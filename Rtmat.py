@@ -32,7 +32,7 @@ def genRotRel(rotsols):
     #generate R between each things
     for i in range(0,len(rotsols)):
         for j in range(0,len(rotsols)):
-            Rrelations[i].append(np.dot(rotsols[j].T,rotsols[i])) ## ASSIM DA BEM MAS DEVIA SER -  Rrelations[i].append(np.dot(rotsols[j].T,rotsols[i]))
+            Rrelations[i].append(np.dot(rotsols[j],rotsols[i].T)) ## ASSIM DA BEM MAS DEVIA SER -  Rrelations[i].append(np.dot(rotsols[j].T,rotsols[i]))
 
     return Rrelations
 
