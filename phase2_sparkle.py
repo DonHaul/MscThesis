@@ -98,10 +98,17 @@ def problemDef(observations,N):
     for obs in observations:
         #fills the matrices according to the observed pairs
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
-        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot']
+        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot'].T # <- ESTE  .T NAO DEVIA AQUI ESTAR DE TODO MAS FAZ COM QUE FUNCIONE WRONG
 
+        
+        #print(obs)
+        #print("Ident")
+        #print(Ident[cnt*3:cnt*3+3,:])
+        #print("A")
+        #print(A[cnt*3:cnt*3+3,:])
+        #raw_input("Press Enter to continue...")
+        
         cnt=cnt+1
-    
     return Ident - A
 
 def TotalLeastSquares(C,Nleast,Nmarkers):
@@ -112,14 +119,14 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
 
     u,s,vh = np.linalg.svd(C)
     
-    #print(s)
-    #print(u)
-    
-    solution = u[:,-Nleast:]
-    #print("sol")
-    #print(solution)
-    
 
+    print("u")
+    print(u)
+    solution =np.concatenate((np.expand_dims(u[:,11],1),np.expand_dims(u[:,10],1), np.expand_dims(u[:,9],1)),1)
+    #solution = u[:,-Nleast:]
+    print("sol")
+    print(solution)
+    
     #split in 3x3 matrices, dat are close to the rotation matrices but not quite
     rotsols = []
     solsplit = np.split(solution,Nmarkers)

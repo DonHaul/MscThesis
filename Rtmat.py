@@ -24,7 +24,7 @@ def genRotMat(angle):
     return np.dot(aux,Rz)
 
     
-
+'''
 def genRotRel(rotsols):
     #print(ig.Nmarkers + ig.markerIDoffset)
     Rrelations = [[] for i in range(len(rotsols))] #correct way to make 2d list
@@ -34,6 +34,16 @@ def genRotRel(rotsols):
         for j in range(0,len(rotsols)):
             Rrelations[i].append(np.dot(rotsols[j],rotsols[i].T)) ## ASSIM DA BEM MAS DEVIA SER -  Rrelations[i].append(np.dot(rotsols[j].T,rotsols[i]))
 
+    return Rrelations
+'''
+
+def genRotRel(rotsols,ref=0):
+    #print(ig.Nmarkers + ig.markerIDoffset)
+    Rrelations = [] #correct way to make 2d list
+
+    #generate R between each things
+    for j in range(0,len(rotsols)):
+        Rrelations.append(np.dot(rotsols[j],rotsols[ref].T)) #Rw2*R1w' = R12
     return Rrelations
 
 

@@ -13,6 +13,7 @@ def FetchKeyArray(key,dictlist):
 
 def main():
 
+    
     refs=[]
 
     R,t = FakeAruco()
@@ -21,7 +22,7 @@ def main():
 
     groundTruths = Rtmat.genRotRel(R)
     
-    ViewRefs(groundTruths[0])
+    #ViewRefs(groundTruths[0])
 
     
 
@@ -41,13 +42,14 @@ def main():
 
     rotSols = phase2.TotalLeastSquares(ola,3,len(R))
     
+    print("global")
 
     ViewRefs(rotSols)
 
     #very janky
     rotSoles = Rtmat.genRotRel(rotSols)
-
-    ViewRefs(rotSoles[0]+groundTruths[0])
+    print("local")
+    ViewRefs(rotSoles[0])
     
  
     quit()
@@ -155,7 +157,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
                 r2 = random.randint(0, len(R)-1)
 
             
-            obsR.append({"from":r2,"to":r1,"rot":np.dot(np.dot(R[r1],R[r2].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})
+            obsR.append({"from":r2,"to":r1,"rot":np.dot(Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
             obst.append({"from":r2,"to":r1,"trans":np.squeeze(t[0]-t[1] + np.random.rand(1,3)*noiset)})
 
             r[r1]=1
@@ -254,36 +256,36 @@ def FakeAruco():
     t=[]
 
     R.append(Rtmat.genRotMat([0,0,0]))
-    R.append(Rtmat.genRotMat([0,0,0]))
-    R.append(Rtmat.genRotMat([0,0,0]))
+    #R.append(Rtmat.genRotMat([0,0,0]))
+    #R.append(Rtmat.genRotMat([0,0,0]))
 
     R.append(Rtmat.genRotMat([0,90,0]))
-    R.append(Rtmat.genRotMat([0,90,0]))
-    R.append(Rtmat.genRotMat([0,90,0]))
+    #R.append(Rtmat.genRotMat([0,90,0]))
+    #R.append(Rtmat.genRotMat([0,90,0]))
     
     R.append(Rtmat.genRotMat([0,180,0]))
-    R.append(Rtmat.genRotMat([0,180,0]))
-    R.append(Rtmat.genRotMat([0,180,0]))
+    #R.append(Rtmat.genRotMat([0,180,0]))
+    #R.append(Rtmat.genRotMat([0,180,0]))
 
     R.append(Rtmat.genRotMat([0,270,0]))
-    R.append(Rtmat.genRotMat([0,270,0]))
-    R.append(Rtmat.genRotMat([0,270,0]))
+    #R.append(Rtmat.genRotMat([0,270,0]))
+    #R.append(Rtmat.genRotMat([0,270,0]))
     
     t.append(np.array([0,10,10]))
-    t.append(np.array([0,30,10]))
-    t.append(np.array([0,50,10]))
+    #t.append(np.array([0,30,10]))
+    #t.append(np.array([0,50,10]))
 
     t.append(np.array([10,10,0]))
-    t.append(np.array([10,30,0]))
-    t.append(np.array([10,50,0]))
+    #t.append(np.array([10,30,0]))
+    #t.append(np.array([10,50,0]))
 
     t.append(np.array([0,10,-10]))
-    t.append(np.array([0,30,-10]))
-    t.append(np.array([0,50,-10]))
+    #t.append(np.array([0,30,-10]))
+    #t.append(np.array([0,50,-10]))
 
     t.append(np.array([-10,10,0]))
-    t.append(np.array([-10,30,0]))
-    t.append(np.array([-10,50,0]))
+    #t.append(np.array([-10,30,0]))
+    #t.append(np.array([-10,50,0]))
 
     return R,t
 
