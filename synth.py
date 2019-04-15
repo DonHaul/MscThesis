@@ -117,7 +117,7 @@ def problemDef2(observations,rotRel,N):
 
         #print(b[cnt*3:cnt*3+3,0])
         #print(obs['trans'])
-        b[cnt*3:cnt*3+3,0]=obs['t']
+        b[cnt*3:cnt*3+3,0]=-np.dot( np.dot(rotRel[obs['to']],rotRel[obs['from']]).T,obs['t'])
 
         cnt=cnt+1
     
@@ -193,6 +193,8 @@ def draw_geometry(pcd):
 
 
 def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
+
+    
 
     #in case one of them is none, get the one that is not zero
     N = len(R) if R is not None else len(t)
@@ -279,21 +281,21 @@ def FakeAruco():
     R.append(Rtmat.genRotMat([0,270,0]))
     R.append(Rtmat.genRotMat([0,270,0]))
     
-    t.append(np.array([0,0,10]))
-    t.append(np.array([0,-20,10]))
-    t.append(np.array([0,20,10]))
+    t.append(np.array([0,10,10]))
+    t.append(np.array([0,30,10]))
+    t.append(np.array([0,50,10]))
 
-    t.append(np.array([10,0,0]))
-    t.append(np.array([10,-20,0]))
-    t.append(np.array([10,20,0]))
+    t.append(np.array([10,10,0]))
+    t.append(np.array([10,30,0]))
+    t.append(np.array([10,50,0]))
 
-    t.append(np.array([0,0,-10]))
-    t.append(np.array([0,-20,-10]))
-    t.append(np.array([0,20,-10]))
+    t.append(np.array([0,10,-10]))
+    t.append(np.array([0,30,-10]))
+    t.append(np.array([0,50,-10]))
 
-    t.append(np.array([-10,0,0]))
-    t.append(np.array([-10,-20,0]))
-    t.append(np.array([-10,20,0]))
+    t.append(np.array([-10,10,0]))
+    t.append(np.array([-10,30,0]))
+    t.append(np.array([-10,50,0]))
 
     return R,t
 

@@ -12,6 +12,8 @@ from synth import *
 
 def main():
 
+    np.set_printoptions(threshold=np.inf)
+    np.set_printoptions(precision=1)
 
     R=[]
     t=[]
@@ -19,10 +21,11 @@ def main():
 
     R,t = FakeAruco()
 
+    pprint.pprint(t)
 
     ViewRefs(R,t)
     
-    obsR,obst = SampleGenerator(R,t,noise=0.1)
+    obsR,obst = SampleGenerator(R,t,noise=0.1,noiset=0,samples=10000)
 
     '''
     for i in obst:
@@ -36,7 +39,7 @@ def main():
     A,b = problemDef2(obst,R,len(t))
 
     x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
-    print(x,res,rank,s) 
+    #print(x,res,rank,s) 
     
 
     print("asahpe",np.dot(A.T,A).shape)
@@ -48,19 +51,19 @@ def main():
 
     
     print("x")
-
+    #print(x2)
     #JANKY
-    solsplit2 = np.split(x,len(t))
-    print("len",len(solsplit2))
+    solsplit2 = np.split(x2,len(t))
+    
     solt =[]
 
     for i in range(len(solsplit2)):
         solt.append(np.dot(-R[i].T,solsplit2[i]))
  
+    pprint.pprint(solt)
 
 
-
-    ViewRefs(R,solt,refSize=1)
+    ViewRefs(R,solt)
 
 
 if __name__ == '__main__':
