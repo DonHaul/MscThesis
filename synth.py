@@ -17,8 +17,13 @@ def main():
 
     R,t = FakeAruco()
 
-
     ViewRefs(R,t)
+
+    groundTruths = Rtmat.genRotRel(R)
+    
+    ViewRefs(groundTruths[0])
+
+    
 
     
    
@@ -26,6 +31,7 @@ def main():
 
     obsR,obst = SampleGenerator(R,t,noise=1)
     
+    #print(obst)
 
     B = phase2.problemDef(obsR,len(R))
 
@@ -36,60 +42,84 @@ def main():
     rotSols = phase2.TotalLeastSquares(ola,3,len(R))
     
 
+    ViewRefs(rotSols)
 
-
-    
-    #ViewRefs(rotSols)
-
+    #very janky
     rotSoles = Rtmat.genRotRel(rotSols)
 
-    print(len(rotSoles))
+    ViewRefs(rotSoles[0]+groundTruths[0])
+    
+ 
+    quit()
+    
+    print("YAOZA")
 
-    ViewRefs(rotSoles[0])
+    
 
-    rr = []
 
+
+    rotS2 = []
     for r in rotSoles[0]:
-        rr.append(np.dot(Rtmat.genRotMat([90,0,0]),r))
+        rotS2.append(np.dot(r,Rtmat.genRotMat([90,0,0])))
+    ViewRefs(rotS2)
+
+    rotS3 = []
+    for r in rotS2:
+        rotS3.append(np.dot(Rtmat.genRotMat([-90,0,0]),r))
+    ViewRefs(rotS3)
+
+
+        
+
+    # TRANSLATION STUFF
+    A,b = problemDef2(obst,rotS3,len(t))
+
+    x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
+
+
+    #print(x,res,rank,s)    
+
+    x2= np.dot( np.linalg.inv(np.dot(A.T,A)),np.dot(A.T,b)) #(A'A)^(-1) * A'b
+
+    pprint.pprint(sum(np.square(np.dot(A,x)-b)) )
+    pprint.pprint(sum(np.square(np.dot(A,x2)-b)))
+
+    #JANKY
+    solsplit2 = np.split(x,len(t))
+
+    print(solsplit2[0].shape)
+
+
+    ViewRefs(rotS3,solsplit2,refSize=1)
+
+    #ViewRefs(None,[np.array([3,1,2]),np.array([3,1,1]),np.array([3,1,0])])
+
     
-    ViewRefs(rr)
-    
-    print("lol",rotSoles[0])
-
-        # TRANSLATION STUFF
-    B = problemDef2(obst,rotSoles,len(t))
-
-    ola = np.dot(B.T,B)
-
-
-    TotalLeastSquaresT(ola,1,len(R))
-    #################
-
-
-    #ViewRefs(rotSoles[0])
 
 def problemDef2(observations,rotRel,N):
 
     #creates the left matrix in the problem formulation
-    Ident = np.zeros((len(observations)*4,N*4))
+    Ident = np.zeros((len(observations)*3,N*3))
 
 
     #creates the right matrix in the problem formulatin
-    A = np.zeros((len(observations)*4,N*4))
+    A = np.zeros((len(observations)*3,N*3))
+
+    b = np.zeros((len(observations)*3,1))
             
     cnt = 0
     for obs in observations:
         #fills the matrices according to the observed pairs
-        Ident[cnt*4:cnt*4+4,obs['to']*4:obs['to']*4+4]= np.eye(4)
-        A[cnt*4:cnt*4+3,obs['from']*4:obs['from']*4+3]=  rotRel[obs['from']][obs['to']]
+        Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
+        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]=  np.dot(rotRel[obs['to']],rotRel[obs['from']].T) #rotRel[obs['from']][obs['to']]
 
-        A[cnt*4+3,obs['from']*4+3]=1
-
-        A[cnt*4+3,obs['from']*4:obs['from']*4+3]= obs['trans']
+        #print(b[cnt*3:cnt*3+3,0])
+        #print(obs['trans'])
+        b[cnt*3:cnt*3+3,0]=obs['trans']
 
         cnt=cnt+1
     
-    return Ident - A
+    return Ident - A ,b
 
 def SampleGeneratorMin(rot,noise = 1e-10):
 
@@ -138,36 +168,57 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
     return obsR,obst
     
+def draw_geometry(pcd):
+    # The following code achieves the same effect as:
+    # draw_geometries([pcd])
+    vis = open3d.Visualizer()
+
+    vis.create_window(width=800 ,height=600)
+    opt = vis.get_render_option()
+    opt.background_color = np.asarray([0, 0, 0])
+    for geo in pcd:
+        vis.add_geometry(geo)
+    vis.run()
+    vis.destroy_window()
 
 
-def ViewRefs(R,t=None):
+def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
 
-
+    #in case one of them is none, get the one that is not zero
+    N = len(R) if R is not None else len(t)
 
     refs = []
 
     if t is None:
         t = []
-        for i in range(0,len(R)):
+        for i in range(0,N):
             t.append([i*20,0,0]) 
 
 
-    
 
-    for i in range(len(R)):
+    if R is None:
+        R = []
+        for i in range(0,N):
+            print(R)
+            R.append(Rtmat.genRotMat([0,0,0])) 
+
+
+   
+
+    for i in range(N):
 
         P=np.eye(4)
 
         
         P[0:3,0:3]= R[i]
-        P[0:3,3]=t[i]
+        P[0:3,3]=np.squeeze(t[i])
 
-        refe = open3d.create_mesh_coordinate_frame(size = 10, origin = [0, 0, 0])
+        refe = open3d.create_mesh_coordinate_frame(refSize, origin = [0, 0, 0])
         refe.transform(P)
 
         refs.append(refe)
 
-    open3d.draw_geometries(refs)
+    draw_geometry(refs)
 
     return refs
 

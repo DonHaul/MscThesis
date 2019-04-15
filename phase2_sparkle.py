@@ -112,7 +112,13 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
 
     u,s,vh = np.linalg.svd(C)
     
+    #print(s)
+    #print(u)
+    
     solution = u[:,-Nleast:]
+    #print("sol")
+    #print(solution)
+    
 
     #split in 3x3 matrices, dat are close to the rotation matrices but not quite
     rotsols = []
