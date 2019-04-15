@@ -122,8 +122,8 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
 
     print("u")
     print(u)
-    solution =np.concatenate((np.expand_dims(u[:,11],1),np.expand_dims(u[:,10],1), np.expand_dims(u[:,9],1)),1)
-    #solution = u[:,-Nleast:]
+    #solution =np.concatenate((np.expand_dims(u[:,11],1),np.expand_dims(u[:,10],1), np.expand_dims(u[:,9],1)),1)
+    solution = u[:,-Nleast:]
     print("sol")
     print(solution)
     
