@@ -154,19 +154,19 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #tw1 = np.dot(-R[r1],t1w) # ref do mundo no referencial do 1
 
             #t12=tw1 - np.dot(np.dot(R[r1],R[r2].T),tw2)
-            print("#### # #### from "+ str(r2) + " to "+ str(r1))
-            print(t[r1])
-            print(t[r2])
-            print("R, and ts")
-            print(np.dot(R[r1],R[r2].T))
-            print(t[r1]-t[r2])
-            print("Result")
-            t12 = np.dot(R[r2],t[r1]-t[r2])
-            print(t12)
+            print("#### # #### from "+ str(r1) + " to "+ str(r2))
+          
+            tw1 = np.dot(-R[r1].T,t[r1]) # <-- NAO ERA SUPOSTO TER O TRANSPOSTO WRONG / understand WHY
+            #print(tw1)
 
+            tw2 = np.dot(-R[r2].T,t[r2]) # <-- NAO ERA SUPOSTO TER O TRANSPOSTO WRONG / understand WHY
+            #print(tw2)
+
+            t21=tw1-np.dot(np.dot(R[r1],R[r2].T),tw2)
+            print(t21)
 
             obsR.append({"from":r2,"to":r1,"rot":np.dot(Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
-            obst.append({"from":r2,"to":r1,"trans":t12}) #Aqui as translacoes geradas a bit WRONG sao desacopladas, no entanto na realidade estao sempre dependentes das rotacoes
+            obst.append({"from":r2,"to":r1,"trans":t21}) #Aqui as translacoes geradas a bit WRONG sao desacopladas, no entanto na realidade estao sempre dependentes das rotacoes
 
             raw_input("press key...")
             r[r1]=1

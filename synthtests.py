@@ -12,11 +12,15 @@ from synth import *
 
 def main():
 
+
+    R=[]
+    t=[]
+
+
     R,t = FakeAruco()
 
-    ViewRefs(R,t)
 
-    print(R)
+    ViewRefs(R,t)
     
     obsR,obst = SampleGenerator(R,t,noise=0.1)
 
