@@ -117,7 +117,7 @@ def problemDef2(observations,rotRel,N):
 
         #print(b[cnt*3:cnt*3+3,0])
         #print(obs['trans'])
-        b[cnt*3:cnt*3+3,0:1]=obs['trans']
+        b[cnt*3:cnt*3+3,0]=obs['t']
 
         cnt=cnt+1
     
@@ -154,7 +154,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #tw1 = np.dot(-R[r1],t1w) # ref do mundo no referencial do 1
 
             #t12=tw1 - np.dot(np.dot(R[r1],R[r2].T),tw2)
-            print("#### # #### from "+ str(r1) + " to "+ str(r2))
+            #print("#### # #### from "+ str(r1) + " to "+ str(r2))
           
             tw1 = np.dot(-R[r1].T,t[r1]) # <-- NAO ERA SUPOSTO TER O TRANSPOSTO WRONG / understand WHY
             #print(tw1)
@@ -163,12 +163,11 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #print(tw2)
 
             t21=tw1-np.dot(np.dot(R[r1],R[r2].T),tw2)
-            print(t21)
+            #print(t21)
 
             obsR.append({"from":r2,"to":r1,"rot":np.dot(Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
-            obst.append({"from":r2,"to":r1,"trans":t21}) #Aqui as translacoes geradas a bit WRONG sao desacopladas, no entanto na realidade estao sempre dependentes das rotacoes
-
-            raw_input("press key...")
+            obst.append({"from":r1,"to":r2,"t":t21+np.random.rand(3)*noiset}) 
+            #print(obst)
             r[r1]=1
             r[r2]=1
 
@@ -265,36 +264,36 @@ def FakeAruco():
     t=[]
 
     R.append(Rtmat.genRotMat([0,0,0]))
-    #R.append(Rtmat.genRotMat([0,0,0]))
-    #R.append(Rtmat.genRotMat([0,0,0]))
+    R.append(Rtmat.genRotMat([0,0,0]))
+    R.append(Rtmat.genRotMat([0,0,0]))
 
     R.append(Rtmat.genRotMat([0,90,0]))
-    #R.append(Rtmat.genRotMat([0,90,0]))
-    #R.append(Rtmat.genRotMat([0,90,0]))
+    R.append(Rtmat.genRotMat([0,90,0]))
+    R.append(Rtmat.genRotMat([0,90,0]))
     
     R.append(Rtmat.genRotMat([0,180,0]))
-    #R.append(Rtmat.genRotMat([0,180,0]))
-    #R.append(Rtmat.genRotMat([0,180,0]))
+    R.append(Rtmat.genRotMat([0,180,0]))
+    R.append(Rtmat.genRotMat([0,180,0]))
 
     R.append(Rtmat.genRotMat([0,270,0]))
-    #R.append(Rtmat.genRotMat([0,270,0]))
-    #R.append(Rtmat.genRotMat([0,270,0]))
+    R.append(Rtmat.genRotMat([0,270,0]))
+    R.append(Rtmat.genRotMat([0,270,0]))
     
     t.append(np.array([0,0,10]))
-    #t.append(np.array([0,-20,10]))
-    #t.append(np.array([0,20,10]))
+    t.append(np.array([0,-20,10]))
+    t.append(np.array([0,20,10]))
 
     t.append(np.array([10,0,0]))
-    #t.append(np.array([10,-20,0]))
-    #t.append(np.array([10,20,0]))
+    t.append(np.array([10,-20,0]))
+    t.append(np.array([10,20,0]))
 
     t.append(np.array([0,0,-10]))
-    #t.append(np.array([0,-20,-10]))
-    #t.append(np.array([0,20,-10]))
+    t.append(np.array([0,-20,-10]))
+    t.append(np.array([0,20,-10]))
 
     t.append(np.array([-10,0,0]))
-    #t.append(np.array([-10,-20,0]))
-    #t.append(np.array([-10,20,0]))
+    t.append(np.array([-10,-20,0]))
+    t.append(np.array([-10,20,0]))
 
     return R,t
 
