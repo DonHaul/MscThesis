@@ -28,7 +28,7 @@ def main():
 
     
    
-    #obs = SampleGeneratorMin(R)
+   
 
     obsR,obst = SampleGenerator(R,t,noise=1)
     
@@ -117,23 +117,13 @@ def problemDef2(observations,rotRel,N):
 
         #print(b[cnt*3:cnt*3+3,0])
         #print(obs['trans'])
-        b[cnt*3:cnt*3+3,0]=obs['trans']
+        b[cnt*3:cnt*3+3,0:1]=obs['trans']
 
         cnt=cnt+1
     
     return Ident - A ,b
 
-def SampleGeneratorMin(rot,noise = 1e-10):
 
-    obs=[]
-
-    for i in range(0,len(rot)-1):
-        #SHOULDNT IT BE rot[i+1],rot[i+1].T)
-        obs.append({"from":i,"to":i+1,"rot":np.dot(np.dot(rot[i+1],rot[i].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})   
-        #print(i,i+1)
-
-    obs.append({"from":len(rot)-1,"to":0,"rot":np.dot(rot[0],rot[len(rot)-1].T)})  #delete this line after
-    return obs
 
 
 def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
@@ -155,11 +145,30 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             r2 = r1
             while r2==r1:
                 r2 = random.randint(0, len(R)-1)
-
             
-            obsR.append({"from":r2,"to":r1,"rot":np.dot(Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
-            obst.append({"from":r2,"to":r1,"trans":np.squeeze(t[0]-t[1] + np.random.rand(1,3)*noiset)})
 
+            #t1w = (np.expand_dims(t[r1],0).T) # ref 1 no referencial do mundo
+            #t2w = (np.expand_dims(t[r2],0).T) # ref 2 no referencial do mundo
+            
+            #tw2 = np.dot(-R[r2],t2w) # ref do mundo no referencial do 2
+            #tw1 = np.dot(-R[r1],t1w) # ref do mundo no referencial do 1
+
+            #t12=tw1 - np.dot(np.dot(R[r1],R[r2].T),tw2)
+            print("#### # #### from "+ str(r2) + " to "+ str(r1))
+            print(t[r1])
+            print(t[r2])
+            print("R, and ts")
+            print(np.dot(R[r1],R[r2].T))
+            print(t[r1]-t[r2])
+            print("Result")
+            t12 = np.dot(R[r2],t[r1]-t[r2])
+            print(t12)
+
+
+            obsR.append({"from":r2,"to":r1,"rot":np.dot(Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
+            obst.append({"from":r2,"to":r1,"trans":t12}) #Aqui as translacoes geradas a bit WRONG sao desacopladas, no entanto na realidade estao sempre dependentes das rotacoes
+
+            raw_input("press key...")
             r[r1]=1
             r[r2]=1
 
@@ -271,21 +280,21 @@ def FakeAruco():
     #R.append(Rtmat.genRotMat([0,270,0]))
     #R.append(Rtmat.genRotMat([0,270,0]))
     
-    t.append(np.array([0,10,10]))
-    #t.append(np.array([0,30,10]))
-    #t.append(np.array([0,50,10]))
+    t.append(np.array([0,0,10]))
+    #t.append(np.array([0,-20,10]))
+    #t.append(np.array([0,20,10]))
 
-    t.append(np.array([10,10,0]))
-    #t.append(np.array([10,30,0]))
-    #t.append(np.array([10,50,0]))
+    t.append(np.array([10,0,0]))
+    #t.append(np.array([10,-20,0]))
+    #t.append(np.array([10,20,0]))
 
-    t.append(np.array([0,10,-10]))
-    #t.append(np.array([0,30,-10]))
-    #t.append(np.array([0,50,-10]))
+    t.append(np.array([0,0,-10]))
+    #t.append(np.array([0,-20,-10]))
+    #t.append(np.array([0,20,-10]))
 
-    t.append(np.array([-10,10,0]))
-    #t.append(np.array([-10,30,0]))
-    #t.append(np.array([-10,50,0]))
+    t.append(np.array([-10,0,0]))
+    #t.append(np.array([-10,-20,0]))
+    #t.append(np.array([-10,20,0]))
 
     return R,t
 

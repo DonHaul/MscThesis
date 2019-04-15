@@ -7,7 +7,7 @@ import random
 import Rtmat
 import phase2_sparkle as phase2
 from synth import *
-from decimal import Decimal
+
 
 def main():
 
@@ -52,7 +52,7 @@ def main():
 
     #generate R between each things
     for j in range(0,len(rotSols)):
-        rotSoles.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12  #ASSIM FUNCIONA MAS NAO WRONG SER ASSIm isto supostamente e de todos para 1 e nao de 1 para todos
+        rotSoles.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12  
 
 
     #print("local")

@@ -134,3 +134,42 @@ for i in range(0,len(w)):
 
 
 print(v.shape)
+
+
+#Translation tests
+
+
+    R=[]
+    t=[]
+
+    R.append(Rtmat.genRotMat([0,0,0]))
+    t.append(np.array([0,0,0]))
+
+    R.append(Rtmat.genRotMat([0,0,0]))
+    R.append(Rtmat.genRotMat([0,0,-90]))
+
+    t.append(np.array([0,-20,0]))
+    t.append(np.array([0,20,0]))
+
+    rr = (np.dot(R[1],R[2].T))
+
+    ola = np.dot(rr,np.array([-20,0,0]))
+    print(ola + np.array([0,40,0]))
+
+    ViewRefs(R,t)
+
+    print("2tw",np.dot(-R[2],t[2]))
+
+
+
+    def SampleGeneratorMin(rot,noise = 1e-10):
+
+    obs=[]
+
+    for i in range(0,len(rot)-1):
+        #SHOULDNT IT BE rot[i+1],rot[i+1].T)
+        obs.append({"from":i,"to":i+1,"rot":np.dot(np.dot(rot[i+1],rot[i].T),Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])))})   
+        #print(i,i+1)
+
+    obs.append({"from":len(rot)-1,"to":0,"rot":np.dot(rot[0],rot[len(rot)-1].T)})  #delete this line after
+    return obs

@@ -6,51 +6,45 @@ import pprint
 import random
 import Rtmat
 import phase2_sparkle as phase2
-import synth
+from synth import *
 
 
 
 def main():
-    print("helloworld")
 
-    R=[]
-    t=[]
+    R,t = FakeAruco()
 
-    R.append(Rtmat.genRotMat([213,126,32915]))
-    R.append(Rtmat.genRotMat([-6,-93,7654]))
+    ViewRefs(R,t)
 
-    rotRel1 =  (np.dot(R[1],R[0].T)) 
-
-    print("original")
-    print(rotRel1)
-
-    t.append(np.array([0,0,0]))
-    t.append(np.array([20,0,0]))
-
-    t.append(np.array([0,-10,0]))
-    t.append(np.array([20,-10,0]))
-
-    #local transformation
-    R.append(np.dot(R[0],Rtmat.genRotMat([0,0,-90])))
-    R.append(np.dot(R[1],Rtmat.genRotMat([0,0,-90])))
-
-    synth.ViewRefs(R,t)
-
-    rotRel2 =  (np.dot(R[3],R[2].T)) 
-    print("after local")
-    print(rotRel2)
-
-
-    #global transformation
-    R.append(np.dot(Rtmat.genRotMat([0,0,-90]),R[0]))
-    R.append(np.dot(Rtmat.genRotMat([0,0,-90]),R[1]))
-
-    rotRel3 =  (np.dot(R[5],R[4].T)) 
-
-    print("after global")
-    print(rotRel3)
+    print(R)
     
+    obsR,obst = SampleGenerator(R,t,noise=0.1)
 
+    '''
+    for i in obst:
+        print("From: " +str(i['from']//3+1)+" to:"+str(i['to']//3+1))
+        print(i)
+
+        ViewRefs([Rtmat.genRotMat([0,0,0]),i['trans']])
+    '''
+
+        # TRANSLATION STUFF
+    A,b = problemDef2(obst,R,len(t))
+
+    x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
+
+
+    #print(x,res,rank,s)    
+
+    x2= np.dot( np.linalg.inv(np.dot(A.T,A)),np.dot(A.T,b)) #(A'A)^(-1) * A'b
+
+    #JANKY
+    solsplit2 = np.split(x2,len(t))
+
+    print(solsplit2[0].shape)
+
+
+    ViewRefs(R,solsplit2,refSize=1)
 
 
 if __name__ == '__main__':
