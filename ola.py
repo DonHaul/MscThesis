@@ -2,14 +2,40 @@ import pprint
 import numpy as np
 import Rtmat
 import pickler as pickle
+from synth import *
+
+R1 = np.eye(3)
+R2 = np.array([[0,1,0],[-1,0,0],[0,0,1]])
 
 
-A = np.array([[1,2],[3,4],[5,6]])
+R=[]
+R.append(R1)
+R.append(R2)
 
-pinv = (np.linalg.pinv(A))
 
-print(pinv)
 
-mypinv = np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)
+ola0 = np.dot(R[0].T,np.array([10,10,0]))
 
-print(mypinv)
+ola = ola0 + [0,-20,0]
+
+print(ola)
+
+
+quit()
+
+
+t=[]
+t.append([0,0,0])
+t.append([10,10,0])
+
+ViewRefs(R,t)
+
+r  = np.dot(R[0],R[1].T)
+t0w=np.array([0,20,0])
+
+ola = np.dot(r,t0w)
+
+tw1 = ola + np.array([10,-10,0])
+
+print(tw1)
+

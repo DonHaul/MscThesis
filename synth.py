@@ -16,8 +16,10 @@ def main():
     
     refs=[]
 
+    #Verified
     R,t = FakeAruco()
 
+    #Verified
     ViewRefs(R,t)
 
     groundTruths = Rtmat.genRotRel(R)
@@ -113,11 +115,11 @@ def problemDef2(observations,rotRel,N):
     for obs in observations:
         #fills the matrices according to the observed pairs
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
-        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]=  np.dot(rotRel[obs['to']],rotRel[obs['from']].T) #rotRel[obs['from']][obs['to']]
+        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]=  np.eye(3) #rotRel[obs['from']][obs['to']]
 
         #print(b[cnt*3:cnt*3+3,0])
         #print(obs['trans'])
-        b[cnt*3:cnt*3+3,0]=-np.dot( np.dot(rotRel[obs['to']],rotRel[obs['from']]).T,obs['t'])
+        b[cnt*3:cnt*3+3,0]=-np.dot( rotRel[obs['to']],obs['t'])
 
         cnt=cnt+1
     
@@ -163,14 +165,16 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
             t1w = t[r1]
             t2w = t[r2]
-            #print(str(r1)+" in w coords",t[r1])
-            #print(str(r2)+" in w coords",t[r2])
+
             
+
             t12 =np.dot(R[r2].T, t1w - t2w)
 
             
-
+            #print(str(r1)+" in w coords",t[r1])
+            #print(str(r2)+" in w coords",t[r2])
             #print(str(r1)+ "  in " + str(r2) + " coordinates: "+ str(t12))
+            #raw_input()
 
             #t21=tw1-np.dot(np.dot(R[r1],R[r2].T),tw2)
             #print(t21)
@@ -181,7 +185,6 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             r[r1]=1
             r[r2]=1
 
-            
 
         #print(sum(r))
         #there is at least one observation per marker

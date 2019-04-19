@@ -21,11 +21,12 @@ def main():
 
     R,t = FakeAruco()
 
-    pprint.pprint(t)
+    #pprint.pprint(t)
 
     ViewRefs(R,t)
     
     obsR,obst = SampleGenerator(R,t,noise=0.1,noiset=0,samples=10000)
+    #correct
 
     '''
     for i in obst:
@@ -38,32 +39,21 @@ def main():
         # TRANSLATION STUFF
     A,b = problemDef2(obst,R,len(t))
 
-    x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
-    #print(x,res,rank,s) 
-    
-
-    #print("asahpe",np.dot(A.T,A).shape)
-
-    x2= np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b  #<= WHY USE PINV INSTEAD OF INV (WRONG?)
+    #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
+    x= np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b  #<= WHY USE PINV INSTEAD OF INV (WRONG?)
     #print(x2)
 
-    print( "DIFFERENCE", sum(np.sqrt(np.square(x-x2))))
-
-    
-    print("x")
-    #print(x2)
-    #JANKY
     solsplit2 = np.split(x,len(t))
-    
+    ViewRefs(R,solsplit2)
+
+
     solt =[]
-
-    for i in range(len(solsplit2)):
-        solt.append(np.dot(-R[i].T,solsplit2[i]))
- 
-    pprint.pprint(solt)
+    #change t referential
+    #for i in range(len(solsplit2)):
+    #    solt.append(np.dot(-R[i].T,solsplit2[i]))
 
 
-    ViewRefs(R,solt)
+    #ViewRefs(R,solt)
 
 
 if __name__ == '__main__':
