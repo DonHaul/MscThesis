@@ -4,9 +4,12 @@ import Rtmat
 import pickler as pickle
 
 
-A = np.array([[-1,1],[0,1],[1,1],[2,1]])
+A = np.array([[1,2],[3,4],[5,6]])
 
-b=np.array([0,1,2,1])
+pinv = (np.linalg.pinv(A))
 
-print(A,b.T)
+print(pinv)
 
+mypinv = np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)
+
+print(mypinv)

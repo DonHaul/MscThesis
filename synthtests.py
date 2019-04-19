@@ -29,10 +29,10 @@ def main():
 
     '''
     for i in obst:
-        print("From: " +str(i['from']//3+1)+" to:"+str(i['to']//3+1))
+        #print("From: " +str(i['from']//3+1)+" to:"+str(i['to']//3+1))
         print(i)
-
-        ViewRefs([Rtmat.genRotMat([0,0,0]),i['trans']])
+        #raw_input()
+        #ViewRefs([Rtmat.genRotMat([0,0,0]),i['trans']])
     '''
 
         # TRANSLATION STUFF
@@ -42,9 +42,9 @@ def main():
     #print(x,res,rank,s) 
     
 
-    print("asahpe",np.dot(A.T,A).shape)
+    #print("asahpe",np.dot(A.T,A).shape)
 
-    x2= np.dot( np.linalg.pinv(np.dot(A.T,A)),np.dot(A.T,b)) #(A'A)^(-1) * A'b  #<= WHY USE PINV INSTEAD OF INV (WRONG?)
+    x2= np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b  #<= WHY USE PINV INSTEAD OF INV (WRONG?)
     #print(x2)
 
     print( "DIFFERENCE", sum(np.sqrt(np.square(x-x2))))
@@ -53,7 +53,7 @@ def main():
     print("x")
     #print(x2)
     #JANKY
-    solsplit2 = np.split(x2,len(t))
+    solsplit2 = np.split(x,len(t))
     
     solt =[]
 
