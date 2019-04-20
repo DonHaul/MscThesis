@@ -77,7 +77,7 @@ class InfoGetter(object):
 
             
 
-            #calculates transpose
+            #calculates transpose     
             self.C = self.C + np.dot(B.T,B)
 
         #shows video

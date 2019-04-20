@@ -173,3 +173,98 @@ print(v.shape)
 
     obs.append({"from":len(rot)-1,"to":0,"rot":np.dot(rot[0],rot[len(rot)-1].T)})  #delete this line after
     return obs
+
+
+    ### TRANSLATION TESTS
+
+    import pprint
+import numpy as np
+import Rtmat
+import pickler as pickle
+from synth import *
+
+R1 = np.eye(3)
+R2 = np.array([[0,1,0],[-1,0,0],[0,0,1]])
+
+
+R=[]
+R.append(R1)
+R.append(R2)
+
+
+
+ola0 = np.dot(R[0].T,np.array([10,10,0]))
+
+ola = ola0 + [0,-20,0]
+
+print(ola)
+
+
+quit()
+
+
+t=[]
+t.append([0,0,0])
+t.append([10,10,0])
+
+ViewRefs(R,t)
+
+r  = np.dot(R[0],R[1].T)
+t0w=np.array([0,20,0])
+
+ola = np.dot(r,t0w)
+
+tw1 = ola + np.array([10,-10,0])
+
+print(tw1)
+
+### MORE TRANSLATIONS TESTS
+
+import open3d
+import math
+import numpy as np
+import pickler as pickle
+import pprint
+import random
+import Rtmat
+import phase2_sparkle as phase2
+import synth
+
+
+
+def main():
+    print("helloworld")
+
+    R=[]
+    t=[]
+
+    
+    t0=np.array([0,0,0]))
+
+    R01 =Rtmat.genRotMat([0,0,0])
+    t01 = np.array([10,0,0])
+
+
+
+
+    synth.ViewRefs(R,t)
+
+    rotRel2 =  (np.dot(R[3],R[2].T)) 
+    print("after local")
+    print(rotRel2)
+
+
+    #global transformation
+    R.append(np.dot(Rtmat.genRotMat([0,0,-90]),R[0]))
+    R.append(np.dot(Rtmat.genRotMat([0,0,-90]),R[1]))
+
+    rotRel3 =  (np.dot(R[5],R[4].T)) 
+
+    print("after global")
+    print(rotRel3)
+    
+
+
+
+if __name__ == '__main__':
+    main()

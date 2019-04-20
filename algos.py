@@ -1,5 +1,12 @@
 import numpy as np
 
+def LeastSquaresNumpy(A,b):
+    return np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b  returns x, res, rank, sss
+
+def LeastSquares(A,b):
+    return  np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b 
+
+
 #this is how wikipedia does it
 def procrustes(X,Y):
     muX = X.mean(0)

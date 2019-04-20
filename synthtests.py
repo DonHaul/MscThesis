@@ -7,7 +7,8 @@ import random
 import Rtmat
 import phase2_sparkle as phase2
 from synth import *
-
+import probdefs
+import algos
 
 
 def main():
@@ -36,11 +37,11 @@ def main():
         #ViewRefs([Rtmat.genRotMat([0,0,0]),i['trans']])
     '''
 
-        # TRANSLATION STUFF
-    A,b = problemDef2(obst,R,len(t))
+    # TRANSLATION STUFF
+    A,b = probdefs.translationProbDef(obst,R,len(t))
 
     #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
-    x= np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b  #<= WHY USE PINV INSTEAD OF INV (WRONG?)
+    x= algos.LeastSquares(A,b)
     #print(x2)
 
     solsplit2 = np.split(x,len(t))

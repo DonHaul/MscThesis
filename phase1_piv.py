@@ -9,8 +9,8 @@ import cv2
 from cv_bridge import CvBridge
 from matplotlib import pyplot as plt
 import open3d
-import converter
-import procrustes as proc
+
+import algos as proc
 import time
 import scipy.io as sio
 

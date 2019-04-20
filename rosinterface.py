@@ -17,9 +17,9 @@ def FetchDepthRegisteredRGB(cameraName):
     return rgb,depth_registered
 
 
-
+'''
 def rgbmatrixfix(rgb):
-
+    #THIS was being used when i forgot to do bgr8 on the rosImg2RGB function
 
     r=rgb[:,:,0]
 
@@ -32,6 +32,7 @@ def rgbmatrixfix(rgb):
     newrgb = np.transpose(newrgb,[1,2,0])
 
     return newrgb
+    '''
 
 def rosImg2RGB(rosimg):
     br = CvBridge()
