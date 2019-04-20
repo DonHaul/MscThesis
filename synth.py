@@ -4,27 +4,10 @@ import numpy as np
 import pickler as pickle
 import pprint
 import random
-import Rtmat
+import matmanip as mmnip
 import phase2_sparkle as phase2
+from visu import *
 
-def deprecated(func):
-    """This is a decorator which can be used to mark functions
-    as deprecated. It will result in a warning being emmitted
-    when the function is used."""
-    def newFunc(*args, **kwargs):
-        warnings.warn("Call to deprecated function %s." % func.__name__,
-                      category=DeprecationWarning)
-        return func(*args, **kwargs)
-    newFunc.__name__ = func.__name__
-    newFunc.__doc__ = func.__doc__
-    newFunc.__dict__.update(func.__dict__)
-    return newFunc
-
-
-
-
-def FetchKeyArray(key,dictlist):
-    return [d[key] for d in dictlist]
 
 def main():
 
@@ -37,7 +20,7 @@ def main():
     #Verified
     ViewRefs(R,t)
 
-    groundTruths = Rtmat.genRotRel(R)
+    groundTruths = mmnip.genRotRel(R)
     
     #ViewRefs(groundTruths[0])
 
@@ -114,34 +97,6 @@ def main():
     #ViewRefs(None,[np.array([3,1,2]),np.array([3,1,1]),np.array([3,1,0])])
 
     
-@deprecated
-def problemDef2(observations,rotRel,N):
-
-    #creates the left matrix in the problem formulation
-    Ident = np.zeros((len(observations)*3,N*3))
-
-
-    #creates the right matrix in the problem formulatin
-    A = np.zeros((len(observations)*3,N*3))
-
-    b = np.zeros((len(observations)*3,1))
-            
-    cnt = 0
-    for obs in observations:
-        #fills the matrices according to the observed pairs
-        Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
-        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]=  np.eye(3) #rotRel[obs['from']][obs['to']]
-
-        #print(b[cnt*3:cnt*3+3,0])
-        #print(obs['trans'])
-        b[cnt*3:cnt*3+3,0]=-np.dot( rotRel[obs['to']],obs['t'])
-
-        cnt=cnt+1
-    
-    return Ident - A ,b
-
-
-
 
 def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
@@ -194,7 +149,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #t21=tw1-np.dot(np.dot(R[r1],R[r2].T),tw2)
             #print(t21)
 
-            obsR.append({"from":r2,"to":r1,"rot":np.dot(Rtmat.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
+            obsR.append({"from":r2,"to":r1,"rot":np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)}) #*noiset
             #print(obst)
             r[r1]=1
@@ -208,124 +163,44 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
     return obsR,obst
     
-def draw_geometry(pcd):
-    # The following code achieves the same effect as:
-    # draw_geometries([pcd])
-    vis = open3d.Visualizer()
-
-    vis.create_window(width=800 ,height=600)
-    opt = vis.get_render_option()
-    opt.background_color = np.asarray([0, 0, 0])
-    for geo in pcd:
-        vis.add_geometry(geo)
-    vis.run()
-    vis.destroy_window()
-
-
-def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
-
-    
-
-    #in case one of them is none, get the one that is not zero
-    N = len(R) if R is not None else len(t)
-
-    refs = []
-
-    if t is None:
-        t = []
-        for i in range(0,N):
-            t.append([i*20,0,0]) 
-
-
-
-    if R is None:
-        R = []
-        for i in range(0,N):
-            print(R)
-            R.append(Rtmat.genRotMat([0,0,0])) 
-
 
    
-
-    for i in range(N):
-
-        P=np.eye(4)
-
-        
-        P[0:3,0:3]= R[i]
-        P[0:3,3]=np.squeeze(t[i])
-
-        refe = open3d.create_mesh_coordinate_frame(refSize, origin = [0, 0, 0])
-        refe.transform(P)
-
-        refs.append(refe)
-
-    draw_geometry(refs)
-
-    return refs
-
-
-
-def GenReferential(angle,t):
-
-    refe = open3d.create_mesh_coordinate_frame(size = 10, origin = [0, 0, 0])
-    
-    refe.transform(P)
-
-    return refe
-
-
-def TotalLeastSquaresT(C,Nleast,split):
-    '''
-    ola
-    '''
-
-    u,s,vh = np.linalg.svd(C)
-    
-    solution = u[:,-Nleast:]
-
-    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
-    rotsols = []
-    solsplit = np.split(solution,split)
-
-    return solsplit
-    
 def FakeAruco():
 
     R=[]
     t=[]
 
-    R.append(Rtmat.genRotMat([0,0,0]))
-    #R.append(Rtmat.genRotMat([0,0,0]))
-    #R.append(Rtmat.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,0,0]))
 
-    R.append(Rtmat.genRotMat([0,90,0]))
-    #R.append(Rtmat.genRotMat([0,90,0]))
-    #R.append(Rtmat.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([0,90,0]))
     
-    R.append(Rtmat.genRotMat([0,180,0]))
-    #R.append(Rtmat.genRotMat([0,180,0]))
-    #R.append(Rtmat.genRotMat([0,180,0]))
+    R.append(mmnip.genRotMat([0,180,0]))
+    R.append(mmnip.genRotMat([0,180,0]))
+    R.append(mmnip.genRotMat([0,180,0]))
 
-    R.append(Rtmat.genRotMat([0,270,0]))
-    #R.append(Rtmat.genRotMat([0,270,0]))
-    #R.append(Rtmat.genRotMat([0,270,0]))
+    R.append(mmnip.genRotMat([0,270,0]))
+    R.append(mmnip.genRotMat([0,270,0]))
+    R.append(mmnip.genRotMat([0,270,0]))
     
     t.append(np.array([0,0,10]))
-    #t.append(np.array([0,30,10]))
-    #t.append(np.array([0,50,10]))
+    t.append(np.array([0,30,10]))
+    t.append(np.array([0,50,10]))
 
     t.append(np.array([10,0,0]))
-    #t.append(np.array([10,30,0]))
-    #t.append(np.array([10,50,0]))
+    t.append(np.array([10,30,0]))
+    t.append(np.array([10,50,0]))
 
     t.append(np.array([0,0,-10]))
-    #t.append(np.array([0,30,-10]))
-    #t.append(np.array([0,50,-10]))
+    t.append(np.array([0,30,-10]))
+    t.append(np.array([0,50,-10]))
 
     t.append(np.array([-10,0,0]))
-    #t.append(np.array([-10,30,0]))
-    #t.append(np.array([-10,50,0]))
+    t.append(np.array([-10,30,0]))
+    t.append(np.array([-10,50,0]))
 
     return R,t
 

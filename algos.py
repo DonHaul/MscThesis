@@ -63,6 +63,35 @@ def procrustes2(X,Y):
 
     return R, t
 
+def TotalLeastSquares(C,Nleast,Nmarkers):
+    '''
+    ola
+    '''
+
+
+    u,s,vh = np.linalg.svd(C)
+    
+
+    print("u")
+    print(u)
+    #solution =np.concatenate((np.expand_dims(u[:,11],1),np.expand_dims(u[:,10],1), np.expand_dims(u[:,9],1)),1)
+    solution = u[:,-Nleast:]
+    print("sol")
+    print(solution)
+    
+    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
+    rotsols = []
+    solsplit = np.split(solution,Nmarkers)  
+
+    #get actual rotation matrices by doing the procrustes
+    for sol in solsplit:
+        r,t=procrustes(np.eye(3),sol)
+        rotsols.append(r)
+
+    return rotsols
+
+
+
 #copy of matlab procrustes function
 #https://stackoverflow.com/questions/18925181/procrustes-analysis-with-numpy
 def procrustesMatlab(X, Y, scaling=True, reflection='best'):

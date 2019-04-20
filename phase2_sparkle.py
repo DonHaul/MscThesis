@@ -6,9 +6,10 @@ import pickler as pickle
 import datetime
 import aruco
 import open3d
-import Rtmat
+import matmanip as mmnip
 import pprint
-
+import probdefs
+import algos
 
 ## Simple talker demo that listens to std_msgs/Strings published 
 ## to the 'chatter' topic
@@ -19,7 +20,7 @@ from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import Image
 import rosinterface as roscv
 import visu
-import procrustes as proc
+import algos as proc
 import time
 
 
@@ -73,7 +74,7 @@ class InfoGetter(object):
                     observations.append(obs)
 
 
-            B = problemDef(observations,self.Nmarkers)
+            B = probdefs.rotationProbDef(observations,self.Nmarkers)
 
             
 
@@ -85,58 +86,6 @@ class InfoGetter(object):
         cv2.waitKey(3)
 
 
-def problemDef(observations,N):
-
-    #creates the left matrix in the problem formulation
-    Ident = np.zeros((len(observations)*3,N*3))
-
-
-    #creates the right matrix in the problem formulatin
-    A = np.zeros((len(observations)*3,N*3))
-            
-    cnt = 0
-    for obs in observations:
-        #fills the matrices according to the observed pairs
-        Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
-        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['rot'] # <- ESTE  .T NAO DEVIA AQUI ESTAR DE TODO MAS FAZ COM QUE FUNCIONE WRONG
-
-        
-        #print(obs)
-        #print("Ident")
-        #print(Ident[cnt*3:cnt*3+3,:])
-        #print("A")
-        #print(A[cnt*3:cnt*3+3,:])
-        #raw_input("Press Enter to continue...")
-        
-        cnt=cnt+1
-    return Ident - A
-
-def TotalLeastSquares(C,Nleast,Nmarkers):
-    '''
-    ola
-    '''
-
-
-    u,s,vh = np.linalg.svd(C)
-    
-
-    print("u")
-    print(u)
-    #solution =np.concatenate((np.expand_dims(u[:,11],1),np.expand_dims(u[:,10],1), np.expand_dims(u[:,9],1)),1)
-    solution = u[:,-Nleast:]
-    print("sol")
-    print(solution)
-    
-    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
-    rotsols = []
-    solsplit = np.split(solution,Nmarkers)  
-
-    #get actual rotation matrices by doing the procrustes
-    for sol in solsplit:
-        r,t=proc.procrustes(np.eye(3),sol)
-        rotsols.append(r)
-
-    return rotsols
 
 
 def main():
@@ -171,7 +120,7 @@ def main():
     pickle.In("obs","AtA",ig.C)
 
     
-    rotsols = TotalLeastSquares(ig.C,3,ig.Nmarkers)
+    rotsols = algos.TotalLeastSquares(ig.C,3,ig.Nmarkers)
     
 
     
@@ -200,7 +149,7 @@ def main():
     open3d.draw_geometries(frames)
 
     
-    Rrel = Rtmat.genRotRel(rotsols)
+    Rrel = mmnip.genRotRel(rotsols)
     
     '''
     for i in range(0,ig.Nmarkers):
