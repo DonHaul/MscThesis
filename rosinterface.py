@@ -3,6 +3,7 @@ import cv2
 from cv_bridge import CvBridge
 import numpy as np
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo
 
 def FetchDepthRegisteredRGB(cameraName):
     rospy.init_node('my_name_is_jeff', anonymous=True)
@@ -16,8 +17,22 @@ def FetchDepthRegisteredRGB(cameraName):
     
     return rgb,depth_registered
 
+def camCalib(cameraName):
+    cameraName = "abretesesamo"
+    rospy.init_node('my_name_is_jeff', anonymous=True)
 
-'''
+
+    #fetch intrinsic parameters
+    camInfo = rospy.wait_for_message("/"+cameraName + "/rgb/camera_info", CameraInfo)        
+
+    rgb,depth = GetRGBD(cameraName)    
+    #print(camInfo)
+    K = np.asarray(camInfo.K).reshape((3,3))
+
+
+
+    return K,camInfo.D
+
 def rgbmatrixfix(rgb):
     #THIS was being used when i forgot to do bgr8 on the rosImg2RGB function
 
@@ -32,12 +47,12 @@ def rgbmatrixfix(rgb):
     newrgb = np.transpose(newrgb,[1,2,0])
 
     return newrgb
-    '''
+
 
 def rosImg2RGB(rosimg):
     br = CvBridge()
 
-    rgb = br.imgmsg_to_cv2(rosimg, "bgr8")
+    rgb = br.imgmsg_to_cv2(rosimg, desired_encoding= "bgr8")
 
     #rgb= rgbmatrixfix(rgb)
 
@@ -59,12 +74,9 @@ def rosCam2RGB(rgbros,depthros):
 
     rgb = br.imgmsg_to_cv2(rgbros, "bgr8")
     depth = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
-    
 
-    #cv2.imshow("Image window", rgb)
-    #cv2.waitKey(3)
 
-    rgb= rgbmatrixfix(rgb)
+    #rgb= rgbmatrixfix(rgb)
 
     return rgb,depth
 

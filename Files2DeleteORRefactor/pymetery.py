@@ -268,3 +268,11 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+## GETTING cAMERA CALIB CAM CALIB INTRINSIC PARAMS
+
+    K,D = roscv.camCalib(cameraName)
+
+    pickle.In("CameraInfo","K",K)
+    pickle.In("CameraInfo","D",D) 

@@ -1,14 +1,9 @@
-import open3d
-import math
 import numpy as np
-import pickler as pickle
-import pprint
-import random
 import matmanip
-import phase2_sparkle as phase2
-from synth import *
+import synth
 import probdefs
 import algos
+import visu
 
 
 def main():
@@ -20,13 +15,13 @@ def main():
     t=[]
 
 
-    R,t = FakeAruco()
+    R,t = synth.FakeAruco()
 
     #pprint.pprint(t)
 
-    ViewRefs(R,t)
+    visu.ViewRefs(R,t)
     
-    obsR,obst = SampleGenerator(R,t,noise=0.1,noiset=0,samples=10000)
+    obsR,obst = synth.SampleGenerator(R,t,noise=0.1,noiset=0,samples=10000)
     #correct
 
     '''
@@ -45,7 +40,7 @@ def main():
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
-    ViewRefs(R,solsplit2)
+    visu.ViewRefs(R,solsplit2)
 
 
     solt =[]

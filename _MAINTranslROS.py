@@ -8,7 +8,7 @@ import aruco #findPoses function is here
 
 import rospy
 
-from sensor_msgs.msg import CameraInfo
+
 from sensor_msgs.msg import Image
 import rosinterface as roscv
 
@@ -23,31 +23,21 @@ import algos
 
 def main():
 
-    R,t = synth.FakeAruco()
+    R,t = synth.FakeAruco() #<-- MUST BE REMOVED LATER
 
     ig = ArucoInfoGetter.ArucoInfoGetter()
 
     cameraName = "abretesesamo"
 
-    rospy.init_node('my_name_is_jeff', anonymous=True)
+    camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
 
-
-    #fetch intrinsic parameters
-    camInfo = rospy.wait_for_message("/"+cameraName + "/rgb/camera_info", CameraInfo)        
-
-    rgb,depth = roscv.GetRGBD(cameraName)    
-    #print(camInfo)
-    K = np.asarray(camInfo.K).reshape((3,3))
-    #print(K)
-    #pickle.In("CameraInfo","K",K)
-    #pickle.In("CameraInfo","dist",camInfo.D) 
-    #subscribe
+ 
 
     # all of the parameters
     cb_params =	{
     "showVideo": 1,
-    "K": K,
-    "D": camInfo.D,
+    "K": camInfo['K'],
+    "D": camInfo['D'],
     "R": R
 }
      # all of the functions
@@ -65,6 +55,13 @@ def main():
 
 
     print("FINISHED")
+
+    x = np.dot(np.linalg.inv(ig.ATA),ig.ATb)
+
+    solsplit2 = np.split(x,len(t))
+    visu.ViewRefs(R,solsplit2)
+
+
 
 
 def ObservationMaker(K,D,det_corners,hello,ids,markerIDoffset):
@@ -93,12 +90,12 @@ def ObservationMaker(K,D,det_corners,hello,ids,markerIDoffset):
             for j in range(i+1,len(ids)):
 
                 #generate R observations
-                obs={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"R":np.dot(rots[i],rots[j].T)}
-                observationsR.append(obs)
+                obsR={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"R":np.dot(rots[i],rots[j].T)}
+                observationsR.append(obsR)
 
                 #generate t observations
-                obs={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"t":np.dot(rots[i],rots[j].T)}
-                observationsT.append(obs)
+                obsT={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"t":np.dot(rots[i],rots[j].T)} #<-- WRONG
+                observationsT.append(obsT)
 
             
 
@@ -118,7 +115,7 @@ def ArucoObservationMaker(img,K,D,markerIDoffset,Nmarkers):
         
 
 
-        return hello ,ids #<- ids parameter doenst need to be here - WRONG
+        return hello ,ids,obsR,obsT #<- ids parameter doenst need to be here - WRONG
 
 
 

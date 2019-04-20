@@ -11,9 +11,10 @@ class ArucoInfoGetter(object):
         self.Nmarkers = 12 #number of markers, MUST BE CONTIGUOUS for this to work
         self.markerIDoffset=-2 #offset dos markers, como vao do 2 ao 12, o offset e 2
 
-        self.C = np.zeros((self.Nmarkers *3,self.Nmarkers *3))
+        self.ATA = np.zeros((self.Nmarkers *3,self.Nmarkers *3)) #*3 because rotations matrix is 3x3
 
-        self.mats = {}
+        self.ATb = np.zeros((self.Nmarkers *3,1)) # *3 because tranlations are 3x1
+
 
 
 
@@ -23,6 +24,7 @@ class ArucoInfoGetter(object):
         showVid = args[0]["showVideo"]
         K=args[0]["K"]
         D=args[0]["D"]
+        R=args[0]["R"] #<- THIS SHOULD BE DELETED WRONG
         ArucoObservationMaker = args[1][0]
         ProbSolv = args[1][1]
         LSFit = args[1][2]
@@ -32,14 +34,14 @@ class ArucoInfoGetter(object):
         img = roscv.rosImg2RGB(data)
 
 
-        img,ids = ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers)
+        img,ids,obsR,obsT = ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers)
 
 
         if  ids is not None and len(ids)>1:
-            A,b = ProbSolv(observations,R,self.Nmarkers)
+            A,b = ProbSolv(obsT,R,self.Nmarkers)
 
-            self.mats["A"] = self.mats["A"] + np.dot(A.T,A) #way to save the matrix in a compact manner
-            self.mats["b"] = self.mats["b"] + np.dot(A.T,b)
+            self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
+            self.ATb = self.ATb + np.dot(A.T,b)
 
 
             

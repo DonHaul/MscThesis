@@ -5,11 +5,11 @@ curTime = datetime.datetime.now()
 
 pickledata = {}
 
-def In(name,key,data,encoding="wb"):
+def In(name,key,data,path="pickles/",encoding="wb"):
 
     pickledata[key]=data
 
-    f= open("pickles/"+name+" "+curTime.strftime("%d-%m-%Y %H-%M-%S")+".pickle",encoding)
+    f= open(path+name+" "+curTime.strftime("%d-%m-%Y %H-%M-%S")+".pickle",encoding)
     
 
     pickle.dump(pickledata,f)
