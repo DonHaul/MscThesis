@@ -70,7 +70,7 @@ class InfoGetter(object):
             for i in range(0,len(ids)):                
                 for j in range(i+1,len(ids)):
                     #carefull with this line
-                    obs={"from":(ids[i]+self.markerIDoffset),"to":(ids[j]+self.markerIDoffset),"rot":np.dot(rots[i],rots[j].T)}
+                    obs={"from":(ids[i]+self.markerIDoffset),"to":(ids[j]+self.markerIDoffset),"R":np.dot(rots[i],rots[j].T)}
                     observations.append(obs)
 
 

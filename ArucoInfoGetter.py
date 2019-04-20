@@ -1,6 +1,8 @@
 import rosinterface as roscv
 import numpy as np
 import cv2
+import aruco
+import probdefs
 
 
 
@@ -24,24 +26,25 @@ class ArucoInfoGetter(object):
         showVid = args[0]["showVideo"]
         K=args[0]["K"]
         D=args[0]["D"]
-        R=args[0]["R"] #<- THIS SHOULD BE DELETED WRONG
-        ArucoObservationMaker = args[1][0]
-        ProbSolv = args[1][1]
-        LSFit = args[1][2]
-
+        #R=args[0]["R"] #<- THIS SHOULD BE DELETED WRONG
+        calc = args[0]["calc"]        
+        #ProbSolv = args[1][1]
         
-
+        #fetches ros image
         img = roscv.rosImg2RGB(data)
 
+        #calculates rotations
+        if (calc == 0):
+            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)
 
-        img,ids,obsR,obsT = ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers)
 
+            if  ids is not None and len(ids)>1:
+                A =  probdefs.rotationProbDef(obsR,self.Nmarkers)
 
-        if  ids is not None and len(ids)>1:
-            A,b = ProbSolv(obsT,R,self.Nmarkers)
+                self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
-            self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
-            self.ATb = self.ATb + np.dot(A.T,b)
+        elif (calc == 1):
+            print("Translation Calculations")
 
 
             

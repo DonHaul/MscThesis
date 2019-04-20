@@ -1,6 +1,17 @@
 #HERE WILL BE the v1, but organized in a good fashion
 import ArucoInfoGetter
 import rospy
+import algos
+import pickler as pickle
+from sensor_msgs.msg import Image
+
+import cv2
+import open3d
+import numpy as np
+import visu
+import matmanip as mmnip
+
+
 def main():
 
     ig = ArucoInfoGetter.ArucoInfoGetter()
@@ -16,10 +27,11 @@ def main():
     cb_params =	{
     "showVideo": 1,
     "K": camInfo['K'],
-    "D": camInfo['D']
+    "D": camInfo['D'],
+    "calc": 0 #0 is R 1 is t
 }
      # all of the functions
-    cb_functions = [ArucoObservationMaker,probdefs.translationProbDef,algos.LeastSquares]
+    cb_functions = []
 
 
 
@@ -32,49 +44,17 @@ def main():
         print("shut")
 
     cv2.destroyAllWindows()
-
-    pickle.In("obs","AtA",ig.C)
-
     
-    rotsols = algos.TotalLeastSquares(ig.C,3,ig.Nmarkers)
-    
+    rotsols = algos.TotalLeastSquares(ig.ATA,3,ig.Nmarkers)
 
-    
-    
-    rref = rotsols[0].T
-
-    frames =[]
-    counter = 0
-    #make ref 1 the reference and display rotations
-    for r in rotsols:
-
-        #r=np.dot(rref,r.T)
-        refe = open3d.create_mesh_coordinate_frame(size = 0.6, origin = [0, 0, 0])
-
-        trans = np.zeros((4,4))
-        trans[3,3]=1
-        trans[0,3]=counter #linha ,coluna
-        trans[0:3,0:3]=r
-
-        refe.transform(trans)
-        frames.append(refe)
-
-        counter = counter +1
-
-    
-    open3d.draw_geometries(frames)
-
+    visu.ViewRefs(rotsols)
     
     Rrel = mmnip.genRotRel(rotsols)
-    
-    '''
-    for i in range(0,ig.Nmarkers):
-        for j in range(0,ig.Nmarkers):
-            print("Ok:",(i,j))
-            print(Rrelations[j][i])
-    '''
 
-    pickle.In("obs","RelMarkerRotations",Rrelations)
+    visu.ViewRefs(Rrel)
+
+
+    #pickle.In("obs","RelMarkerRotations",Rrelations)
      
 
 if __name__ == '__main__':
