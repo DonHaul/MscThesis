@@ -6,6 +6,9 @@ def LeastSquaresNumpy(A,b):
 def LeastSquares(A,b):
     return  np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b 
 
+def LeastSquaresOldSchool(A,b):
+    return np.dot(np.dot(np.linalg.inv(np.dot(A.T,A)),A.T),b)
+
 
 #this is how wikipedia does it
 def procrustes(X,Y):

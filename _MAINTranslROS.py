@@ -67,6 +67,7 @@ def main():
     x = algos.LeastSquares(A,b)
     print("sums")
     print(sum(x))
+    print(sum(algos.LeastSquaresOldSchool(A,b)))
 
     print(x)
 
