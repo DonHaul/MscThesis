@@ -15,12 +15,8 @@ def main():
 
     visu.ViewRefs(R)
 
-    groundTruths = mmnip.genRotRel(R) #95% confidence that it is correct
-    
-    visu.ViewRefs(groundTruths)
 
-
-    #correct
+    #correct 100%
     obsR,obst = synth.SampleGenerator(R,t,noise=0.1)
 
     '''
@@ -35,21 +31,25 @@ def main():
     C = np.dot(B.T,B) #C = B'B
 
 
-    rotSols = algos.TotalLeastSquares(C,3,len(R)) #<- HAS TO BE WRONG
-    
+    rotSols = algos.TotalLeastSquares(C,3,len(R)) 
+
     print("global")
 
     visu.ViewRefs(rotSols)
 
     print("local")
-
-
     
-    rotSoles = [] #correct way to make 2d list
+    rotSoles = mmnip.genRotRel(rotSols)
+    
+  
+    #see R between each things
+    for j in range(0,len(rotSoles)):
+        r = rotSoles
+        print(str(j)+":")
+        print(r)
 
-    #generate R between each things
-    for j in range(0,len(rotSols)):
-        rotSoles.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12  
+
+
 
 
     #print("local")
