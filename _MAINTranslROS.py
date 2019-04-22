@@ -60,12 +60,20 @@ def main():
 
     print("FINISHED")
 
-    x = np.dot(np.linalg.inv(ig.ATA),ig.ATb)
+    #x = np.dot(np.linalg.inv(ig.ATA),ig.ATb)
+
+    A,b =  probdefs.translationProbDef(ig.obstList,R,12)
+
+    x = algos.LeastSquares(A,b)
+    print("sums")
+    print(sum(x))
 
     print(x)
 
     solsplit2 = np.split(x,len(t))
     visu.ViewRefs(R,solsplit2,refSize=0.1)
+
+    print(solsplit2)
 
 
 

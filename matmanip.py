@@ -13,6 +13,12 @@ def CompareMatLists(matListA,matListB):
         print("first - seconds")
         print(matListA[i]-matListB[i])
 
+def PermuteCols(matList,permuter):
+    finalR=[]
+    for r in matList:
+        finalR.append(np.dot(r,permuter))
+    
+    return finalR
 
 def genRotMat(angle):
 

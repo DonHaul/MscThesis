@@ -34,26 +34,25 @@ def main():
     print("global")
     visu.ViewRefs(rotSols)
 
-    print("global transposed")
-
-    rolSol3 = []
-
-    for i in range(0,len(rotSols)):
-        rolSol3.append(rotSols[i].T)
-
-    visu.ViewRefs(rolSol3)
+    
+   
 
     print("local")    
     rotSoles = mmnip.genRotRel(rotSols)    
     visu.ViewRefs(rotSoles)
 
-    print("local")    
-    rotSoles3 = mmnip.genRotRel(rolSol3)    
-    visu.ViewRefs(rotSoles3)
+    
+    #mmnip.CompareMatLists(groundTruths,rotSoles)
 
-    mmnip.CompareMatLists(groundTruths,rotSoles)
+    permuter = [[1,0,0],[0,0,-1],[0,1,0]]
+
+    finalR=  mmnip.PermuteCols(rotSoles,permuter)
+
+    visu.ViewRefs(finalR )
 
     
+    #visu.ViewRefs( mmnip.genRotRel(finalR) )
+
 
 if __name__ == '__main__':
     main()
