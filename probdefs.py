@@ -97,8 +97,8 @@ def translationProbDef(observations,rotRel,N):
             
     cnt = 0
     for obs in observations:
-        print("YAOZA")
-        print(obs)
+        #print("YAOZA")
+        #print(obs)
         #fills the matrices according to the observed pairs
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
         A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]=  np.eye(3) #rotRel[obs['from']][obs['to']]

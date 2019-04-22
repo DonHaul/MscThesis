@@ -39,17 +39,18 @@ def main():
     x= algos.LeastSquares(A,b)
     
     print("LS,LSnp,LSinv")
-    print(np.sum(algos.LeastSquares(A,b)**2))
 
+    x2 = np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
 
-
-    print(np.sum(algos.LeastSquaresNumpy(A,b)[0]**2))
-    print((np.sum(algos.LeastSquaresOldSchool(A,b)**2)))
+    print(np.sqrt(np.sum(x**2)))
+    print(np.sqrt(np.sum(x2**2)))
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
     visu.ViewRefs(R,solsplit2)
 
+    solsplit3 = np.split(x2,len(t))
+    visu.ViewRefs(R,solsplit2,refSize=0.1)
 
     solt =[]
     #change t referential

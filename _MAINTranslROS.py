@@ -60,16 +60,18 @@ def main():
 
     print("FINISHED")
 
-    #x = np.dot(np.linalg.inv(ig.ATA),ig.ATb)
 
-    A,b =  probdefs.translationProbDef(ig.obstList,R,12)
+    #A,b =  probdefs.translationProbDef(ig.obstList,R,12)
+    #x = algos.LeastSquares(A,b)
 
-    x = algos.LeastSquares(A,b)
+    #THIS HAS 3 singular values that are pretty much zero
+    #_,s,_ = np.linalg.svd(np.dot(A.T,A))
+    #print(s)
+
+    x = np.dot(np.linalg.pinv(ig.ATA),ig.ATb)
+    
     print("sums")
     print(sum(x))
-    print(sum(algos.LeastSquaresOldSchool(A,b)))
-
-    print(x)
 
     solsplit2 = np.split(x,len(t))
     visu.ViewRefs(R,solsplit2,refSize=0.1)

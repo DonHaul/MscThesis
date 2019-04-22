@@ -49,13 +49,13 @@ class ArucoInfoGetter(object):
             img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=True)
 
             if  ids is not None and len(ids)>1:
-                #A,b =  probdefs.translationProbDef(obsT,R,self.Nmarkers)
+                A,b =  probdefs.translationProbDef(obsT,R,self.Nmarkers)
 
-                #self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
+                self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
-                #self.ATb = self.ATb + np.dot(A.T,b) #way to save the matrix in a compact manner
+                self.ATb = self.ATb + np.dot(A.T,b) #way to save the matrix in a compact manner
 
-                self.obstList =self.obstList + obsT
+                #self.obstList =self.obstList + obsT
 
 
             

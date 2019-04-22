@@ -9,6 +9,9 @@ def LeastSquares(A,b):
 def LeastSquaresOldSchool(A,b):
     return np.dot(np.dot(np.linalg.inv(np.dot(A.T,A)),A.T),b)
 
+def LeastSquaresOldSchoolPinved(A,b):
+    return np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
+
 
 #this is how wikipedia does it
 def procrustes(X,Y):

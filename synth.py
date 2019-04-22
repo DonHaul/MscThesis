@@ -5,7 +5,6 @@ import pickler as pickle
 import pprint
 import random
 import matmanip as mmnip
-import phase2_sparkle as phase2
 from visu import *
 
     
