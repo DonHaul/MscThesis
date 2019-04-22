@@ -26,7 +26,7 @@ class ArucoInfoGetter(object):
         showVid = args[0]["showVideo"]
         K=args[0]["K"]
         D=args[0]["D"]
-        #R=args[0]["R"] #<- THIS SHOULD BE DELETED WRONG
+        R=args[0]["R"] #<-CORRECT, but only for translation
         calc = args[0]["calc"]        
         #ProbSolv = args[1][1]
         
@@ -44,7 +44,15 @@ class ArucoInfoGetter(object):
                 self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
         elif (calc == 1):
-            print("Translation Calculations")
+            
+            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=True)
+
+            if  ids is not None and len(ids)>1:
+                A,b =  probdefs.translationProbDef(obsT,R,self.Nmarkers)
+
+                self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
+
+                self.ATb = self.ATb + np.dot(A.T,b) #way to save the matrix in a compact manner
 
 
             

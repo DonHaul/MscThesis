@@ -1,3 +1,7 @@
 import matmanip
+import numpy as np
 
-print(matmanip.genRotMat([0,-90,0]))
+plug = 14
+
+if plug not in range(2,14):
+    print("exit")

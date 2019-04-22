@@ -60,7 +60,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
             #t21=tw1-np.dot(np.dot(R[r1],R[r2].T),tw2)
             #print(t21)
-
+            #print(t12.shape)
             obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)}) #*noiset
             #print({"from":r2,"to":r1,"R":np.dot(R[r1],R[r2].T)})
@@ -111,7 +111,7 @@ def FakeAruco():
     return R,t
 
    
-def FakeAruco2():
+def FakeArucoReal():
 
     R=[]
     t=[]
