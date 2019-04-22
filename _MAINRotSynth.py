@@ -25,23 +25,31 @@ def main():
 
     B = probdefs.rotationProbDef(obsR,len(R))  #95% confidence that it is correct
 
+
     C = np.dot(B.T,B) #C = B'B
 
 
     rotSols = algos.TotalLeastSquares(C,3,len(R)) 
 
     print("global")
-
     visu.ViewRefs(rotSols)
 
-    print("local")
-    
-    rotSoles = mmnip.genRotRel(rotSols)
-    
-  
+    print("global transposed")
 
-    #print("local")
+    rolSol3 = []
+
+    for i in range(0,len(rotSols)):
+        rolSol3.append(rotSols[i].T)
+
+    visu.ViewRefs(rolSol3)
+
+    print("local")    
+    rotSoles = mmnip.genRotRel(rotSols)    
     visu.ViewRefs(rotSoles)
+
+    print("local")    
+    rotSoles3 = mmnip.genRotRel(rolSol3)    
+    visu.ViewRefs(rotSoles3)
 
     mmnip.CompareMatLists(groundTruths,rotSoles)
 
