@@ -53,7 +53,7 @@ def main():
 
     visu.ViewRefs(Rrel)
 
-
+    pickle.In("ArucoRot1","R",Rrel,"static")
     #pickle.In("obs","RelMarkerRotations",Rrelations)
      
 

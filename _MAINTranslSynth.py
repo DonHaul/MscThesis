@@ -4,7 +4,7 @@ import synth
 import probdefs
 import algos
 import visu
-
+import gc
 
 def main():
 
@@ -21,7 +21,7 @@ def main():
 
     visu.ViewRefs(R,t)
     
-    obsR,obst = synth.SampleGenerator(R,t,noise=0.1,noiset=0,samples=10000)
+    obsR,obst = synth.SampleGenerator(R,t,noise=0.1,noiset=0,samples=100)
     #correct
 
     '''
@@ -37,6 +37,14 @@ def main():
 
     #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
     x= algos.LeastSquares(A,b)
+    
+    print("LS,LSnp,LSinv")
+    print(np.sum(algos.LeastSquares(A,b)**2))
+
+
+
+    print(np.sum(algos.LeastSquaresNumpy(A,b)[0]**2))
+    print((np.sum(algos.LeastSquaresOldSchool(A,b)**2)))
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
