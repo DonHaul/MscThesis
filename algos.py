@@ -30,7 +30,7 @@ def procrustes(X,Y):
     R = np.dot(V, U.T)
     t = muX - np.dot(muY, R)
 
-
+ 
 
     return R, t
 
@@ -72,12 +72,12 @@ def TotalLeastSquares(C,Nleast,Nmarkers):
     u,s,vh = np.linalg.svd(C)
     
 
-    print("u")
-    print(u)
-    #solution =np.concatenate((np.expand_dims(u[:,9],1),np.expand_dims(u[:,10],1), np.expand_dims(u[:,11],1)),1)
+    print("s")
+    print(s)
+    #solution =np.concatenate((-np.expand_dims(u[:,10],1),-np.expand_dims(u[:,11],1), np.expand_dims(u[:,9],1)),1)
     solution = u[:,-Nleast:]
-    print("sol")
-    print(solution)
+    #print("sol")
+    #print(solution)
     
     #split in 3x3 matrices, dat are close to the rotation matrices but not quite
     rotsols = []

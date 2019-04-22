@@ -2,6 +2,17 @@ import math
 import numpy as np
 
 
+def CompareMatLists(matListA,matListB):
+        #comparing with ground truth
+    for i in range(0,len(matListA)):
+        print(i)
+        print("first")
+        print(matListA[i])
+        print("second")
+        print(matListB[i])
+        print("first - seconds")
+        print(matListA[i]-matListB[i])
+
 
 def genRotMat(angle):
 
