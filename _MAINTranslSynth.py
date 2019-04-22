@@ -15,7 +15,7 @@ def main():
     t=[]
 
 
-    R,t = synth.FakeArucoReal()
+    R,t = synth.FakeAruco()
 
     #pprint.pprint(t)
 
@@ -37,12 +37,9 @@ def main():
 
     #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
     x= algos.LeastSquares(A,b)
-    
+    #print(x2)
 
     solsplit2 = np.split(x,len(t))
-
-    print(solsplit2)
-
     visu.ViewRefs(R,solsplit2)
 
 
