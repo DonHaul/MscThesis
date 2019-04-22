@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import open3d
 import numpy as np
+import matmanip
 
 def plotImg(img):
     fig = plt.figure()
@@ -44,7 +45,7 @@ def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
         R = []
         for i in range(0,N):
             print(R)
-            R.append(Rtmat.genRotMat([0,0,0])) 
+            R.append(matmanip.genRotMat([0,0,0])) 
 
 
    

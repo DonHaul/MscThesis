@@ -76,7 +76,22 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
     return obsR,obst
     
+def FakeArucoRotated():
 
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([90,180,0]))
+    R.append(mmnip.genRotMat([90,90,0]))
+    R.append(mmnip.genRotMat([90,0,0]))
+    R.append(mmnip.genRotMat([90,-90,0]))
+    
+    t.append(np.array([0,10,0]))
+    t.append(np.array([10,0,0]))
+    t.append(np.array([0,-10,0]))
+    t.append(np.array([-10,0,0]))
+
+    return R,t
 
 def FakeAruco():
 

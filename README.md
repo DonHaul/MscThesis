@@ -16,5 +16,5 @@ rosbag record --split --size=1024 --duration=2 -b 0 /camera/depth_registered/ima
 #rgbonly to cameras
 
 
-rosbag record --split --size=1024 -b 0 /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color /ervilhamigalhas/rgb/camera_info /abretesesamo/rgb/camera_info
+rosbag record --split --size=1024 -b 0 /abretesesamo/rgb/image_color /abretesesamo/rgb/camera_info
 

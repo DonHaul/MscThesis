@@ -13,7 +13,7 @@ def main():
 
     R,t = synth.FakeAruco()
 
-    visu.ViewRefs(R)
+    visu.ViewRefs(R,t)
 
 
     #correct 100%
