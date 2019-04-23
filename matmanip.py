@@ -72,6 +72,7 @@ def Rt2Homo(R,t):
     H = np.eye(4)
 
     H[0:3,0:3]=R
-    H[3,0:3]=t
+    H[0:3,3]=t
+
 
     return H

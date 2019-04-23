@@ -10,7 +10,9 @@ from visu import *
     
 
 def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
-
+    '''
+    returns observationsR, and observationsT
+    '''
 
     r = np.zeros([len(R),1])
 
@@ -82,9 +84,11 @@ def Scenev1():
 
     R.append(mmnip.genRotMat([0,180,0]))
     R.append(mmnip.genRotMat([0,-90,0]))
+    R.append(mmnip.genRotMat([0,0,0]))
 
     t.append(np.array([0,0,0]))
     t.append(np.array([50,0,-50]))
+    t.append(np.array([0,0,-100]))
 
     return R,t
 

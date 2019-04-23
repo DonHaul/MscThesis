@@ -306,3 +306,29 @@ pickle.ShowData()
 visu.ViewRefs(finalR)
 
 ##############################333333333333333333
+
+g = pickle.Out("pickles/ArucoRot.pickle")
+
+#print("LOCALLL",g['Rglobal'])
+
+#print("GLOBALL",g['Rlocal'])
+
+permuter = [[0,-1,0],[-1,0,0],[0,0,-1]]
+
+finalR=  mmnip.PermuteCols(g['Rlocal'],permuter)
+
+
+pickle.In("ArucoRot","RlocalPermutated",finalR,putDate=False)
+
+
+visu.ViewRefs(finalR)
+
+####################################
+
+
+
+
+def ObsMatcher(camsObs):
+
+    for i in range(0,len(camsObs)):
+        for j in range(0,i):
