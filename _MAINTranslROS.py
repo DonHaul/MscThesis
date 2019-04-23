@@ -26,6 +26,10 @@ def main():
 
     R,t = synth.FakeArucoReal() #<-- MUST BE REMOVED LATER
 
+    #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
+    ola = pickle.Out("static/ArucoRot.pickle")
+    R =ola["RlocalPermutated"]
+
     
     cameraName = "abretesesamo"
 
@@ -73,7 +77,8 @@ def main():
     solsplit2 = np.split(x,len(t))
     visu.ViewRefs(R,solsplit2,refSize=0.1)
 
-    print(solsplit2)
+    pickle.In("ArucoModel","R",R)
+    pickle.In("ArucoModel","t",solsplit2)
 
 
 

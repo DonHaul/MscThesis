@@ -4,7 +4,8 @@ import synth
 import probdefs
 import algos
 import visu
-import gc
+
+import pickler as pickle
 
 def main():
 
@@ -15,7 +16,10 @@ def main():
     t=[]
 
 
-    R,t = synth.FakeAruco()
+    R,t = synth.FakeArucoReal()
+
+
+
 
     #pprint.pprint(t)
 
@@ -24,13 +28,9 @@ def main():
     obsR,obst = synth.SampleGenerator(R,t,noise=0.1,noiset=0,samples=100)
     #correct
 
-    '''
-    for i in obst:
-        #print("From: " +str(i['from']//3+1)+" to:"+str(i['to']//3+1))
-        print(i)
-        #raw_input()
-        #ViewRefs([matmanip.genRotMat([0,0,0]),i['trans']])
-    '''
+    #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
+    ola = pickle.Out("static/ArucoRot.pickle")
+    R =ola["RlocalPermutated"]
 
     # TRANSLATION STUFF
     A,b = probdefs.translationProbDef(obst,R,len(t))
@@ -48,9 +48,6 @@ def main():
 
     solsplit2 = np.split(x,len(t))
     visu.ViewRefs(R,solsplit2)
-
-    solsplit3 = np.split(x2,len(t))
-    visu.ViewRefs(R,solsplit2,refSize=0.1)
 
     solt =[]
     #change t referential

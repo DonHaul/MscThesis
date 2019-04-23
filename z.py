@@ -6,14 +6,16 @@ import visu
 
 g = pickle.Out("pickles/ArucoRot.pickle")
 
-print("LOCALLL",g['Rglobal'])
+#print("LOCALLL",g['Rglobal'])
 
-print("GLOBALL",g['Rlocal'])
+#print("GLOBALL",g['Rlocal'])
 
-permuter = [[0,-1,0],[1,0,0],[0,0,-1]]
+permuter = [[0,-1,0],[-1,0,0],[0,0,-1]]
 
 finalR=  mmnip.PermuteCols(g['Rlocal'],permuter)
 
-#pickle.In("ArucoRot","RlocalPermutated",finalR,putDate=False)
+
+pickle.In("ArucoRot","RlocalPermutated",finalR,putDate=False)
+
 
 visu.ViewRefs(finalR)

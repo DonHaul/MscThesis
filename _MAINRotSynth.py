@@ -34,13 +34,20 @@ def main():
     print("global")
     visu.ViewRefs(rotSols)
 
-    
-   
+    print("HELP I HAVE THE BIG ")
+    haha =(np.dot(B,np.vstack(rotSols)))
+    ga = algos.MeanSquaredError(haha)
+    print("MSE real sol",ga)
+
+    print("")
 
     print("local")    
     rotSoles = mmnip.genRotRel(rotSols)    
-    visu.ViewRefs(rotSoles)
 
+    print("HELP I HAVE THE BIG  LOCAL")
+    haha =(np.dot(B,np.vstack(rotSoles)))
+    ga = algos.MeanSquaredError(haha)
+    print("MSE real sol",ga)
     
     #mmnip.CompareMatLists(groundTruths,rotSoles)
 
@@ -48,7 +55,10 @@ def main():
 
     finalR=  mmnip.PermuteCols(rotSoles,permuter)
 
-    visu.ViewRefs(finalR )
+    print("HELP I HAVE THE BIG  LOCAL PERMUTED")
+    haha =(np.dot(B,np.vstack(finalR)))
+    ga = algos.MeanSquaredError(haha)
+    print("MSE real sol",ga)
 
     
     #visu.ViewRefs( mmnip.genRotRel(finalR) )

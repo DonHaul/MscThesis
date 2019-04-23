@@ -46,13 +46,14 @@ def main():
     
     rotsols = algos.TotalLeastSquares(ig.ATA,3,ig.Nmarkers)
 
+
     visu.ViewRefs(rotsols)
     
     Rrel = mmnip.genRotRel(rotsols)
 
     visu.ViewRefs(Rrel)
 
-    permuter = [[1,0,0],[0,0,-1],[0,1,0]]
+    permuter = [[0,-1,0],[1,0,0],[0,0,-1]]
 
     finalR=  mmnip.PermuteCols(Rrel,permuter)
 
@@ -62,8 +63,9 @@ def main():
 
     pickle.In("ArucoRot","Rlocal",Rrel,putDate=False)
 
-    #pickle.In("ArucoRot","RlocalPermutated",finalR,"static/")
+    pickle.In("Tests","ATA",ig.ATA)
 
+    pickle.In
 
 if __name__ == '__main__':
     main()

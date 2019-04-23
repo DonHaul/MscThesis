@@ -12,6 +12,16 @@ def LeastSquaresOldSchool(A,b):
 def LeastSquaresOldSchoolPinved(A,b):
     return np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
 
+def MeanSquaredError(a,b=None):
+    '''
+    Sum of squared error, or sum of squared, of every element in a matrix, element wise
+    '''
+    
+    if(b is not None):
+        a=a-b
+
+    return np.sqrt(np.sum(a**2))
+
 
 #this is how wikipedia does it
 def procrustes(X,Y):
