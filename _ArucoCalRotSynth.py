@@ -8,8 +8,6 @@ import algos
 
 def main():
 
-    np.set_printoptions(threshold=np.inf)
-    np.set_printoptions(precision=1)
 
     R,t = synth.FakeArucoRotated()
 

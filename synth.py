@@ -77,6 +77,42 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
     return obsR,obst
 
+
+
+
+#attention this does not check if all cameras have matches
+def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t):
+    '''
+    simulates one single frame in every camera and matches results
+    '''
+    nObs = 5 #number of observations of a camera in a certain frame
+
+    camsObs = []
+
+    noise = 0.01
+    
+    #generate SingleCam Samples
+    for i in range(0,len(Rcam)):
+        
+        #pick random ones
+        rnds = random.sample(range(1, len(R)), nObs)
+
+        obsR=[]
+        obsT=[]
+
+        for r in rnds:
+            
+            #generate the samples
+            obsR.append({"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T))}) 
+            #obsT
+
+        #assign them to each camera
+        camsObs.append({"obsR":obsR,"obsT":obsT})
+
+    
+    
+    return camsObs
+
 def Scenev1():
 
     R=[]
