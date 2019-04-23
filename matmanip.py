@@ -66,3 +66,12 @@ def genRotRel(rotsols,ref=0):
 
 def CheckSymmetric(a, tol=1e-8):
     return np.allclose(a, a.T, atol=tol)
+
+def Rt2Homo(R,t):
+
+    H = np.eye(4)
+
+    H[0:3,0:3]=R
+    H[3,0:3]=t
+
+    return H

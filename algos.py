@@ -79,7 +79,7 @@ def procrustes2(X,Y):
 
     return R, t
 
-def TotalLeastSquares(C,Nleast,Nmarkers):
+def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     '''
     ola
     '''

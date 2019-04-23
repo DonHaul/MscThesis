@@ -1,7 +1,11 @@
 from matplotlib import pyplot as plt
 import open3d
 import numpy as np
-import matmanip
+import matmanip as mmnip
+
+mesh = open3d.read_triangle_mesh("models/filmCamera.ply")
+mesh.compute_vertex_normals()
+mesh.paint_uniform_color([1, 0.706, 0])
 
 def plotImg(img):
     fig = plt.figure()
@@ -66,3 +70,15 @@ def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
     draw_geometry(refs)
 
     return refs
+
+def ViewScene(R,t):
+
+    mesh1 = mesh
+    mesh2 = mesh
+    
+
+
+    mesh1.transform(mmnip.Rt2Homo(R[0],t[0]))
+    mesh2.transform(mmnip.Rt2Homo(R[1],t[1]))
+
+    open3d.draw_geometries([mesh1,mesh2])

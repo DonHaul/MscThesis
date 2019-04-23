@@ -74,7 +74,20 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             break
 
     return obsR,obst
-    
+
+def Scenev1():
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,180,0]))
+    R.append(mmnip.genRotMat([0,-90,0]))
+
+    t.append(np.array([0,0,0]))
+    t.append(np.array([50,0,-50]))
+
+    return R,t
+
 def FakeArucoRotated():
 
     R=[]
