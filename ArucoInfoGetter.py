@@ -7,7 +7,7 @@ import probdefs
 
 
 class ArucoInfoGetter(object):
-    def __init__(self):
+    def __init__(self,K,D,showVid=0,calc=0,R=None):
       
         self.count = 0
         self.Nmarkers = 12 #number of markers, MUST BE CONTIGUOUS for this to work
@@ -17,26 +17,30 @@ class ArucoInfoGetter(object):
 
         self.ATb = np.zeros((self.Nmarkers *3,1)) # *3 because tranlations are 3x1
 
-        self.obstList = []
+        #intrinsic Params
+        self.K = K
+        #Distortion params
+        self.D = D
+        #show video
+        self.showVid = showVid
+        #translation
+        self.calc = calc
 
+        self.R = R
 
 
 
     def callback(self,data,args):
 
-        showVid = args[0]["showVideo"]
-        K=args[0]["K"]
-        D=args[0]["D"]
-        R=args[0]["R"] #<-CORRECT, but only for translation
-        calc = args[0]["calc"]        
-        #ProbSolv = args[1][1]
+        
+       
         
         #fetches ros image
         img = roscv.rosImg2RGB(data)
 
         #calculates rotations
-        if (calc == 0):
-            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)
+        if (self.calc == 0):
+            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)
 
 
             if  ids is not None and len(ids)>1:
@@ -44,12 +48,12 @@ class ArucoInfoGetter(object):
 
                 self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
-        elif (calc == 1):
+        elif (self.calc == 1):
             
-            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,K,D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=True)
-
+            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=True)
+            
             if  ids is not None and len(ids)>1:
-                A,b =  probdefs.translationProbDef(obsT,R,self.Nmarkers)
+                A,b =  probdefs.translationProbDef(obsT,self.R,self.Nmarkers)
 
                 self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
@@ -58,13 +62,9 @@ class ArucoInfoGetter(object):
                 #self.obstList =self.obstList + obsT
 
 
-            
-
-
-
-        if(showVid == 1):
+        if(self.showVid == 1):
             cv2.imshow("Image window", img)
             cv2.waitKey(3)
-        elif(showVid == 2):
+        elif(self.showVid == 2):
             cv2.imshow("Image window", img)
             cv2.waitKey(0)

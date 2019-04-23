@@ -13,8 +13,10 @@ import matmanip as mmnip
 
 
 def main():
+    showVideo = 1
+    calc = 0  #0 is R 1 is t
 
-    ig = ArucoInfoGetter.ArucoInfoGetter()
+    
 
     cameraName = "abretesesamo"
 
@@ -22,18 +24,15 @@ def main():
 
     camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
 
+
+    ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc)
      
     # all of the parameters
-    cb_params =	{
-    "showVideo": 1,
-    "K": camInfo['K'],
-    "D": camInfo['D'],
-    "calc": 0 #0 is R 1 is t
-}
+    cb_params =	{}
      # all of the functions
     cb_functions = []
 
-
+    
 
     rospy.Subscriber(cameraName+"/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
 
@@ -53,9 +52,18 @@ def main():
 
     visu.ViewRefs(Rrel)
 
-    pickle.In("ArucoRot1","R",Rrel,"static")
-    #pickle.In("obs","RelMarkerRotations",Rrelations)
-     
+    permuter = [[1,0,0],[0,0,-1],[0,1,0]]
+
+    finalR=  mmnip.PermuteCols(Rrel,permuter)
+
+    visu.ViewRefs(finalR)
+
+    pickle.In("ArucoRot","Rglobal",rotsols,putDate=False)
+
+    pickle.In("ArucoRot","Rlocal",Rrel,putDate=False)
+
+    #pickle.In("ArucoRot","RlocalPermutated",finalR,"static/")
+
 
 if __name__ == '__main__':
     main()

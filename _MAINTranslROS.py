@@ -26,26 +26,23 @@ def main():
 
     R,t = synth.FakeArucoReal() #<-- MUST BE REMOVED LATER
 
-    ig = ArucoInfoGetter.ArucoInfoGetter()
-
+    
     cameraName = "abretesesamo"
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
     camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
 
- 
+    showVideo = 1
+    calc= 1  #0 is R 1 is t
+
+    ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc,R)
 
     # all of the parameters
-    cb_params =	{
-    "showVideo": 1,
-    "K": camInfo['K'],
-    "D": camInfo['D'],
-    "R": R,
-    "calc": 1 #0 is R 1 is t
-}
+    cb_params =	{}
+
      # all of the functions
-    cb_functions = [aruco.ArucoObservationMaker,probdefs.translationProbDef,algos.LeastSquares]
+    cb_functions = []
 
     rospy.Subscriber(cameraName+"/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
 
