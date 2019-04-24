@@ -31,6 +31,8 @@ def main():
 
     R,t = synth.FakeArucoReal()
 
+    
+
     #similar to output from ROS (I think)
     camsObs =synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
 
@@ -54,15 +56,13 @@ def main():
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
-    visu.ViewRefs(R,solsplit2)
+    visu.ViewRefs(Rcam,solsplit2)
 
     solt =[]
     #change t referential
     #for i in range(len(solsplit2)):
     #    solt.append(np.dot(-R[i].T,solsplit2[i]))
 
-
-    #ViewRefs(R,solt)
 
 
 
