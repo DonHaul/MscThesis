@@ -63,7 +63,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #print(t21)
             #print(t12.shape)
             obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
-            obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)}) #*noiset
+            obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset
             #print({"from":r2,"to":r1,"R":np.dot(R[r1],R[r2].T)})
             #raw_input()
             r[r1]=1
@@ -90,6 +90,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t):
     camsObs = []
 
     noise = 0.01
+    noiset = 0.01
     
     #generate SingleCam Samples
     for i in range(0,len(Rcam)):
@@ -102,8 +103,17 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t):
 
         for r in rnds:
             
-            #generate the samples
+                    
+
+            tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
+
+
+            #generate the samples  'from' Camera i 'to' sample i
+            #'ObsId' = 'to'            
             obsR.append({"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T))}) 
+
+             #'camId = to ObsId = 'from'
+            obsT.append({"camId":i,"obsId":r,"t": tcr}) 
             #obsT
 
         #assign them to each camera

@@ -21,8 +21,8 @@ def main():
     #correct
 
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
-    ola = pickle.Out("static/ArucoRot.pickle")
-    R =ola["RlocalPermutated"]
+    #ola = pickle.Out("static/ArucoRot.pickle")
+    #R =ola["RlocalPermutated"]
 
     # TRANSLATION STUFF
     A,b = probdefs.translationProbDef(obst,R,len(t))

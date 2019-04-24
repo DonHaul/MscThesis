@@ -13,6 +13,8 @@ import random
 import probdefs
 import algos
 
+import observationgenner as obsGen
+
 
 def main():
 
@@ -30,106 +32,41 @@ def main():
     R,t = synth.FakeArucoReal()
 
     #similar to output from ROS (I think)
-    camsObs = MultiCamSampleGeneratorStatic(Rcam,tcam,R,t)
+    camsObs =synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
 
-    obsR, obsT = GenerateCameraPairObs(camsObs,R,t)
+    obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
-    ObservationViewer(obsR)
+    obsGen.ObservationViewer(obsR)
     #quit()
 
-    B = probdefs.rotationProbDef(obsR,len(Rcam))  #95% confidence that it is correct
+     # TRANSLATION STUFF
+    A,b = probdefs.translationProbDef(obsT,Rcam,len(t))
 
-
-    C = np.dot(B.T,B) #C = B'B
-
-    print(C.shape)
-
-    rotSols = algos.TotalLeastSquares(C,3,len(Rcam)) 
-
-    print("global")
-    visu.ViewRefs(rotSols)
-    print("local")    
-    rotSoles = mmnip.genRotRel(rotSols)    
-
-    permuter = [[1,0,0],[0,0,-1],[0,1,0]]
-
-    finalR=  mmnip.PermuteCols(rotSoles,permuter)
-
-    visu.ViewRefs(finalR)
-
-
-
-#attention this does not check if all cameras have matches
-def MultiCamSampleGeneratorStatic(Rcam,tcam,R,t):
-    '''
-    simulates one single frame in every camera and matches results
-    '''
-    nObs = 5 #number of observations of a camera in a certain frame
-
-    camsObs = []
-
-    noise = 0.01
+    #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
+    x= algos.LeastSquares(A,b)
     
-    #generate SingleCam Samples
-    for i in range(0,len(Rcam)):
-        
-        #pick random ones
-        rnds = random.sample(range(1, len(R)), nObs)
+    print("LS,LSnp,LSinv")
 
-        obsR=[]
-        obsT=[]
+    x2 = np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
 
-        for r in rnds:
-            
-            #generate the samples
-            obsR.append({"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T))}) 
-            #obsT
+    print(np.sqrt(np.sum(x**2)))
+    print(np.sqrt(np.sum(x2**2)))
+    #print(x2)
 
-        #assign them to each camera
-        camsObs.append({"obsR":obsR,"obsT":obsT})
+    solsplit2 = np.split(x,len(t))
+    visu.ViewRefs(R,solsplit2)
 
-    
-    
-    return camsObs
+    solt =[]
+    #change t referential
+    #for i in range(len(solsplit2)):
+    #    solt.append(np.dot(-R[i].T,solsplit2[i]))
 
-def GenerateCameraPairObs(camsObs,R,t):
-    '''
-    R and t are from aruco
-    '''
 
-    obsR = []
-    obsT = []
-    #this double for loop makes all camera combinations
+    #ViewRefs(R,solt)
 
-    #between one camera
-    for i in range(0,len(camsObs)):
-        #and another camera
-        for j in range(i+1,len(camsObs)):
-            
-            #this double loop matches every possible observation in each camera
 
-            #go through all the obs of one camera
-            for obsiR in camsObs[i]['obsR']:
-                #and through all the obs of the other
-                for obsjR in camsObs[j]['obsR']:
-                
-                    #AND MATCHERU THEM
 
-                    #confusing as fuck i, know
-                    # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
-                    # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-                    obsR.append({"from":i,"to":j,"R": np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']])})
 
-    print(str(len(obsR))+ " Observations Were Generated") # should be same as Ncameras_C_2 * Nobs^2
-
-    return obsR,obsT
-
-def ObservationViewer(observations,what='R'):
-    for obs in observations:
-        print("from:"+str(obs['from'])+" to:"+str(obs['to']))
-        print(obs[what])
-
-#R": np.linalg.multi_dot([camsObs[j]['R'].T,R[camsObs[j]['obsId']],R[camsObs[i]['obsId']].T,camsObs[i]['R'].T])})
 
 
 

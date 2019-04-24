@@ -76,3 +76,11 @@ def Rt2Homo(R,t):
 
 
     return H
+
+def Transform(totransform,R,t):
+
+    return np.dot(R,totransform)+t
+
+def InverseTransform(totransform,R,t):
+
+    return np.dot(R.T,totransform)-np.dot(R.T,t)
