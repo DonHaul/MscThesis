@@ -47,11 +47,20 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #confusing as fuck i, know
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-                    Rbetweenaruco = np.dot(R[obsiR['obsId']],R[obsjR['obsId']].T)
-                    tbetweenaruco = np.dot(R[obsiR['obsId']].T, t[obsjR['obsId']] - t[obsjR['obsId']])
 
+
+
+                    Rbetweenaruco = np.dot(R[obsjR['obsId']],R[obsiR['obsId']].T)
+                    tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
+                    #tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
                     new_t =  mmnip.Transform(obsiR['t'],Rbetweenaruco,tbetweenaruco)
                     tij = mmnip.InverseTransform(new_t,obsjR['R'],obsjR['t'])
+
+                    print("R from: "+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
+                    print(Rbetweenaruco)
+                    print("T from:"+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
+                    print(tbetweenaruco)
+                    raw_input()
 
                     obsT.append({"from":i,"to":j,"t": tij})
 

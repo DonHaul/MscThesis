@@ -81,11 +81,15 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
 
 #attention this does not check if all cameras have matches
-def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t):
+def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5):
     '''
     simulates one single frame in every camera and matches results
     '''
-    nObs = 5 #number of observations of a camera in a certain frame
+     #number of observations of a camera in a certain frame
+
+    if(nObs>len(tcam)):
+        print("Warning: Number of observations requested higher than total markers")
+        nObs=len(tcam)-1
 
     camsObs = []
 
@@ -103,18 +107,22 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t):
 
         for r in rnds:
             
-                   
-
-
             tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
 
 
             #generate the samples  'from' Camera i 'to' sample i
             #'ObsId' = 'to'                 #'camId = to ObsId = 'from'
             #assign them to each camera
-            obs.append({"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}) 
+            o ={"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}
+            obs.append(o)
+
+            #print("fromMarker:"+str(o['obsId'])+" toCamera:"+str(i)) - CORRECT
+            #print(tcr)
+            #raw_input()
     
         camsObs.append(obs)
+
+
 
     return camsObs
 
@@ -149,6 +157,7 @@ def FakeArucoRotated():
     t.append(np.array([-10,0,0]))
 
     return R,t
+
 
 def FakeAruco():
 

@@ -25,16 +25,17 @@ def main():
     
     Rcam, tcam = synth.Scenev1()
 
-    visu.ViewRefs(Rcam)
+    visu.ViewRefs(Rcam,tcam)
 
     #visu.ViewScene(R,t)
 
-    R,t = synth.FakeArucoReal()
+    R,t = synth.FakeAruco()
 
-    
+    visu.ViewRefs(Rcam+R,tcam+t)
 
     #similar to output from ROS (I think)
     camsObs =synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
+
 
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
