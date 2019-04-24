@@ -61,16 +61,16 @@ def GenerateCameraPairObs(camsObs,R,t):
                     tij = mmnip.Transform(mmnip.InvertT(new_R.T, new_t),obsjR['R'],obsjR['t'])
                     #tij = mmnip.Transform(mmnip.InvertT(new_R, new_t),obsjR['R'].T, mmnip.InvertT(obsjR['R'].T,obsjR['t']))
 
-                    print("R from: "+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
-                    print(Rbetweenaruco)
-                    print("T from:"+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
-                    print(tbetweenaruco)
+                    #print("R from: "+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
+                    #print(Rbetweenaruco)
+                    #print("T from:"+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
+                    #print(tbetweenaruco)
 
-                    print("fromMarker:"+str(obsjR['obsId'])+" toCamera:"+str(i)) #- CORRECT
-                    print(new_t)
+                    #print("fromMarker:"+str(obsjR['obsId'])+" toCamera:"+str(i)) #- CORRECT
+                    #print(new_t)
 
-                    print("fromCamera:"+str(i)+" toCamera:"+str(j)) #- CORRECT
-                    print(tij)
+                    #print("fromCamera:"+str(i)+" toCamera:"+str(j)) #- CORRECT
+                    #print(tij)
 
                     #raw_input()
 

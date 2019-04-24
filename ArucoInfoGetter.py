@@ -33,8 +33,11 @@ class ArucoInfoGetter(object):
     def callback(self,data,args):
 
         
-       
-        
+        camId=0
+
+        if self.calc>2:
+            camId= args[0]['camId']
+
         #fetches ros image
         img = roscv.rosImg2RGB(data)
 
@@ -63,8 +66,8 @@ class ArucoInfoGetter(object):
 
 
         if(self.showVid == 1):
-            cv2.imshow("Image window", img)
+            cv2.imshow("Image window "+str(camId) , img)
             cv2.waitKey(3)
         elif(self.showVid == 2):
-            cv2.imshow("Image window", img)
+            cv2.imshow("Image window "+str(camId), img)
             cv2.waitKey(0)
