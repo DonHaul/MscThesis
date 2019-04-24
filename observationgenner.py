@@ -52,15 +52,27 @@ def GenerateCameraPairObs(camsObs,R,t):
 
                     Rbetweenaruco = np.dot(R[obsjR['obsId']],R[obsiR['obsId']].T)
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
-                    #tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
-                    new_t =  mmnip.Transform(obsiR['t'],Rbetweenaruco,tbetweenaruco)
-                    tij = mmnip.InverseTransform(new_t,obsjR['R'],obsjR['t'])
+
+                    new_R = np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T])
+                    new_t =  mmnip.Transform(mmnip.InvertT(Rbetweenaruco.T, tbetweenaruco),obsiR['R'],  obsiR['t'])
+                    #new_t =  mmnip.Transform(tbetweenaruco,obsiR['R'].T, mmnip.InvertT(obsiR['R'].T,obsiR['t']))
+                    
+                    
+                    tij = mmnip.Transform(mmnip.InvertT(new_R.T, new_t),obsjR['R'],obsjR['t'])
+                    #tij = mmnip.Transform(mmnip.InvertT(new_R, new_t),obsjR['R'].T, mmnip.InvertT(obsjR['R'].T,obsjR['t']))
 
                     print("R from: "+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
                     print(Rbetweenaruco)
                     print("T from:"+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))
                     print(tbetweenaruco)
-                    raw_input()
+
+                    print("fromMarker:"+str(obsjR['obsId'])+" toCamera:"+str(i)) #- CORRECT
+                    print(new_t)
+
+                    print("fromCamera:"+str(i)+" toCamera:"+str(j)) #- CORRECT
+                    print(tij)
+
+                    #raw_input()
 
                     obsT.append({"from":i,"to":j,"t": tij})
 
