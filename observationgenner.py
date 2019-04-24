@@ -7,6 +7,9 @@ def ObservationViewer(observations,what='R'):
         print("from:"+str(obs['from'])+" to:"+str(obs['to']))
         print(obs[what])
 
+def SampleGenMultiCam(camObs1,camObs2):
+    pass
+
 def GenerateCameraPairObs(camsObs,R,t):
     '''
     R and t are from aruco
@@ -22,11 +25,21 @@ def GenerateCameraPairObs(camsObs,R,t):
         for j in range(i+1,len(camsObs)):
             
             #this double loop matches every possible observation in each camera
+            
 
             #go through all the obs of one camera
-            for k in range(0,len(camsObs[i]['obsR'])):
+            for obsiR in camsObs[i]:
                 #and through all the obs of the other
-                for l in range(0,len(camsObs[j]['obsR'])):
+                for obsjR in camsObs[j]:
+                
+
+
+
+                    #confusing as fuck i, know
+                    # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
+                    # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
+                    obsR.append({"from":i,"to":j,"R": np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']])})
+
 
                     
                     #AND MATCHERU THEM
@@ -34,18 +47,11 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #confusing as fuck i, know
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-                    obsR.append({"from":i,"to":j,"R": np.linalg.multi_dot([camsObs[i]['obsR'][k]['R'].T,R[camsObs[i]['obsR'][k]['obsId']],R[camsObs[j]['obsR'][l]['obsId']].T,camsObs[j]['obsR'][l]['R']])})
+                    Rbetweenaruco = np.dot(R[obsiR['obsId']],R[obsjR['obsId']].T)
+                    tbetweenaruco = np.dot(R[obsiR['obsId']].T, t[obsjR['obsId']] - t[obsjR['obsId']])
 
-                    #AND MATCHERU THEM
-
-                    #confusing as fuck i, know
-                    # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
-                    # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-                    Rbetweenaruco = np.dot(R[camsObs[i]['obsR'][k]['obsId']],R[camsObs[j]['obsR'][l]['obsId']].T)
-                    tbetweenaruco = np.dot(R[camsObs[i]['obsR'][k]['obsId']].T, t[camsObs[j]['obsR'][l]['obsId']] - t[camsObs[j]['obsR'][l]['obsId']])
-
-                    new_t =  mmnip.Transform(camsObs[i]['obsT'][k]['t'],Rbetweenaruco,tbetweenaruco)
-                    tij = mmnip.InverseTransform(new_t,camsObs[j]['obsR'][l]['R'],camsObs[j]['obsT'][l]['t'])
+                    new_t =  mmnip.Transform(obsiR['t'],Rbetweenaruco,tbetweenaruco)
+                    tij = mmnip.InverseTransform(new_t,obsjR['R'],obsjR['t'])
 
                     obsT.append({"from":i,"to":j,"t": tij})
 

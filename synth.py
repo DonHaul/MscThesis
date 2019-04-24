@@ -98,29 +98,24 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t):
         #pick random ones
         rnds = random.sample(range(1, len(R)), nObs)
 
-        obsR=[]
-        obsT=[]
+        obs=[]
+        
 
         for r in rnds:
             
-                    
+                   
+
 
             tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
 
 
             #generate the samples  'from' Camera i 'to' sample i
-            #'ObsId' = 'to'            
-            obsR.append({"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T))}) 
-
-             #'camId = to ObsId = 'from'
-            obsT.append({"camId":i,"obsId":r,"t": tcr}) 
-            #obsT
-
-        #assign them to each camera
-        camsObs.append({"obsR":obsR,"obsT":obsT})
-
+            #'ObsId' = 'to'                 #'camId = to ObsId = 'from'
+            #assign them to each camera
+            obs.append({"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}) 
     
-    
+        camsObs.append(obs)
+
     return camsObs
 
 def Scenev1():

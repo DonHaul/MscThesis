@@ -60,26 +60,5 @@ def main():
 
 
 
-
-
-#R": np.linalg.multi_dot([camsObs[j]['R'].T,R[camsObs[j]['obsId']],R[camsObs[i]['obsId']].T,camsObs[i]['R'].T])})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     main()
