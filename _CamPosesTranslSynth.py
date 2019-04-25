@@ -36,6 +36,8 @@ def main():
     #similar to output from ROS (I think)
     camsObs =synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
 
+    print(camsObs)
+    print("ahdioad")
 
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 

@@ -86,7 +86,7 @@ def main():
 
 
     solsplit2 = np.split(x,g.N_cams)
-    visu.ViewRefs(Rcam,solsplit2,refSize=0.1)
+    #visu.ViewRefs(Rcam,solsplit2,refSize=0.1)
 
     print(solsplit2)
 

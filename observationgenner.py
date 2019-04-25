@@ -50,7 +50,7 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
                 o['R']=rots[i]
 
                 #generate t observations
-                o['t']=tvecs[i] #WRONG - Not sure if this is the correct t
+                o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
                 
                 observations.append(o)
 
@@ -86,7 +86,9 @@ def GenerateCameraPairObs(camsObs,R,t):
                 #and through all the obs of the other
                 for obsjR in camsObs[j]:
                 
-
+                    
+                    #print("t")
+                    #print(t)
 
 
                     #confusing as fuck i, know
@@ -105,14 +107,47 @@ def GenerateCameraPairObs(camsObs,R,t):
 
 
                     Rbetweenaruco = np.dot(R[obsjR['obsId']],R[obsiR['obsId']].T)
+
+                    print("Rbetweenaruco")
+                    print(Rbetweenaruco.shape)
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
+                    print("tbetweenaruco")
+                    print(tbetweenaruco.shape)
+
+                    print("R[obsjR['obsId']].T")
+                    print(R[obsjR['obsId']].T.shape)
+
+                    print("t[obsiR['obsId']]")
+                    print(t[obsiR['obsId']].shape)
+
+                    print("t[obsjR['obsId']]")
+                    print(t[obsjR['obsId']].shape)
 
                     new_R = np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T])
+                    
+                    #print("obsiR['t']")
+                    #print(obsiR['t'].shape)
+
+                    #print("oako")
+                    #print(mmnip.InvertT(Rbetweenaruco.T, tbetweenaruco).shape)
+                    #print("obsiR['R']")
+                    #print(obsiR['R'].shape)
+
                     new_t =  mmnip.Transform(mmnip.InvertT(Rbetweenaruco.T, tbetweenaruco),obsiR['R'],  obsiR['t'])
                     #new_t =  mmnip.Transform(tbetweenaruco,obsiR['R'].T, mmnip.InvertT(obsiR['R'].T,obsiR['t']))
+
+                    #print("new_R")
+                    #print(new_R.shape)
+                    #print("new_T")
+                    #print(new_t.shape)
                     
                     
                     tij = mmnip.Transform(mmnip.InvertT(new_R.T, new_t),obsjR['R'],obsjR['t'])
+
+
+                    print("tij")
+                    print(tij.shape)
+
                     #tij = mmnip.Transform(mmnip.InvertT(new_R, new_t),obsjR['R'].T, mmnip.InvertT(obsjR['R'].T,obsjR['t']))
 
                     #print("R from: "+str(obsiR['obsId'])+" to: "+str(obsjR['obsId']))

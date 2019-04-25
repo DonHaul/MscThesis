@@ -21,7 +21,15 @@ class img_gather(object):
 
 
         self.R = arucoModel['R']
-        self.t = arucoModel['t']
+
+        self.t = []
+
+        for tt in arucoModel['t']:
+            self.t.append(np.squeeze(tt))
+        
+        #self.t = arucoModel['t']
+        #print(self.t)
+        #print("t is above")
 
         self.calc = calc
 
@@ -65,7 +73,13 @@ class img_gather(object):
             #for o in self.Allobs:
             #    print(len(o))
             #Generate Pairs
+            #print("PIXA")
+            #print(self.Allobs)
+            #print("AOLAO")
             obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
+
+            #print(obsT[0]['t'].shape)
+            self.calc=3
 
             if self.calc == 0:
                 A = probdefs.rotationProbDef(obsR,self.N_cams)
