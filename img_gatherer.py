@@ -27,7 +27,7 @@ class img_gather(object):
         self.ATA = np.zeros((N_cams*3,N_cams*3))
 
         #print("obs")
-        #print(self.Allobs)
+        print(self.ATA.shape)
         
     def showImg(self):
         cv2.imshow("Image window ",self.images)           
@@ -45,8 +45,6 @@ class img_gather(object):
 
         self.Allobs[camId]=self.Allobs[camId] +obs  # WRONG SHOULD IT BE concantenate lists OR =?
 
-        print("afteradding")
-        print(self.Allobs)
 
         if(np.sum(self.gatherReady)== self.N_cams):
             
@@ -54,15 +52,19 @@ class img_gather(object):
             #Generate Pairs
             obsR , _ = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
-            ATA = probdefs.rotationProbDef(obsR,self.N_cams)
+            A = probdefs.rotationProbDef(obsR,self.N_cams)
 
-            self.ATA = self.ATA + ATA
+            #print(ATA.shape)
+
+            self.ATA = self.ATA + np.dot(A.T,A)
 
             #cleanse
             self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)
 
             #clear observations
             self.Allobs = [ [] for i in range(self.N_cams) ]
+
+
         
 
 

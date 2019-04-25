@@ -81,11 +81,11 @@ def main():
     rotsols = algos.TotalLeastSquares(g.ATA,3,g.N_cams)
 
 
-    #visu.ViewRefs(rotsols)
+    visu.ViewRefs(rotsols)
     
     Rrel = mmnip.genRotRel(rotsols)
 
-    #visu.ViewRefs(Rrel)
+    visu.ViewRefs(Rrel)
 
 
 

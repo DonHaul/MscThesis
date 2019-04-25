@@ -131,6 +131,6 @@ def GenerateCameraPairObs(camsObs,R,t):
                     obsT.append({"from":i,"to":j,"t": tij})
 
     print(str(len(obsR))+ " Rotation Observations Were Generated") # should be same as Ncameras_C_2 * Nobs^2
-    print(str(len(obsT))+ " Translation Observations Were Generated") 
+    #print(str(len(obsT))+ " Translation Observations Were Generated") 
 
     return obsR,obsT
