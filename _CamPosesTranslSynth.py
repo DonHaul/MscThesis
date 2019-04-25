@@ -29,7 +29,7 @@ def main():
 
     #visu.ViewScene(R,t)
 
-    R,t = synth.FakeAruco()
+    R,t = synth.FakeArucoReal()
 
     visu.ViewRefs(Rcam+R,tcam+t)
 

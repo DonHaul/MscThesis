@@ -17,7 +17,6 @@ def main():
 
     visu.ViewRefs(R,t)
     
-    obsR,obst = synth.SampleGenerator(R,t,noise=0.1,noiset=0,samples=100)
     #correct
 
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS

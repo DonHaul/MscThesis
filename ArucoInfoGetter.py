@@ -28,6 +28,7 @@ class ArucoInfoGetter(object):
 
         self.R = R
 
+        
 
 
     def callback(self,data,args):
@@ -40,7 +41,7 @@ class ArucoInfoGetter(object):
 
         #fetches ros image
         img = roscv.rosImg2RGB(data)
-
+        print(img.shape)
         #calculates rotations
         if (self.calc == 0):
             img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)

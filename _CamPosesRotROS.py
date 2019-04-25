@@ -51,7 +51,7 @@ def main():
     cb_functions = []
 
     
-    rospy.Subscriber(camsName[cb_params["camId"]]+"/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
+    #rospy.Subscriber(camsName[cb_params["camId"]]+"/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
 
     try:
         rospy.spin()
