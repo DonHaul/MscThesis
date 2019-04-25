@@ -33,6 +33,7 @@ class img_gather(object):
         cv2.imshow("Image window ",self.images)           
         cv2.waitKey(1)
         #print(self.gatherCounter)
+        #pass
 
     def GatherImg(self,camId,img,obs):
         #print("on gather img")
@@ -63,6 +64,8 @@ class img_gather(object):
 
             #clear observations
             self.Allobs = [ [] for i in range(self.N_cams) ]
+
+            #raw_input("DO U KNO Da WAE?")
 
 
         
