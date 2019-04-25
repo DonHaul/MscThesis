@@ -42,7 +42,7 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
                  
                 if i not in range(2,14):
                     #print("Invalid marker id: "+str(i))
-                    continue
+                    continue 
 
                 o ={"obsId":i+markerIDoffset}
 
@@ -53,7 +53,7 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
                 o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
                 
                 observations.append(o)
-
+ 
     return observations ,img
 
 def ObservationViewer(observations,what='R'):
