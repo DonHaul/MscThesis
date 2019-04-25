@@ -7,7 +7,7 @@ import probdefs
 
 
 class ArucoInfoGetter(object):
-    def __init__(self,K,D,showVid=0,calc=0,R=None):
+    def __init__(self,K,D,showVid=0,calc=0,R=None,camId=0,gather=None):
       
         self.count = 0
         self.Nmarkers = 12 #number of markers, MUST BE CONTIGUOUS for this to work
@@ -28,16 +28,22 @@ class ArucoInfoGetter(object):
 
         self.R = R
 
+        self.camId = camId
+
+        self.gather = gather
+
         
 
 
     def callback(self,data,args):
 
-        
+        #print("calc")
+        #print(self.calc)
         camId=0
 
-        if self.calc>2:
-            camId= args[0]['camId']
+        #if self.calc>2:
+            #print("camId")
+            #print(self.camId)
 
         #fetches ros image
         img = roscv.rosImg2RGB(data)
@@ -65,10 +71,17 @@ class ArucoInfoGetter(object):
 
                 #self.obstList =self.obstList + obsT
 
+        self.gather.GatherImg(self.camId,img)
+        
 
-        if(self.showVid == 1):
-            cv2.imshow("Image window "+str(camId) , img)
-            cv2.waitKey(3)
-        elif(self.showVid == 2):
-            cv2.imshow("Image window "+str(camId), img)
-            cv2.waitKey(0)
+        if(self.showVid == 1 and self.camId==0):
+            
+            
+            self.gather.showImg()
+            #print(img.shape)
+             
+            #cv2.imshow("Image window "+str(self.camId) , img)           
+            #cv2.waitKey(3)
+        #elif(self.showVid == 2):
+        #    cv2.imshow("Image window "+str(self.camId), img)
+        #    cv2.waitKey(0)

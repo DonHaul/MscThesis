@@ -11,7 +11,7 @@ import matmanip as mmnip
 
 import visu 
 
-import ArucoInfoGetter
+import ArucoInfoGetterv2 as ArucoInfoGetter
 
 import random
 
@@ -19,6 +19,8 @@ import probdefs
 import algos
 
 import observationgenner as obsGen
+
+import img_gatherer as gather
 
 
 from sensor_msgs.msg import Image
@@ -28,30 +30,34 @@ def main():
     showVideo = 1
     calc = 3  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
 
-    
 
     camsName = ["abretesesamo","ervilhamigalhas"]
+
+    #create gather class
+    g = gather.img_gather(len(camsName))
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
     camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
 
-    ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc)
-     
+    arucoGetters=[]
+
     # all of the parameters
-    cb_params =	{"camId":0}
-     # all of the functions
+    cb_params =	{}
+    # all of the functions
     cb_functions = []
 
-    
-    rospy.Subscriber(camsName[cb_params["camId"]]+"/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
+    for i in range(0,len(camsName)):
 
-    cb_params["camId"]=1
-     # all of the functions
-    cb_functions = []
+        #initialize class for each camera
+        ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc,None,i,g)
 
-    
-    #rospy.Subscriber(camsName[cb_params["camId"]]+"/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
+        #saves it for some reason
+        arucoGetters.append(ig)
+
+        #subscribe to each camera
+        rospy.Subscriber(camsName[i] + "/rgb/image_color", Image, ig.callback,(cb_params,cb_functions))
+
 
     try:
         rospy.spin()
