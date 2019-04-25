@@ -35,7 +35,7 @@ def main():
     #Load aruco Model
     arucoModel = pickle.Out("static/ArucoModel 23-04-2019 13-45-37.pickle")
 
-    
+     
 
     showVideo = 1
     calc = 0  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
