@@ -34,6 +34,7 @@ def main():
     #similar to output from ROS (I think)
     camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
 
+
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
     obsGen.ObservationViewer(obsR)

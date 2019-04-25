@@ -47,7 +47,7 @@ class ArucoInfoGetter(object):
         #print(img.shape)
         #calculates rotations
         if (self.calc == 0):
-            obs, img = obsGen.Cam2ArucoObsMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)
+            obs, img = obsGen.Cam2ArucoObsMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers)
 
 
 

@@ -3,7 +3,7 @@ import matmanip as mmnip
 import aruco
 import cv2
 
-def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT=False):
+def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
     '''
     this function creates observations between this camera and every aruco marker it sees
 
@@ -47,12 +47,10 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT=Fal
                 o ={"obsId":i+markerIDoffset}
 
                 #generate R observations
-                if(captureR):
-                    o['R']=rots[i]
+                o['R']=rots[i]
 
-                if(captureT):
-                    #generate t observations
-                    o['t']=tvecs[i] #WRONG - Not sure if this is the correct t
+                #generate t observations
+                o['t']=tvecs[i] #WRONG - Not sure if this is the correct t
                 
                 observations.append(o)
 
