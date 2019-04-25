@@ -113,7 +113,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5):
             #generate the samples  'from' Camera i 'to' sample i
             #'ObsId' = 'to'                 #'camId = to ObsId = 'from'
             #assign them to each camera
-            o ={"obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}
+            o ={ "obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}
             obs.append(o)
 
             #print("fromMarker:"+str(o['obsId'])+" toCamera:"+str(i)) - CORRECT

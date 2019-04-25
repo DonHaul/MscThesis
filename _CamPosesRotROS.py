@@ -27,14 +27,19 @@ from sensor_msgs.msg import Image
 
 def main():
 
+    #Load aruco Model
+    arucoModel = pickle.Out("static/ArucoModel 23-04-2019 13-45-37.pickle")
+
+    
+
     showVideo = 1
-    calc = 3  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
+    calc = 0  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
 
 
     camsName = ["abretesesamo","ervilhamigalhas"]
 
     #create gather class
-    g = gather.img_gather(len(camsName))
+    g = gather.img_gather(len(camsName),arucoModel)
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 

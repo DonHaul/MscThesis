@@ -1,6 +1,62 @@
 import numpy as np
 import matmanip as mmnip
+import aruco
+import cv2
 
+def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT=False):
+    '''
+    this function creates observations between this camera and every aruco marker it sees
+
+    if the camera sees markers 1 2 and 3
+
+    it will generate Rcam_1 Rcam_2 and Rcam_3
+
+    THIS FUNCTION WILL GENERATE SAMPLES FOR A SINGLE CAMERA
+    
+    K - intrinsic camera matrix
+    D - distortion parameters
+    det_corners - all detected corners
+    hello - img
+    ids - all detected ids
+    '''
+
+    det_corners, ids, rejected = aruco.FindMarkers(img, K)
+
+    hello = img.astype(np.uint8).copy() 
+    hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+    
+    observations =[]
+
+    #if more than one marker was detected
+    if  ids is not None and len(ids)>1:
+
+        #finds rotations and vectors and draws referentials on image
+        rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
+
+        #squeeze
+        ids = ids.squeeze()
+
+
+        #generates samples
+        for i in range(0,len(ids)):                
+                 
+                if i not in range(2,14):
+                    #print("Invalid marker id: "+str(i))
+                    continue
+
+                o ={"obsId":i+markerIDoffset}
+
+                #generate R observations
+                if(captureR):
+                    o['R']=rots[i]
+
+                if(captureT):
+                    #generate t observations
+                    o['t']=tvecs[i] #WRONG - Not sure if this is the correct t
+                
+                observations.append(o)
+
+    return observations ,img
 
 def ObservationViewer(observations,what='R'):
     for obs in observations:
