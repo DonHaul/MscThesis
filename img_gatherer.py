@@ -23,6 +23,8 @@ class img_gather(object):
         self.R = arucoModel['R']
         self.t = arucoModel['t']
 
+        self.ATA = np.zeros((N_cams*3,N_cams*3))
+
         print("obs")
         print(self.obs)
         
@@ -45,7 +47,12 @@ class img_gather(object):
         if(np.sum(self.gatherReady)== self.N_cams):
             
             #Generate Pairs
-            obsGen.GenerateCameraPairObs(obs,self.R,self.t)
+            obs , _ = RobsGen.GenerateCameraPairObs(obs,self.R,self.t)
+
+            ATA = probdefs.rotationProbDef(obsR,self.N_cams)
+
+            self.ATA = self.ATA + ATA
+
             #cleanse
             self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)
 

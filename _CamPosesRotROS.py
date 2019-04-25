@@ -22,6 +22,11 @@ import observationgenner as obsGen
 
 import img_gatherer as gather
 
+import cv2
+
+import visu
+
+
 
 from sensor_msgs.msg import Image
 
@@ -71,6 +76,16 @@ def main():
 
     cv2.destroyAllWindows()
 
+
+    
+    rotsols = algos.TotalLeastSquares(g.ATA,3,g.N_cams)
+
+
+    visu.ViewRefs(rotsols)
+    
+    Rrel = mmnip.genRotRel(rotsols)
+
+    visu.ViewRefs(Rrel)
 
 
 
