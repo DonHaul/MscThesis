@@ -8,7 +8,7 @@ import observationgenner as obsGen
 
 
 class ArucoInfoGetter(object):
-    def __init__(self,K,D,showVid=0,calc=0,R=None,camId=0,gather=None):
+    def __init__(self,K,D,camId=0,gather=None):
       
         self.count = 0
         self.Nmarkers = 12 #number of markers, MUST BE CONTIGUOUS for this to work
@@ -18,12 +18,6 @@ class ArucoInfoGetter(object):
         self.K = K
         #Distortion params
         self.D = D
-        #show video
-        self.showVid = showVid
-        #translation
-        self.calc = calc
-
-        self.R = R
 
         self.camId = camId
 
@@ -34,40 +28,14 @@ class ArucoInfoGetter(object):
 
     def callback(self,data,args):
 
-        #print("calc")
-        #print(self.calc)
-        camId=0
-
-        #if self.calc>2:
-            #print("camId")
-            #print(self.camId)
-
-        #fetches ros image
+        
         img = roscv.rosImg2RGB(data)
-        #print(img.shape)
-        #calculates rotations
-        if (self.calc == 0):
-            obs, img = obsGen.Cam2ArucoObsMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers)
-
-
-
-
-        elif (self.calc == 1):
-            
-            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=True)
-            
-            if  ids is not None and len(ids)>1:
-                A,b =  probdefs.translationProbDef(obsT,self.R,self.Nmarkers)
-
-                self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
-
-                self.ATb = self.ATb + np.dot(A.T,b) #way to save the matrix in a compact manner
-
-                #self.obstList =self.obstList + obsT
+        
+        obs, img = obsGen.Cam2ArucoObsMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers)
 
         self.gather.GatherImg(self.camId,img,obs)
         
 
-        if(self.showVid == 1 and self.camId==0):
+        if(self.camId==0):
                   
             self.gather.showImg()

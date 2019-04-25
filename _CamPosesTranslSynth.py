@@ -39,6 +39,8 @@ def main():
 
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
+    print(obsT)
+
     obsGen.ObservationViewer(obsR)
     #quit()
 

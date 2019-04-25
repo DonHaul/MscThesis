@@ -7,7 +7,7 @@ import observationgenner as obsGen
 
 
 class img_gather(object):
-    def __init__(self,N_cams,arucoModel):
+    def __init__(self,N_cams,arucoModel,calc,Rcam=None):
       
         self.N_cams = N_cams
 
@@ -19,15 +19,27 @@ class img_gather(object):
 
         self.Allobs = [ [] for i in range(self.N_cams) ]
 
-        print(self.Allobs)
 
         self.R = arucoModel['R']
         self.t = arucoModel['t']
 
+        self.calc = calc
+
+        if(self.calc==0):
+            print("R problem Definition")
+        elif(self.calc==1):
+            print("t problem Definition")
+        else:
+            print("SOMETHING WENT WRONG")
+
+        self.Rcam = Rcam
+
         self.ATA = np.zeros((N_cams*3,N_cams*3))
 
+        self.ATb = np.zeros((N_cams*3,1)) # *3 because tranlations are 3x1
+
         #print("obs")
-        print(self.ATA.shape)
+        #print(self.ATA.shape)
         
     def showImg(self):
         cv2.imshow("Image window ",self.images)           
@@ -49,15 +61,25 @@ class img_gather(object):
 
         if(np.sum(self.gatherReady)== self.N_cams):
             
-
+            #print("listu printu")
+            #for o in self.Allobs:
+            #    print(len(o))
             #Generate Pairs
-            obsR , _ = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
+            obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
-            A = probdefs.rotationProbDef(obsR,self.N_cams)
+            if self.calc == 0:
+                A = probdefs.rotationProbDef(obsR,self.N_cams)
+                #print(ATA.shape)
+                self.ATA = self.ATA + np.dot(A.T,A)
+            elif self.calc ==1:
 
-            #print(ATA.shape)
+                
 
-            self.ATA = self.ATA + np.dot(A.T,A)
+                A,b =  probdefs.translationProbDef(obsT,self.Rcam,self.N_cams)
+
+                self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
+
+                self.ATb = self.ATb + np.dot(A.T,b) #way to save the matrix in a compact manner
 
             #cleanse
             self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)

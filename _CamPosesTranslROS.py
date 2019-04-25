@@ -35,16 +35,19 @@ def main():
     #Load aruco Model
     arucoModel = pickle.Out("static/ArucoModel 23-04-2019 13-45-37.pickle")
 
-     
+    CameraPose = pickle.Out("static/CameraPoseR 25-04-2019 20-08-11.pickle")
+
+    Rcam = CameraPose['R']
 
     showVideo = 1
-    calc = 0  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
+    calc = 1  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
+
 
 
     camsName = ["abretesesamo","ervilhamigalhas"]
 
     #create gather class
-    g = gather.img_gather(len(camsName),arucoModel,calc)
+    g = gather.img_gather(len(camsName),arucoModel,calc,Rcam)
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
@@ -77,19 +80,16 @@ def main():
     cv2.destroyAllWindows()
 
 
+        
+    x = np.dot(np.linalg.pinv(g.ATA),g.ATb)
     
-    rotsols = algos.TotalLeastSquares(g.ATA,3,g.N_cams)
 
 
-    visu.ViewRefs(rotsols)
-    
-    Rrel = mmnip.genRotRel(rotsols)
+    solsplit2 = np.split(x,g.N_cams)
+    visu.ViewRefs(Rcam,solsplit2,refSize=0.1)
 
-    visu.ViewRefs(Rrel)
+    print(solsplit2)
 
-    pickle.In("CameraPoseR","R",Rrel)
-
-    
 
 
 
