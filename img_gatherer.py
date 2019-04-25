@@ -40,7 +40,7 @@ class img_gather(object):
         
         #print(np.sum(img-self.images[0:480,camId*640:camId*640+640,0:3]))
         self.gatherCounter[camId] = self.gatherCounter[camId] +1
-        '''
+        
         self.gatherReady[camId]=1
 
         self.Allobs[camId]=self.Allobs[camId] +obs  # WRONG SHOULD IT BE concantenate lists OR =?
@@ -63,7 +63,7 @@ class img_gather(object):
 
             #clear observations
             self.Allobs = [ [] for i in range(self.N_cams) ]
-        '''
+        
 
 
 
