@@ -1,14 +1,22 @@
+"""
+visu.py
+
+This module contains functions to visualize plots, Referentials and pointclouds
+"""
+
 from matplotlib import pyplot as plt
 import open3d
 import numpy as np
 import matmanip as mmnip
 import copy
 
-#mesh = open3d.read_triangle_mesh("models/filmCamera.ply")
-#mesh.compute_vertex_normals()
-#mesh.paint_uniform_color([1, 0.706, 0])
 
 def plotImg(img):
+    '''
+    receives an image and plots it.
+
+    Upon pressing key plot closes
+    '''
     fig = plt.figure()
     plt.imshow(img)
     plt.draw()
@@ -17,21 +25,45 @@ def plotImg(img):
 
 
 def draw_geometry(pcd):
+    '''
+    Draws an open3d geometry with a black bacground so that my eyes dont bleed out.
+    Upon pressing Escape, the plot closes.
+
+    Args:
+        pcd [open3d.Geometry]: Array of geometries to display
+
+    Returns:
+        Visualizer: the generates Visualizer window
+    '''
     # The following code achieves the same effect as:
     # draw_geometries([pcd])
     vis = open3d.Visualizer()
 
+    #creates the window
     vis.create_window(width=800 ,height=600)
+
+    #fetches its options
     opt = vis.get_render_option()
+
+    #makes it black
     opt.background_color = np.asarray([0, 0, 0])
     for geo in pcd:
         vis.add_geometry(geo)
+
+    #applies all geometries
     vis.run()
     vis.destroy_window()
 
+    return vis
 
-def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
+def ViewRefs(R=None,t=None,refSize=10):
+    '''ViewRefs - Displays a bunch of referentials on the screen
 
+    Args:
+        R: Rotations Array from the world to it
+        t: Translations Array from the each referential in world coordinated
+        refSize: Size of the referentials
+    '''
     
 
     #in case one of them is none, get the one that is not zero
@@ -39,52 +71,37 @@ def ViewRefs(R=None,t=None,refSize=10, w=None,h=None):
 
     refs = []
 
+    #When no t is given, generate translations in a line
     if t is None:
         t = []
         for i in range(0,N):
             t.append([i*20,0,0]) 
 
 
-
+    #When no R is given, generate Rotations with no rotation (Identity)
     if R is None:
         R = []
         for i in range(0,N):
             print(R)
-            R.append(matmanip.genRotMat([0,0,0])) 
+            R.append(mmnip.genRotMat([0,0,0])) 
 
 
    
-
+    #display each referential (R,t)
     for i in range(N):
-
-        P=np.eye(4)
-
         
-        P[0:3,0:3]= R[i]
-        P[0:3,3]=np.squeeze(t[i])
+        P=np.eye(4)                 #Initialize P matrix - homographic transformation
+        P[0:3,0:3]= R[i]            #Set R
+        P[0:3,3]=np.squeeze(t[i])   #Set t
 
+        #Create referential mesh
         refe = open3d.create_mesh_coordinate_frame(refSize, origin = [0, 0, 0])
-        refe.transform(P)
+        
+        
+        refe.transform(P)   #Transform it according tom p
 
-        refs.append(refe)
+        refs.append(refe)   #Add it to the Referentials array
 
-    draw_geometry(refs)
+    draw_geometry(refs) #Draw them all
 
     return refs
-
-def ViewScene(R,t):
-
-    
-    mesh1 = copy.deepcopy(mesh)
-    mesh2 = copy.deepcopy(mesh)
-    mesh1.compute_vertex_normals()  
-    mesh2.compute_vertex_normals()
-
-    print(mmnip.Rt2Homo(R[0],t[0]))
-    print(mmnip.Rt2Homo(R[1],t[1]))
-
-
-    mesh1.transform(mmnip.Rt2Homo(R[0],t[0]))
-    mesh2.transform(mmnip.Rt2Homo(R[1],t[1]))
-
-    open3d.draw_geometries([mesh1,mesh2])
