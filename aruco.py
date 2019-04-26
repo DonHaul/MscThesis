@@ -1,3 +1,8 @@
+"""
+aruco.py
+
+This module contains aruco marker detection stuff
+"""
 import cv2
 import numpy as np
 

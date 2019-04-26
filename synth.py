@@ -1,26 +1,48 @@
-import open3d
-import math
+"""
+synth.py
+
+This module contains functions to:
+-Generate Synthetic Observations in a set of Referentials
+-Generate Synthetic scenes and models (Sets of Referantials)
+-Generate Synthetic Observations between a Set of Referantials(Cameras) that are observing another set (Aruco)
+"""
+
 import numpy as np
-import pickler as pickle
-import pprint
 import random
 import matmanip as mmnip
-from visu import *
-
-    
+   
 
 def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
-    '''
-    returns observationsR, and observationsT
+    ''' Generates observations(Rotations and translations) between a set of Referentials
+
+    Args:
+        R: List of rotations of the referentials
+        t: List of translations of the referentials
+        samples: Approximated number of samples to generate
+        noise: Noise scale in degrees that will be added to the rotations observed
+        noiset: Noise scale in degrees that will be added to the tranlations observed
+
+    Returns:
+        obsR: Dictionary with the Rotation Observations. Each Observations Contains
+            -from: Where the rotation comes from
+            -to: Where the rotation is going to
+            -R: The rotation itself
+        obst: Dictionary with the Translation Observations. Each Observations Contains
+            -from: Where the rotation comes from
+            -to: Where the rotation is going to
+            -t: The translation itself
     '''
 
-    r = np.zeros([len(R),1])
+    #initializes array that tells if this rotation r[i] has atleast one observation
+    r = np.zeros([len(R),1])  
 
+    #for a while (this loop only occurs 1 time if we are lucky)
     while True:
 
         obsR = []
         obst = []
 
+        #generates samples
         for i in range(0,samples):
 
             #for each observation        
@@ -32,46 +54,24 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
                 r2 = random.randint(0, len(R)-1)
             
 
-            #t1w = (np.expand_dims(t[r1],0).T) # ref 1 no referencial do mundo
-            #t2w = (np.expand_dims(t[r2],0).T) # ref 2 no referencial do mundo
+
+            t1w = t[r1] #translation of referantial 1 in world coordinates
+            t2w = t[r2] #translation of referantial 2 in world coordinates
+                        
+            t12 =np.dot(R[r2].T, t1w - t2w) #translation of referantial 1 in referantial 2's coordinates
             
-            #tw2 = np.dot(-R[r2],t2w) # ref do mundo no referencial do 2
-            #tw1 = np.dot(-R[r1],t1w) # ref do mundo no referencial do 1
-
-            #t12=tw1 - np.dot(np.dot(R[r1],R[r2].T),tw2)
-            #print("#### # #### from "+ str(r1) + " to "+ str(r2))
-          
-            #tw1 = np.dot(-R[r1].T,t[r1]) # <-- NAO ERA SUPOSTO TER O TRANSPOSTO WRONG / understand WHY
-            #print(tw1)
-
-            #tw2 = np.dot(-R[r2].T,t[r2]) # <-- NAO ERA SUPOSTO TER O TRANSPOSTO WRONG / understand WHY
-
-            t1w = t[r1]
-            t2w = t[r2]
-
-            
-
-            t12 =np.dot(R[r2].T, t1w - t2w)
-
-            
-            #print(str(r1)+" in w coords",t[r1])
-            #print(str(r2)+" in w coords",t[r2])
-            #print(str(r1)+ "  in " + str(r2) + " coordinates: "+ str(t12))
-            #raw_input()
-
-            #t21=tw1-np.dot(np.dot(R[r1],R[r2].T),tw2)
-            #print(t21)
-            #print(t12.shape)
+            #generate a R observation w/ noise
             obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
+            
+            #generate a t observation  w/ noise
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset
-            #print({"from":r2,"to":r1,"R":np.dot(R[r1],R[r2].T)})
-            #raw_input()
+            
+            #sets this cameras as having observations
             r[r1]=1
             r[r2]=1
 
 
-        #print(sum(r))
-        #there is at least one observation per marker
+        #there is at least one observation per marker then, exit, else generate more samples
         if sum(r)==len(R):
             break
 
@@ -80,33 +80,45 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
 
 
-#attention this does not check if all cameras have matches
-def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5):
-    '''
-    simulates one single frame in every camera and matches results
-    '''
-     #number of observations of a camera in a certain frame
 
+def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 0.01,noiset = 0.01):
+    '''
+    Simulates one single time instance and generates Synthetic Observations
+    between a Set of Referantials(Cameras) that are observing another set (Aruco)
+    
+    Every rotation received comes from world coordinates  w -> i
+    Every translation received is to world coordinates  i -> w
+
+    Args:
+        Rcam: List of rotations of every camera
+        tcam: List of translations  of every camera
+        R: List of rotations of the aruco model that both cameras see
+        t: List of translations  of the aruco model that both cameras see
+        nObs: Number of Markers that each camera sees,
+        noise: Noise added to the rotations
+        noiset: Noise added to the translations
+    '''
+
+    #number of observations of a camera in a certain frame, prevent it from being bigger than all markers
     if(nObs>len(tcam)):
         print("Warning: Number of observations requested higher than total markers")
         nObs=len(tcam)-1
 
-    camsObs = []
 
-    noise = 0.01
-    noiset = 0.01
+    camsObs = []        #list of all observations
     
-    #generate SingleCam Samples
+    #generate samples for each camera
     for i in range(0,len(Rcam)):
         
-        #pick random ones
+        #pick random aruco markers, #noBs of them
         rnds = random.sample(range(1, len(R)), nObs)
 
-        obs=[]
+        obs=[]  #list of Observations
         
-
+        #For each observed marker
         for r in rnds:
             
+
             tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
 
 
@@ -115,11 +127,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5):
             #assign them to each camera
             o ={ "obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}
             obs.append(o)
-
-            #print("fromMarker:"+str(o['obsId'])+" toCamera:"+str(i)) - CORRECT
-            #print(tcr)
-            #raw_input()
-    
+            
         camsObs.append(obs)
 
 
@@ -127,6 +135,9 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5):
     return camsObs
 
 def Scenev1():
+    '''
+    Generate a scene with 3 cameras
+    '''
 
     R=[]
     t=[]
@@ -142,6 +153,7 @@ def Scenev1():
     return R,t
 
 def FakeArucoRotated():
+    '''Generate aruco model with 4 markers'''
 
     R=[]
     t=[]
@@ -160,6 +172,7 @@ def FakeArucoRotated():
 
 
 def FakeAruco():
+    '''Generate aruco model with 4 markers'''
 
     R=[]
     t=[]
@@ -178,6 +191,7 @@ def FakeAruco():
 
    
 def FakeArucoReal():
+    '''Generate aruco model with 12 markers'''
 
     R=[]
     t=[]

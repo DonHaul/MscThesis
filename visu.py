@@ -8,7 +8,6 @@ from matplotlib import pyplot as plt
 import open3d
 import numpy as np
 import matmanip as mmnip
-import copy
 
 
 def plotImg(img):
