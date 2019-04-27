@@ -108,20 +108,20 @@ def GenerateCameraPairObs(camsObs,R,t):
 
                     Rbetweenaruco = np.dot(R[obsjR['obsId']],R[obsiR['obsId']].T)
 
-                    print("Rbetweenaruco")
-                    print(Rbetweenaruco.shape)
+                    #print("Rbetweenaruco")
+                    #print(Rbetweenaruco.shape)
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
-                    print("tbetweenaruco")
-                    print(tbetweenaruco.shape)
+                    #print("tbetweenaruco")
+                    #print(tbetweenaruco.shape)
 
-                    print("R[obsjR['obsId']].T")
-                    print(R[obsjR['obsId']].T.shape)
+                    #print("R[obsjR['obsId']].T")
+                    #print(R[obsjR['obsId']].T.shape)
 
-                    print("t[obsiR['obsId']]")
-                    print(t[obsiR['obsId']].shape)
+                    #print("t[obsiR['obsId']]")
+                    #print(t[obsiR['obsId']].shape)
 
-                    print("t[obsjR['obsId']]")
-                    print(t[obsjR['obsId']].shape)
+                    #print("t[obsjR['obsId']]")
+                    #print(t[obsjR['obsId']].shape)
 
                     new_R = np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T])
                     
@@ -145,8 +145,8 @@ def GenerateCameraPairObs(camsObs,R,t):
                     tij = mmnip.Transform(mmnip.InvertT(new_R.T, new_t),obsjR['R'],obsjR['t'])
 
 
-                    print("tij")
-                    print(tij.shape)
+                    #print("tij")
+                    #print(tij)
 
                     #tij = mmnip.Transform(mmnip.InvertT(new_R, new_t),obsjR['R'].T, mmnip.InvertT(obsjR['R'].T,obsjR['t']))
 

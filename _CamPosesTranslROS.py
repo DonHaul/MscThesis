@@ -39,6 +39,8 @@ def main():
 
     Rcam = CameraPose['R']
 
+    #visu.ViewRefs(Rcam)
+
     showVideo = 1
     calc = 1  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
 
@@ -79,6 +81,9 @@ def main():
 
     cv2.destroyAllWindows()
 
+    #print("PIXA")
+    #print(g.ATA)
+    #print(g.ATb)
 
         
     x = np.dot(np.linalg.pinv(g.ATA),g.ATb)
@@ -86,9 +91,9 @@ def main():
 
 
     solsplit2 = np.split(x,g.N_cams)
-    #visu.ViewRefs(Rcam,solsplit2,refSize=0.1)
+    visu.ViewRefs(Rcam,solsplit2,refSize=0.1)
 
-    print(solsplit2)
+    print(solsplit2[1]-solsplit2[0])
 
 
 

@@ -79,7 +79,7 @@ class img_gather(object):
             obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
             #print(obsT[0]['t'].shape)
-            self.calc=3
+            
 
             if self.calc == 0:
                 A = probdefs.rotationProbDef(obsR,self.N_cams)
@@ -90,7 +90,8 @@ class img_gather(object):
                 
 
                 A,b =  probdefs.translationProbDef(obsT,self.Rcam,self.N_cams)
-
+                print("A",A)
+                print("b",b)
                 self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
                 self.ATb = self.ATb + np.dot(A.T,b) #way to save the matrix in a compact manner

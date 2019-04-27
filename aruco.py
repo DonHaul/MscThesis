@@ -1,29 +1,60 @@
+'''
+aruco.py
+
+in this script there aruco related functions
+
+'''
 import cv2
 import numpy as np
 
 def ArucoObservationMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT=False):
-        
+    '''
+    Finds Markers and makes observations
+
+    Args:
+        img: image to find aruco markers in
+        K: intrinsic parameters
+        D: distortion parameters
+        markerIDoffset: shift from lowest id to 0
+        Nmarkers: number of existing markers
+        captureR (Bool): whether or not will be generated rotation observations
+        captureT (Bool): whether or not will be generated translation observations
+
+    Returns: 
+        hello: image with detected markers and their referentials
+        ids: detected ids
+        obsR: observated Rotations
+        obsT: observated translations
+    '''
+
+        #finds markers
         det_corners, ids, rejected = FindMarkers(img, K)
 
+        #copy image
         hello = img.astype(np.uint8).copy() 
+
+        #draw maerkers
         hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
 
-
-
-
+        #make observations, and draw referentials
         obsR,obsT,hello = ObservationMaker(K,D,det_corners,hello,ids,markerIDoffset,captureR,captureT)
-        
-
 
         return hello ,ids,obsR,obsT #<- ids parameter doenst need to be here - WRONG
 
 def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captureT=False):
     '''
-    K - intrinsic camera matrix
-    D - distortion parameters
-    det_corners - all detected corners
-    hello - img
-    ids - all detected ids
+    Generates Observations
+
+    Args:
+        K: intrinsic camera matrix
+        D: distortion parameters
+        det_corners: all detected corners
+        hello: img
+        ids: all detected ids
+    Returns:
+        observationsR: rotation observations
+        observationsT: tranlation observations
+        img: img with markers and referentials in it
     '''
     
     observationsR = []
@@ -56,41 +87,47 @@ def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captur
                 if(captureT):
                     #generate t observations
                     obsT={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"t":np.squeeze(np.dot(rots[j].T,(tvecs[i]-tvecs[j]).T))} 
-
-                    #print(obsT)
-
                     observationsT.append(obsT)
-
-    #print(observationsR)
 
     return observationsR , observationsT ,img
 
 
 def FindMarkers(img,K):
-    
+    '''Detects aruco markers in an image
+
+    Args:
+        img: image to extract markers from
+        K: camera intrinsic parameters
+    '''  
+
+    #What type of aruco markers are there
     adict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_ARUCO_ORIGINAL)
-        
+
+    #make the image grey
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
+    #get markers
     det_corners, ids, rejected  = cv2.aruco.detectMarkers(gray,dictionary=adict,cameraMatrix=K)
 
     return det_corners, ids, rejected
 
 
 def FindPoses(K,D,det_corners,img,n):
+    '''
+    Estimates rotation and translation of each aruco
 
+    Args:
+        K: intrinsic parameters
+        D: distortion parameters
+        det_corners:detected corners
+        img: image to draw axis on
+        n: number of detected ids
+    '''
 
+    #get pose
     rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,0.0875,K,D)
 
     #the third parameter is corner coordinates
-
-    #if(len(ids)>0):
-    #print("rotation")
-    #print(rots[0])
-    #print("position")
-    #if(len(tvecs)>0):
-    #    print("tvecs"+ str(len(tvecs)))
-    #    print(tvecs)
 
 
     #for r in rvecs
@@ -98,15 +135,11 @@ def FindPoses(K,D,det_corners,img,n):
 
     for i in range(n):
 
-        #converts to 3x3
+        #converts to 3x3 rotation matrix
         elm,_ = cv2.Rodrigues(rvecs[i,0,:])
         cv2.Rodrigues(src=rvecs[i,0,:])
         rots.append(elm)
 
-        #print("rotation_elm")
-        #print(elm)
-        #print("det")
-        #print(np.linalg.det(elm))
         #draws axis
         img = cv2.aruco.drawAxis(img,K,D,elm,tvecs[i],0.1)
 
