@@ -1,15 +1,41 @@
+'''
+algos.py
+
+This module contains some of the well known algorithms, that help in the thesis
+'''
+
 import numpy as np
 
 def LeastSquaresNumpy(A,b):
+    '''
+    Gets least squares aproximation.
+
+    Gets x that minimzes Ax=b
+    '''
     return np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b  returns x, res, rank, sss
 
 def LeastSquares(A,b):
+    '''
+    Gets least squares aproximation.
+
+    Gets x that minimzes Ax=b
+    '''
     return  np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b 
 
 def LeastSquaresOldSchool(A,b):
+    '''
+    Gets least squares aproximation.
+
+    Gets x that minimzes Ax=b
+    '''
     return np.dot(np.dot(np.linalg.inv(np.dot(A.T,A)),A.T),b)
 
 def LeastSquaresOldSchoolPinved(A,b):
+    '''
+    Gets least squares aproximation.
+
+    Gets x that minimzes Ax=b
+    '''
     return np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
 
 def MeanSquaredError(a,b=None):
@@ -25,9 +51,17 @@ def MeanSquaredError(a,b=None):
 
 #this is how wikipedia does it
 def procrustes(X,Y):
+    '''
+    Get closest matrix that minimizes R : min RX-Y such that R.T*R is Identity 
+
+    Gets x that minimzes Ax=b
+    '''
+
+    #get mean
     muX = X.mean(0)
     muY = Y.mean(0)
 
+    #center X and Y around mean
     X0 = X - muX
     Y0 = Y - muY
 
@@ -54,6 +88,11 @@ def procrustes(X,Y):
 
 #same as procrustes 1 but arguments are inverted - (This is how it is done in  the paper - Estimating 3-D rigid body transformations: a comparison of four major algorithms)
 def procrustes2(X,Y):
+    '''
+    Get closest matrix that minimizes R : min RX-Y such that R.T*R is Identity 
+
+    Gets x that minimzes Ax=b
+    '''
     muX = X.mean(0)
     muY = Y.mean(0)
 
@@ -75,13 +114,20 @@ def procrustes2(X,Y):
     R = np.dot(U, Vt)
     t = muX - np.dot(muY, R)
 
-
+    
 
     return R, t
 
 def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     '''
-    ola
+    Get the X that minimizes AX=0 through svd, and splits it up
+
+    Args:
+        C: matrix A in the equation
+        Nleast: how many of the eigenvectors with the smallest eigenvalues do we want?
+        Nmarkers: total number of markers, it is used to split up the fetched lowest eigenvectors 
+    Returns:
+        rotsols: Split up lower eigenvalued, eigenvectors (the least significat)
     '''
 
 
