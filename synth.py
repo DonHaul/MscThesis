@@ -189,6 +189,20 @@ def FakeAruco():
 
     return R,t
 
+def FakeAruco2Markers():
+    '''Generate aruco model with 2 markers'''
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,180,0]))
+    
+    t.append(np.array([0,0,10]))
+    t.append(np.array([0,0,-10]))
+
+    return R,t
+
    
 def FakeArucoReal():
     '''Generate aruco model with 12 markers'''

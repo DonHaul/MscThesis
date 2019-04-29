@@ -9,7 +9,7 @@ import algos
 def main():
 
 
-    R,t = synth.FakeAruco()
+    R,t = synth.FakeAruco2Markers()
 
     groundTruths = mmnip.genRotRel(R)
 
@@ -35,10 +35,11 @@ def main():
     #visu.ViewRefs(rotSols)
      
     rotSoles = mmnip.genRotRel(rotSols)    
-    
+    visu.ViewRefs(rotSoles)
+
     permuter = [[0,0,1],[-1,0,0],[0,-1,0]]
 
-    METHOD1
+    #METHOD1
     finalR = mmnip.AxisSwapper(rotSoles,permuter)
     visu.ViewRefs(finalR)
 
