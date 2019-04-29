@@ -31,6 +31,11 @@ def CompareMatLists(matListA,matListB):
         print("first - seconds")
         print(matListA[i]-matListB[i])
 
+def PrintMatList(matlist):
+
+    for i in range(0,len(matlist)):
+        print("Mat "+str(i))
+        print(matlist[i])
 
 def PermuteCols(matList,permuter):
     '''Permutes columns of matrices of a list:
@@ -51,6 +56,48 @@ def PermuteCols(matList,permuter):
         finalR.append(np.dot(r,permuter))
     
     return finalR
+
+def PermuteRows(matList,permuter):
+    '''Permutes columns of matrices of a list:
+    
+    Does:
+        matList[i]*permuter
+
+    Args:
+        matList [Nx3]: matrices to permute columns
+        permuter [3x3]: permuter matrix
+
+    Returns:
+        finalR [Nx3]: matrices with permutated columns   
+    '''
+
+    finalR=[]
+    for r in matList:
+        finalR.append(np.dot(permuter,r))
+    
+    return finalR
+
+def genRandRotMatrix(noise):
+
+    #print("noise is:"+str(noise))
+
+    #generate noise
+    a = np.random.rand(3,1)*noise
+
+    #make it have 0 mean
+    b =np.ones((3,1))*(noise/2)
+    c=a-b
+    #print("a")
+    #print(a)
+    #print(a.shape)
+    #print("b")
+    #print(b)
+    #print(b.shape)
+    #print("c")
+    #print(c)
+    #print(c.shape)
+
+    return genRotMat(np.squeeze(c))
 
 def genRotMat(angle):
     '''Generates a rotation matrix

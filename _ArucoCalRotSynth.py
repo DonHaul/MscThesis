@@ -9,15 +9,17 @@ import algos
 def main():
 
 
-    R,t = synth.FakeArucoRotated()
+    R,t = synth.FakeAruco()
 
     groundTruths = mmnip.genRotRel(R)
 
-    visu.ViewRefs(R,t)
+    #visu.ViewRefs(R,t)
+    print("ground truth")
+    visu.ViewRefs(groundTruths)
 
 
     #correct 100%
-    obsR,obst = synth.SampleGenerator(R,t,noise=0.1)
+    obsR,obst = synth.SampleGenerator(R,t,noise=1)
 
 
 
@@ -32,34 +34,29 @@ def main():
     print("global")
     visu.ViewRefs(rotSols)
 
-    print("HELP I HAVE THE BIG ")
-    haha =(np.dot(B,np.vstack(rotSols)))
-    ga = algos.MeanSquaredError(haha)
-    print("MSE real sol",ga)
-
-    print("")
-
-    print("local")    
+     
     rotSoles = mmnip.genRotRel(rotSols)    
 
-    print("HELP I HAVE THE BIG  LOCAL")
-    haha =(np.dot(B,np.vstack(rotSoles)))
-    ga = algos.MeanSquaredError(haha)
-    print("MSE real sol",ga)
-    
-    #mmnip.CompareMatLists(groundTruths,rotSoles)
-
-    permuter = [[1,0,0],[0,0,-1],[0,1,0]]
-
-    finalR=  mmnip.PermuteCols(rotSoles,permuter)
-
-    print("HELP I HAVE THE BIG  LOCAL PERMUTED")
-    haha =(np.dot(B,np.vstack(finalR)))
-    ga = algos.MeanSquaredError(haha)
-    print("MSE real sol",ga)
+    print("local")   
+    visu.ViewRefs(rotSoles)
 
     
-    #visu.ViewRefs( mmnip.genRotRel(finalR) )
+    permuter = [[0,0,1],[-1,0,0],[0,-1,0]]
+
+    finalR=  mmnip.PermuteCols(rotSoles,permuter)  
+
+    print("finalR")
+    visu.ViewRefs(finalR)
+
+
+    
+    Rrelations = []
+    #generate R between each things
+    for j in range(0,len(finalR)):
+        Rrelations.append(np.dot(finalR[0].T,finalR[j])) #Rw2*R1w' = R12
+
+    print("Rotated")
+    visu.ViewRefs(Rrelations)
 
 
 if __name__ == '__main__':
