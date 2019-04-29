@@ -1,3 +1,8 @@
+"""
+observationgenner.py
+
+This module contains functions that make pairs of observations
+"""
 import numpy as np
 import matmanip as mmnip
 import aruco
@@ -13,18 +18,28 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
 
     THIS FUNCTION WILL GENERATE SAMPLES FOR A SINGLE CAMERA
     
-    K - intrinsic camera matrix
-    D - distortion parameters
-    det_corners - all detected corners
-    hello - img
-    ids - all detected ids
-    '''
+    Args:
+        K - intrinsic camera matrix
+        D - distortion parameters
+        det_corners - all detected corners
+        hello - image that has the aruco detections added to it on top
+        ids - all detected ids
 
+    Returns:
+        observations (dict array):All marker observations made by this camera
+            obsId: observed aruco marker
+            t: translation from obsId to camera (marker position in world coordinates)
+            R: rotation from camera to obsId
+    '''
+    
+    #fetches detected markers
     det_corners, ids, rejected = aruco.FindMarkers(img, K)
 
+    #changes image
     hello = img.astype(np.uint8).copy() 
     hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
     
+    #list of all observations generated
     observations =[]
 
     #if more than one marker was detected
@@ -40,57 +55,63 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
         #generates samples
         for i in range(0,len(ids)):                
                  
+                 #only valid markers
                 if i not in range(2,14):
                     #print("Invalid marker id: "+str(i))
                     continue 
 
+                #initializes observation
                 o ={"obsId":i+markerIDoffset}
 
                 #generate R observations
                 o['R']=rots[i]
 
                 #generate t observations
+<<<<<<< HEAD
                 o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
+=======
+                o['t']=tvecs[i] #t i->w
+>>>>>>> 4a5274e9cfed8a8ee8e96d2d345d1259ecb31501
                 
                 observations.append(o)
  
     return observations ,img
 
-def ObservationViewer(observations,what='R'):
-    for obs in observations:
-        print("from:"+str(obs['from'])+" to:"+str(obs['to']))
-        print(obs[what])
-
-def SampleGenMultiCam(camObs1,camObs2):
-    pass
 
 def GenerateCameraPairObs(camsObs,R,t):
     '''
-    R and t are from aruco
+    Generate observations between 2 cameras, by doing Transformations throught the aruco
+
+    camObs (list of list of dicts) - first list dimensions tells us the camera, the second list is all the observations for that camera
+    R - rotations of the aruco model
+    t - translation of the aruco model
     '''
 
+    #initialize observation lists
     obsR = []
     obsT = []
-    #this double for loop makes all camera combinations
 
+
+    #this double for loop makes all camera combinations
     #between one camera
     for i in range(0,len(camsObs)):
         #and another camera
         for j in range(i+1,len(camsObs)):
             
-            #this double loop matches every possible observation in each camera
-            
-
+            #this double loop matches every possible observation in each camera        
             #go through all the obs of one camera
             for obsiR in camsObs[i]:
                 #and through all the obs of the other
                 for obsjR in camsObs[j]:
                 
+<<<<<<< HEAD
                     
                     #print("t")
                     #print(t)
 
 
+=======
+>>>>>>> 4a5274e9cfed8a8ee8e96d2d345d1259ecb31501
                     #confusing as fuck i, know
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
@@ -103,9 +124,7 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #confusing as fuck i, know
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-
-
-
+                    #Feito erradamente moreless empiricamente
                     Rbetweenaruco = np.dot(R[obsjR['obsId']],R[obsiR['obsId']].T)
 
                     #print("Rbetweenaruco")
@@ -134,6 +153,7 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #print(obsiR['R'].shape)
 
                     new_t =  mmnip.Transform(mmnip.InvertT(Rbetweenaruco.T, tbetweenaruco),obsiR['R'],  obsiR['t'])
+<<<<<<< HEAD
                     #new_t =  mmnip.Transform(tbetweenaruco,obsiR['R'].T, mmnip.InvertT(obsiR['R'].T,obsiR['t']))
 
                     #print("new_R")
@@ -162,10 +182,11 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #print(tij)
 
                     #raw_input()
+=======
+                    
+                    tij = mmnip.Transform(mmnip.InvertT(new_R.T, new_t),obsjR['R'],obsjR['t'])
+>>>>>>> 4a5274e9cfed8a8ee8e96d2d345d1259ecb31501
 
                     obsT.append({"from":i,"to":j,"t": tij})
-
-    #print(str(len(obsR))+ " Rotation Observations Were Generated") # should be same as Ncameras_C_2 * Nobs^2
-    #print(str(len(obsT))+ " Translation Observations Were Generated") 
 
     return obsR,obsT

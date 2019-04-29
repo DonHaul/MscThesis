@@ -1,9 +1,8 @@
-'''
+"""
 aruco.py
 
-in this script there aruco related functions
-
-'''
+This module contains aruco marker detection stuff
+"""
 import cv2
 import numpy as np
 
