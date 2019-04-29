@@ -29,8 +29,12 @@ class img_gather(object):
         #list of empty lists where observations will be saved (first dim tells camera, second dim is the observations for that cam)
         self.Allobs = [ [] for i in range(self.N_cams) ]
 
+
+
         #get aruco model
         self.R = arucoModel['R']
+
+        #self.R = synth
 
         self.t = []
 

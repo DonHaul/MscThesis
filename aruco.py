@@ -26,19 +26,19 @@ def ArucoObservationMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT
         obsT: observated translations
     '''
 
-        #finds markers
-        det_corners, ids, rejected = FindMarkers(img, K)
+    #finds markers
+    det_corners, ids, rejected = FindMarkers(img, K)
 
-        #copy image
-        hello = img.astype(np.uint8).copy() 
+    #copy image
+    hello = img.astype(np.uint8).copy() 
 
-        #draw maerkers
-        hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+    #draw maerkers
+    hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
 
-        #make observations, and draw referentials
-        obsR,obsT,hello = ObservationMaker(K,D,det_corners,hello,ids,markerIDoffset,captureR,captureT)
+    #make observations, and draw referentials
+    obsR,obsT,hello = ObservationMaker(K,D,det_corners,hello,ids,markerIDoffset,captureR,captureT)
 
-        return hello ,ids,obsR,obsT #<- ids parameter doenst need to be here - WRONG
+    return hello ,ids,obsR,obsT #<- ids parameter doenst need to be here - WRONG
 
 def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captureT=False):
     '''

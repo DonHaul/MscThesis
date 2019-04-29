@@ -27,8 +27,8 @@ def main():
     R,t = synth.FakeArucoReal() #<-- MUST BE REMOVED LATER
 
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
-    ola = pickle.Out("static/ArucoRot.pickle")
-    R =ola["RlocalPermutated"]
+    ola = pickle.Out("static/CameraPoseR NEW2CamAruco4.pickle")
+    R =ola["R"]
 
     
     cameraName = "abretesesamo"

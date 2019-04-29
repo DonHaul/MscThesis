@@ -111,7 +111,7 @@ def rosDepth2RGB(depthros):
     return depth
 
 def rosCam2RGB(rgbros,depthros):
-        '''
+    '''
     Converts from  ros images to rgb and depth matrix
 
     Args:
