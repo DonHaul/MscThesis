@@ -61,7 +61,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             t12 =np.dot(R[r2].T, t1w - t2w) #translation of referantial 1 in referantial 2's coordinates
             
             #generate a R observation w/ noise
-            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])),np.dot(R[r1],R[r2].T))})
+            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise-noise/2])),np.dot(R[r1],R[r2].T))})
             
             #generate a t observation  w/ noise
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset
