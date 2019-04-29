@@ -12,6 +12,23 @@ This module is used to
 import math
 import numpy as np
 
+def AxisSwapper(matlist,permuter):
+    
+
+    finalR=  PermuteCols(matlist,permuter)  
+
+    #print("finalR")
+    #visu.ViewRefs(finalR)
+
+
+    
+    Rrelations = []
+    #generate R between each things
+    for j in range(0,len(finalR)):
+        Rrelations.append(np.dot(finalR[0].T,finalR[j])) #Rw2*R1w' = R12
+
+    return Rrelations
+
 
 def CompareMatLists(matListA,matListB):
     '''
