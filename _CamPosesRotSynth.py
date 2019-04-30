@@ -34,7 +34,7 @@ def main():
     visu.ViewRefs(Rcam+R,tcam+t)
 
     #similar to output from ROS (I think)
-    camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
+    camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,noise=1)
 
 
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)

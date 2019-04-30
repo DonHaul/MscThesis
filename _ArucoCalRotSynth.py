@@ -9,7 +9,7 @@ import algos
 def main():
 
 
-    R,t = synth.FakeAruco2Markers()
+    R,t = synth.FakeAruco()
 
     groundTruths = mmnip.genRotRel(R)
 

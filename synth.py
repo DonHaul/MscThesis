@@ -60,6 +60,10 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
                         
             t12 =np.dot(R[r2].T, t1w - t2w) #translation of referantial 1 in referantial 2's coordinates
             
+            #print("from:"+str(r2)+"to:"+str(r1))
+            #print(np.dot(R[r1],R[r2].T))
+            #raw_input()
+
             #generate a R observation w/ noise
             obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1],R[r2].T))})
             
@@ -127,8 +131,9 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
             #assign them to each camera
             #print("from camera:"+str(i)+" to Id:"+str(r))
             #print(np.dot(R[r],Rcam[i].T))
+            #raw_input()
             
-            
+            #same as R w->r *(R w->cam transposed)
             o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r],Rcam[i].T)),'t':tcr}
             obs.append(o)
             
