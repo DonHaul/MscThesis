@@ -9,7 +9,7 @@ import algos
 def main():
 
 
-    R,t = synth.FakeAruco()
+    R,t = synth.FakeAruco2Markers()
 
     groundTruths = mmnip.genRotRel(R)
 
@@ -19,9 +19,9 @@ def main():
 
 
     #correct 100%
-    obsR,obst = synth.SampleGenerator(R,t,noise=1)
+    obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
 
-
+    #visu.ViewRefs([obsR[0]['R']])
 
     B = probdefs.rotationProbDef(obsR,len(R))  #95% confidence that it is correct
 
@@ -34,12 +34,14 @@ def main():
     print("global")
     visu.ViewRefs(rotSols)
      
+    print("local")
     rotSoles = mmnip.genRotRel(rotSols)    
     visu.ViewRefs(rotSoles)
 
     permuter = [[0,0,1],[-1,0,0],[0,-1,0]]
 
     #METHOD1
+    print("swapped")
     finalR = mmnip.AxisSwapper(rotSoles,permuter)
     visu.ViewRefs(finalR)
 

@@ -25,11 +25,13 @@ def main():
     
     Rcam, tcam = synth.Scenev1()
 
-    visu.ViewRefs(Rcam)
+    
 
     #visu.ViewScene(R,t)
 
-    R,t = synth.FakeArucoReal()
+    R,t = synth.FakeAruco()
+
+    visu.ViewRefs(Rcam+R,tcam+t)
 
     #similar to output from ROS (I think)
     camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
@@ -37,8 +39,7 @@ def main():
 
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
-    obsGen.ObservationViewer(obsR)
-    #quit()
+    
 
     B = probdefs.rotationProbDef(obsR,len(Rcam))  #95% confidence that it is correct
 
@@ -50,13 +51,18 @@ def main():
 
     print("global")
     visu.ViewRefs(rotSols)
-    print("local")    
+
+
     rotSoles = mmnip.genRotRel(rotSols)    
 
-    permuter = [[1,0,0],[0,0,-1],[0,1,0]]
+    print("local")
+    visu.ViewRefs(rotSoles)
 
-    finalR=  mmnip.PermuteCols(rotSoles,permuter)
+    permuter = [[0,1,0],[1,0,0],[0,0,1]]
 
+    finalR=  mmnip.AxisSwapper(rotSoles,permuter)
+
+    print("swapped")
     visu.ViewRefs(finalR)
 
 

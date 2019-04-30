@@ -178,12 +178,12 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     #if symettirc, u.T = vh
 
     #IF there is indeed a null space, then svd breaks
-    print("vh")
-    print(vh)
-    print("u")
-    print(u.T)
-    print("UVH")
-    print(np.dot(u,vh))
+    #print("vh")
+    #print(vh)
+    #print("u")
+    #print(u.T)
+    #print("UVH")
+    #print(np.dot(u,vh))
 
 
     print("s")

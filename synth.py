@@ -81,7 +81,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
 
 
 
-def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 0.01,noiset = 0.01):
+def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
     '''
     Simulates one single time instance and generates Synthetic Observations
     between a Set of Referantials(Cameras) that are observing another set (Aruco)
@@ -100,9 +100,9 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 0.01,noiset = 0.01
     '''
 
     #number of observations of a camera in a certain frame, prevent it from being bigger than all markers
-    if(nObs>len(tcam)):
+    if(nObs>len(t)):
         print("Warning: Number of observations requested higher than total markers")
-        nObs=len(tcam)-1
+        nObs=len(t)-1
 
 
     camsObs = []        #list of all observations
@@ -125,7 +125,11 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 0.01,noiset = 0.01
             #generate the samples  'from' Camera i 'to' sample i
             #'ObsId' = 'to'                 #'camId = to ObsId = 'from'
             #assign them to each camera
-            o ={ "obsId":r,"R": np.dot(mmnip.genRotMat(np.squeeze([np.random.rand(3,1)*noise])), np.dot(R[r],Rcam[i].T)),'t':tcr}
+            #print("from camera:"+str(i)+" to Id:"+str(r))
+            #print(np.dot(R[r],Rcam[i].T))
+            
+            
+            o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r],Rcam[i].T)),'t':tcr}
             obs.append(o)
             
         camsObs.append(obs)
