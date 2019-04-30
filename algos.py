@@ -267,7 +267,7 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
         print(np.dot(r.T,r))
         rotestimate.append(r)
 
-    return rotestimate
+    return rotsols
 
 
 

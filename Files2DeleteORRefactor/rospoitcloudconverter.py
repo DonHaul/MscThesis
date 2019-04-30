@@ -4,11 +4,12 @@ from sensor_msgs.msg import PointCloud2
 from ast import literal_eval
 import struct
 from matplotlib import pyplot as plt
+import struct
 
 rospy.init_node('my_name_is_jeff', anonymous=True)
 
 
-topicDepth ="ervilhamigalhas/depth_registered/points"
+topicDepth ="abretesesamo/depth_registered/points"
 
 
 msg = rospy.wait_for_message(topicDepth, PointCloud2)
@@ -63,10 +64,10 @@ for i in range(0, msg.height*msg.width):
     #print("fetched",boi)
 
        
-    r.append(255 -  ord(rgb[0])) #com ou sem 255-
-    g.append(255 -  ord(rgb[1]))
-    b.append(255 - ord(rgb[2]))
-    alpha.append(ord(rgb[3   ]))
+    b.append(255-ord(rgb[0])) #com ou sem 255-
+    g.append(255- ord(rgb[1]))
+    r.append(255 -ord(rgb[2]))
+    alpha.append(255-ord(rgb[3  ]))
 
     #count=count+1
     #print(count)
@@ -75,20 +76,20 @@ for i in range(0, msg.height*msg.width):
 print(len(r))
 
 
-r = np.asarray(r)
-g = np.asarray(g)
-b = np.asarray(b)
+r1 = np.asarray(r)
+g1 = np.asarray(g)
+b1 = np.asarray(b)
 alpha = np.asarray(alpha)
 
 print("heya",alpha[1:])
 
-r=r.reshape(480,-1)
-g=g.reshape(480,-1)
-b=b.reshape(480,-1)
+r=r1.reshape(480,-1)
+g=g1.reshape(480,-1)
+b=b1.reshape(480,-1)
 alpha=alpha.reshape(480,-1)
 
 
-image = np.array([r,g,b])#alpha must be added
+image = np.array([r,g,b,alpha/255])#alpha must be added
 
 image = np.transpose(image, (1, 2, 0))
 print(image.shape)

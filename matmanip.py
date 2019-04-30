@@ -227,3 +227,23 @@ def InverseTransform(totransform,R,t):
         t[3x1]: t from j to i
     '''
     return np.dot(R.T,totransform)-np.dot(R.T,t)
+
+def depthimg2xyz(depthimg,K):
+
+    fx=K[0,0]
+    fy=K[1,1]
+    cx=K[0,2]
+    cy=K[1,2]
+    
+    depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
+
+    u,v =np.indices((480,640))
+    
+    u=u-cx
+    v=v-cy
+
+    depthcoords[:,:,2]= depthimg/1000.0
+    depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
+    depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
+
+    return depthcoords

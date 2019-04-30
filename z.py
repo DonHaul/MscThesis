@@ -1,29 +1,40 @@
-import matmanip as mmnip
+import rospy
 import numpy as np
-import pickler as pickle
-import visu
-import random
+from sensor_msgs.msg import PointCloud2
+from ast import literal_eval
+import struct
+from matplotlib import pyplot as plt
+import rosinterface
+import open3d
+import pointclouder
+
+rospy.init_node('my_name_is_jeff', anonymous=True)
 
 
-#a = pickle.Out("static/ArucoModel 23-04-2019 13-45-37.pickle")
+cameraNames=["abretesesamo,ervilhamigalhas"]
 
-#visu.ViewRefs(a['R'],a['t'],refSize=0.1)
+topicDepth ="abretesesamo/depth_registered/points"
 
-#noise=1
+pcROSlist = []
 
-#lol = np.squeeze([np.random.rand(3,1)*noise-np.ones((3,1))*noise/2])
+pcs = []
 
-#print(lol)
+for name in cameraNames:
+    msg = rospy.wait_for_message(topicDepth, PointCloud2)
 
-#haha  = mmnip.genRotMat(lol)
+    pcrgb, pcpos =  rosinterface.pcROS2rgbpos(msg)
+    
+    pcs.append(pointclouder.Points2Cloud(pcpos,pcrgb))
 
-#print(haha)
+#Rotate and trnaslate point clouds at this point
 
-#print(np.linalg.det(haha))
+#see individual clouds
+for pc in pcs:
+    #see 1 clouds
+    open3d.draw_geometries([pc])
 
+#see all clouds
+open3d.draw_geometries(pcs)
 
-a ,b= np.indices((5,3))
+finalPc = pointclouder.MergeClouds(pcs)
 
-print(a)
-print(a[3:])
-print(a[-2:])

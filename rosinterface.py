@@ -9,6 +9,7 @@ from cv_bridge import CvBridge
 import numpy as np
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import CameraInfo
+import struct
 
 def FetchDepthRegisteredRGB(cameraName,topicRGB = "/rgb/image_color", topicDepth ="/depth_registered/image_raw"):
     '''Gets rgb + depth (REGISTERED) of a certain camera
@@ -151,3 +152,44 @@ def GetRGBD(cameraName):
     rgb,depth = rosCam2RGB(rgbros,depthros)
 
     return rgb,depth
+
+def pcROS2rgbpos(msg):
+
+    r=[]
+    g=[]
+    b=[]
+    
+    x1=[]
+    y1=[]
+    z1=[]
+    for i in range(0, msg.height*msg.width):
+
+        x = msg.data[i*msg.point_step:i*msg.point_step+4]
+        y = msg.data[i*msg.point_step+4:i*msg.point_step+4+4]
+        z = msg.data[i*msg.point_step+4+4:i*msg.point_step+4+4+4]
+        rgb = msg.data[i*msg.point_step+4+4+4+4:i*msg.point_step+4+4+4+4+4]
+        
+        [xx] = struct.unpack('f', x)
+        [yy] = struct.unpack('f',y)
+        [zz] = struct.unpack('f',z)
+        #print("x",xx)
+        #print("y",yy)
+        #print("z",zz)
+        #print("c",rgb)
+
+        #boi = struct.unpack('!f', mss)
+        #print("fetched",boi)
+        x1.append(xx)
+        y1.append(yy)
+        z1.append(zz)
+        
+        b.append(255-ord(rgb[0])) #com ou sem 255-
+        g.append(255- ord(rgb[1]))
+        r.append(255 -ord(rgb[2]))
+        #alpha.append(ord(rgb[3  ]))
+
+    rgb = np.vstack((r,g,b))
+    pos = np.vstack((x1,y1,z1))
+    print(rgb.shape)
+
+    return rgb,pos

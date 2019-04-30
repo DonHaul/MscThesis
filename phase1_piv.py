@@ -244,7 +244,7 @@ def main():
         t = proctf["translation"]
         
         XYZ2in1 = applyTransformation(XYZ2,rot,t)
-
+        
         temp = XYZ2in1 - XYZ1
         norms = np.linalg.norm(temp,axis=1)
         
@@ -257,7 +257,9 @@ def main():
             high_score_inliers=score
             best_inliers = inliers
 
-        #open3d.draw_geometries([Points2Cloud(XYZ1),Points2Cloud(XYZ2in1)])
+
+
+        open3d.draw_geometries([Points2Cloud(XYZ1),Points2Cloud(XYZ2in1)])
 
         #sio.savemat('np_vector.mat', {'rgb1':rgb[cameraNames[0]] ,'rgb2':rgb[cameraNames[1]] ,'XYZ1':XYZ[cameraNames[0]],'XYZ2':XYZ[cameraNames[1]], 'XYZ1emp':XYZ1,'XYZ2emp':XYZ2,'R':rot,'T':proctf["translation"],'P1':P1,'P2':P2})
     
