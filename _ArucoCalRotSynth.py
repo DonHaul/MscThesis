@@ -9,7 +9,7 @@ import algos
 def main():
 
 
-    R,t = synth.FakeAruco2Markers()
+    R,t = synth.FakeAruco()
 
     groundTruths = mmnip.genRotRel(R)
 
@@ -31,8 +31,8 @@ def main():
 
     rotSols = algos.TotalLeastSquares(C,3,len(R)) 
 
-    #print("global")
-    #visu.ViewRefs(rotSols)
+    print("global")
+    visu.ViewRefs(rotSols)
      
     rotSoles = mmnip.genRotRel(rotSols)    
     visu.ViewRefs(rotSoles)

@@ -9,14 +9,21 @@ import random
 
 #visu.ViewRefs(a['R'],a['t'],refSize=0.1)
 
-noise=1
+#noise=1
 
-lol = np.squeeze([np.random.rand(3,1)*noise-np.ones((3,1))*noise/2])
+#lol = np.squeeze([np.random.rand(3,1)*noise-np.ones((3,1))*noise/2])
 
-print(lol)
+#print(lol)
 
-haha  = mmnip.genRotMat(lol)
+#haha  = mmnip.genRotMat(lol)
 
-print(haha)
+#print(haha)
 
-print(np.linalg.det(haha))
+#print(np.linalg.det(haha))
+
+
+a ,b= np.indices((5,3))
+
+print(a)
+print(a[3:])
+print(a[-2:])
