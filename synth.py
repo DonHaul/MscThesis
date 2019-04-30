@@ -10,7 +10,8 @@ This module contains functions to:
 import numpy as np
 import random
 import matmanip as mmnip
-   
+
+import visu
 
 def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
     ''' Generates observations(Rotations and translations) between a set of Referentials
@@ -63,7 +64,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #print("from:"+str(r2)+"to:"+str(r1))
             #print(np.dot(R[r1],R[r2].T))
             #raw_input()
-
+            
             #generate a R observation w/ noise
             obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1],R[r2].T))})
             
@@ -129,12 +130,16 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
             #generate the samples  'from' Camera i 'to' sample i
             #'ObsId' = 'to'                 #'camId = to ObsId = 'from'
             #assign them to each camera
-            #print("from camera:"+str(i)+" to Id:"+str(r))
+            print("from camera:"+str(i)+" to Id:"+str(r))
             #print(np.dot(R[r],Rcam[i].T))
             #raw_input()
             
             #same as R w->r *(R w->cam transposed)
+            #noise=10
             o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r],Rcam[i].T)),'t':tcr}
+
+            visu.ViewRefs([np.eye(3),o['R']])
+
             obs.append(o)
             
         camsObs.append(obs)

@@ -204,17 +204,70 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     #print(ns)
     #print("sol")
     #print(solution)
+    Icol=(np.array([1,0,0,0,1,0,0,0,1])[np.newaxis]).T
+    print(Icol)
+    qmao=np.array([[1,0,0,0,0,0],
+    [0,1,0,0,0,0],
+    [0,0,1,0,0,0],
+    [0,1,0,0,0,0],
+    [0,0,0,1,0,0],
+    [0,0,0,0,1,0],
+    [0,0,1,0,0,0],
+    [0,0,0,0,1,0],
+    [0,0,0,0,0,1],
+    ])
+    print(qmao)
+    print("LOL")
     
+    #print(np.kron(sol,sol).shape)
     #split in 3x3 matrices, dat are close to the rotation matrices but not quite
-    rotsols = []
-    solsplit = np.split(solution,Nmarkers)  
+    rotsols=[] 
 
+
+    solsplit = np.split(solution,Nmarkers)  
+    iii = np.empty((0,1))
+    vacols=np.empty((0,9))
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
+        #print(np.linalg.det(sol))
+        #print(np.dot(sol.T,sol))
+        #print(np.kron(sol,sol).shape)
+        vacols = np.vstack([vacols,np.kron(sol,sol)])
+
+        iii = np.vstack([iii,Icol])
+
         r,t=procrustes(np.eye(3),sol)
         rotsols.append(r)
+    print(vacols.shape)
+    print("ha")
 
-    return rotsols
+
+    x = LeastSquares(np.dot(vacols,qmao),iii)
+
+    Q=np.array([[x[0],x[1],x[2]],
+    [x[1],x[3],x[4]],
+    [x[2],x[4],x[5]]])
+    Q=np.squeeze(Q)
+    u,s,v=np.linalg.svd(Q)
+    print(Q.shape)
+    G=np.squeeze(np.dot(u,np.diag(np.sqrt(s))))
+    
+    print("GG")
+    print(u.shape)
+    print(np.diag(np.sqrt(s)).shape)
+    print(G.shape)
+    rotestimate=[]
+    for sol in solsplit:
+        ps=np.dot(sol,G)
+        print("each")
+        print(np.linalg.det(ps))
+        print(np.dot(ps.T,ps))
+        r,t=procrustes(np.eye(3),ps)
+        print(np.linalg.det(r))
+        print(np.dot(r.T,r))
+        rotestimate.append(r)
+
+    return rotestimate
 
 
 

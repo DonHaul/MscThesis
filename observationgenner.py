@@ -8,6 +8,8 @@ import matmanip as mmnip
 import aruco
 import cv2
 
+import visu
+
 
 
 def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):

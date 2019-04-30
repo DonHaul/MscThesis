@@ -9,7 +9,9 @@ import algos
 def main():
 
 
+    #R,t = synth.Scenev1()
     R,t = synth.FakeArucoWTF()
+    #R,t = synth.FakeArucoReal()
 
     visu.ViewRefs(R)
     print(np.dot(R[0],R[1]).T)
@@ -23,7 +25,7 @@ def main():
 
 
     #correct 100%
-    obsR,obst = synth.SampleGenerator(R,t,noise=10,samples=10000)
+    obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
 
     #visu.ViewRefs([obsR[0]['R']])
 

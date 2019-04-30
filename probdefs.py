@@ -41,6 +41,11 @@ def rotationProbDef(observations,N):
 
         #print("from camera:"+str(obs['from'])+" to camera:"+str(obs['to']))
         #print(obs['R'])
+        
+        #print("Ident")
+        #print(Ident[cnt*3:cnt*3+3,:])
+        #print("A")
+        #print(A[cnt*3:cnt*3+3,:])
         #raw_input()
 
         cnt=cnt+1
