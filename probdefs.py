@@ -39,6 +39,10 @@ def rotationProbDef(observations,N):
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
         A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['R']
 
+        #print("from camera:"+str(obs['from'])+" to camera:"+str(obs['to']))
+        #print(obs['R'])
+        #raw_input()
+
         cnt=cnt+1
 
     return Ident - A

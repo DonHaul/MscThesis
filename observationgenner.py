@@ -106,9 +106,9 @@ def GenerateCameraPairObs(camsObs,R,t):
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
                     
-                    print("from camera:"+str(j)+" to camera:"+str(i))
-                    print(np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']]))
-                    raw_input()
+                    #print("from camera:"+str(j)+" to camera:"+str(i))
+                    #print(np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']]))
+                    #raw_input()
 
                     obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']])})
 

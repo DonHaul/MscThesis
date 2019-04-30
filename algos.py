@@ -172,7 +172,7 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
         rotsols: Split up lower eigenvalued, eigenvectors (the least significat)
     '''
 
-    print(C)
+    #print(C)
     u,s,vh = np.linalg.svd(C)
     
     #if symettirc, u.T = vh

@@ -9,17 +9,21 @@ import algos
 def main():
 
 
-    R,t = synth.FakeAruco()
+    R,t = synth.FakeArucoWTF()
 
-    groundTruths = mmnip.genRotRel(R)
+    visu.ViewRefs(R)
+    print(np.dot(R[0],R[1]).T)
+    R = mmnip.genRotRel(R)
 
+    print(np.dot(R[0],R[1]).T)
+    
     #visu.ViewRefs(R,t)
     print("ground truth")
-    visu.ViewRefs(groundTruths)
+    visu.ViewRefs(R)
 
 
     #correct 100%
-    obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
+    obsR,obst = synth.SampleGenerator(R,t,noise=10,samples=10000)
 
     #visu.ViewRefs([obsR[0]['R']])
 

@@ -40,7 +40,7 @@ def main():
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
     
-
+    print(len(Rcam))
     B = probdefs.rotationProbDef(obsR,len(Rcam))  #95% confidence that it is correct
 
 
