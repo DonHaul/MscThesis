@@ -22,6 +22,9 @@ def plotImg(img):
     plt.waitforbuttonpress()
     plt.close(fig)
 
+def draw_non_blocking():
+    pass
+
 
 def draw_geometry(pcd):
     '''

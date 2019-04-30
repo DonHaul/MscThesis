@@ -10,6 +10,8 @@ import numpy as np
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import CameraInfo
 import struct
+import matmanip as mnip
+import pointclouder
 
 def FetchDepthRegisteredRGB(cameraName,topicRGB = "/rgb/image_color", topicDepth ="/depth_registered/image_raw"):
     '''Gets rgb + depth (REGISTERED) of a certain camera
@@ -132,6 +134,20 @@ def rosCam2RGB(rgbros,depthros):
     depth = br.imgmsg_to_cv2(depthros, desired_encoding="passthrough")
 
     return rgb,depth
+
+#GETS IT THROGUH REGISTERES
+def GetPointCloudRGBD(cameraName,K):
+    rgb,depth_reg = GetRGBD(cameraName)
+   
+    points = mnip.depthimg2xyz(depth_reg,K)
+    points = points.reshape((480*640, 3))
+    
+
+    rgb1 = rgb.reshape((480*640, 3))
+
+    pc = pointclouder.Points2Cloud(points,rgb1)
+    
+    return pc,rgb,depth_reg
 
 def GetRGBD(cameraName):
     '''Gets rgb + depth (REGISTERED) of a certain camera

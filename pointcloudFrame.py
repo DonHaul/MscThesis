@@ -21,22 +21,11 @@ pcl=[]
 for i in range(0,len(camsName)):
 
     
-    rgb,depth_reg = rosinterface.GetRGBD(camsName[i])
+    pc,rgb,depth = rosinterface.GetPointCloudRGBD(camsName[i],camInfo['K'])
 
+    pcl.append(pc)
     rgbl.append(rgb)
-    depthl.append(depth_reg)
-
-    points = mnip.depthimg2xyz(depth_reg,camInfo['K'])
-    points = points.reshape((480*640, 3))
-
-
-
-    rgb = rgb.reshape((480*640, 3))
-    
-
-
-
-    pcl.append(pointclouder.Points2Cloud(points,rgb))
+    depthl.append(depth)
 
 cv2.imshow("Image window" , rgbl[0])
 cv2.waitKey(0)
@@ -51,4 +40,11 @@ cv2.destroyAllWindows()
 open3d.draw_geometries([pcl[0]])
 open3d.draw_geometries([pcl[1]])
 open3d.draw_geometries(pcl)
+
+
+pcc = pointclouder.MergeClouds(pcl)
+print("final PC")
+open3d.draw_geometries([pcc])
+
+print("final PC")
     
