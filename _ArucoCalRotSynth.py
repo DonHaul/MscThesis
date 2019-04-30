@@ -10,7 +10,7 @@ def main():
 
 
     #R,t = synth.Scenev1()
-    R,t = synth.FakeArucoWTF()
+    R,t = synth.FakeArucoReal()
     #R,t = synth.FakeArucoReal()
 
     visu.ViewRefs(R)
@@ -41,15 +41,22 @@ def main():
     visu.ViewRefs(rotSols)
      
     print("local")
-    rotSoles = mmnip.genRotRel(rotSols)    
-    visu.ViewRefs(rotSoles)
+    Rrelations = []
+
+    #generate R between each things
+    for j in range(0,len(rotSols)):
+        Rrelations.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12
+
+   
+    #rotSoles = mmnip.genRotRel(rotSols)    
+    #visu.ViewRefs(rotSoles)
 
     permuter = [[0,0,1],[-1,0,0],[0,-1,0]]
 
     #METHOD1
     print("swapped")
-    finalR = mmnip.AxisSwapper(rotSoles,permuter)
-    visu.ViewRefs(finalR)
+    #finalR = mmnip.AxisSwapper(rotSoles,permuter)
+    visu.ViewRefs(Rrelations)
 
 
     
