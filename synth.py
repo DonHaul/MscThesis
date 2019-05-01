@@ -17,8 +17,8 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
     ''' Generates observations(Rotations and translations) between a set of Referentials
 
     Args:
-        R: List of rotations of the referentials
-        t: List of translations of the referentials
+        R: List of rotations of the referentials in world coordinates (Riw)
+        t: List of translations of the referentials in world coordinates (tiw)
         samples: Approximated number of samples to generate
         noise: Noise scale in degrees that will be added to the rotations observed
         noiset: Noise scale in degrees that will be added to the tranlations observed
@@ -66,7 +66,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #raw_input()
             
             #generate a R observation w/ noise
-            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1],R[r2].T))})
+            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1].T,R[r2]))})
             
             #generate a t observation  w/ noise
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset

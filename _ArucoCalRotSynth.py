@@ -11,21 +11,9 @@ import observationgenner as obsgen
 def main():
 
 
-    #R,t = synth.Scenev3()
-    R,t = synth.FakeAruco()
-    #R,t = synth.FakeAruco()
-    #R,t = synth.FakeArucoReal()
-    R = mmnip.genRotRel(R)
-    #visu.ViewRefs(R)
-    #print(np.dot(R[0],R[1]).T)
-
-
-    print(np.dot(R[0],R[1]).T)
+    R,t = synth.FakeArucoReal() #in world coordinates
     
-    #visu.ViewRefs(R,t)
-    #print("ground truth")
-    #visu.ViewRefs(R)
-
+    visu.ViewRefs(R)
 
     #correct 100%
     obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
@@ -41,35 +29,19 @@ def main():
 
 
     print("global1")
-    rotSols = algos.RProbSolv1(C,3,len(R))    
+    rotSols = algos.RProbSolv1(C,3,len(R))
+
     visu.ViewRefs(rotSols)
 
-    print("global2")
-    #rotSols = algos.RProbSolv1(C,3,len(R))    
-    #visu.ViewRefs(rotSols)
-     
-    
-    print("local1")
-    
-    rr = mmnip.genRotRel(rotSols)
+    #converts to world coordinates
+    rotSols = mmnip.Transposer(rotSols)
+    visu.ViewRefs(rotSols)
+   
+    #converts in first ref coordinates , 
+    rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
     
-    print("localleft1")
-    rr = mmnip.globalRotateRotsl(rotSols)
-    visu.ViewRefs(rr)
-
-    print("localweird mode")
-
-    Rrelations = []
-
-    #generate R between each things
-    for j in range(0,len(rotSols)):
-        Rrelations.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12
-
-    
-    visu.ViewRefs(Rrelations)
-
-    
+    print(rr)
     
 
 

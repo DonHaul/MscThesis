@@ -10,6 +10,7 @@ import cv2
 import aruco
 import probdefs
 
+import observationgenner as obsgen
 
 class ArucoInfoGetter(object):
     def __init__(self,K,D,showVid=0,calc=0,R=None,Nmarkers=12,markerIDoffset=-2):
@@ -56,6 +57,9 @@ class ArucoInfoGetter(object):
         #calculates rotations
         if (self.calc == 0):
             img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)
+
+            
+            obsgen.ObsViewer(obsR,pause=False)
 
             #only if there are observations it makes the A matrix
             if  ids is not None and len(ids)>1:

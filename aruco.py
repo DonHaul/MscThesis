@@ -64,6 +64,7 @@ def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captur
 
         #finds rotations and vectors and draws referentials on image
         rots,tvecs,img = FindPoses(K,D,det_corners,img,len(ids))
+        #this rots and tvecs are in camera coordinates
 
         #squeeze
         ids = ids.squeeze()
@@ -74,15 +75,17 @@ def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captur
         for i in range(0,len(ids)):                
             for j in range(i+1,len(ids)):
                 
-                if j not in range(2,14) or i not in range(2,14):
+                if ids[j] not in range(2,14) or ids[i] not in range(2,14):
                     continue
+
+                #print("observing "+str(i)+" and "+str(j))
 
                 #generate R observations
                 if(captureR):
-                    obsR={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"R":np.dot(rots[i],rots[j].T)}
+                    obsR={"to":(ids[i]+markerIDoffset),"from":(ids[j]+markerIDoffset),"R":np.dot(rots[i].T,rots[j])}
                     observationsR.append(obsR)
-                    
-
+                
+                
                 if(captureT):
                     #generate t observations
                     obsT={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"t":np.squeeze(np.dot(rots[j].T,(tvecs[i]-tvecs[j]).T))} 

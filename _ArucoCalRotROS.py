@@ -51,36 +51,15 @@ def main():
 
     print("global1")
     rotSols = algos.RProbSolv1(ig.ATA,3,ig.Nmarkers)    
+    
+    #converts to world coordinates
+    rotSols = mmnip.Transposer(rotSols)
     visu.ViewRefs(rotSols)
-
-
+   
     
-    pickle.In("ArucoRot","Rglob",rotSols)
-
-    
-    print("local1")
-    
-    rr = mmnip.genRotRel(rotSols)
+    #converts in first ref coordinates , 
+    rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
-
-    pickle.In("ArucoRot","Rloc",rr)
-    
-    print("localleft1")
-    rr = mmnip.globalRotateRotsl(rotSols)
-    visu.ViewRefs(rr)
-
-    pickle.In("ArucoRot","Rlocleft",rr)
-
-    print("localweird mode")
-
-    Rrelations = []
-
-    #generate R between each things
-    for j in range(0,len(rotSols)):
-        Rrelations.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12
-
-    
-    visu.ViewRefs(Rrelations)
 
 
 

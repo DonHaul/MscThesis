@@ -143,7 +143,18 @@ def genRotMat(angle):
     aux = np.dot(Rx,Ry)
     return np.dot(aux,Rz)
 
-def genRotRel(rotsols,ref=0):
+def genRotRelLeft(rotsols,ref=0):
+    #from world coordinates to ref coordinates
+    
+    Rrelations = []
+
+    #generate R between each things
+    for j in range(0,len(rotsols)):
+        Rrelations.append(np.dot(rotsols[ref].T,rotsols[j]))
+
+    return Rrelations
+
+def genRotRelRight(rotsols,ref=0):
     '''Rotates given matrics to be rotations relative to one them
 
     Does:
@@ -211,6 +222,17 @@ def Rt2Homo(R,t):
     H[0:3,3]=t      #sets t
 
     return H
+
+def Transposer(M):
+    '''
+    Receives matrix list where each matrix will be Transposed
+    '''
+    transposed = []
+    for m in M:
+        transposed.append(m.T)
+    
+    return transposed
+    
 
 def InvertT(R,t):
     '''Inverts translation, that is: t(1->2) transforms into t(2->1)
