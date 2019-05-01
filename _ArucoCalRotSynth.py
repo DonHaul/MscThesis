@@ -12,7 +12,7 @@ def main():
 
 
     #R,t = synth.Scenev3()
-    R,t = synth.FakeArucoWTF()
+    R,t = synth.FakeAruco()
     #R,t = synth.FakeAruco()
     #R,t = synth.FakeArucoReal()
     R = mmnip.genRotRel(R)
