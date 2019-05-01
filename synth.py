@@ -294,6 +294,43 @@ def FakeArucoReal():
     R.append(mmnip.genRotMat([0,180,0]))
     R.append(mmnip.genRotMat([0,180,0]))
 
+
+    
+    t.append(np.array([0,0,10]))
+    t.append(np.array([0,30,10]))
+    t.append(np.array([0,50,10]))
+
+    t.append(np.array([10,0,0]))
+    t.append(np.array([10,30,0]))
+    t.append(np.array([10,50,0]))
+
+    t.append(np.array([0,0,-10]))
+    t.append(np.array([0,30,-10]))
+    t.append(np.array([0,50,-10]))
+
+
+    return R,t
+
+
+   
+def FakeArucoReal():
+    '''Generate aruco model with 12 markers'''
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,0,0]))
+
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([0,90,0]))
+    
+    R.append(mmnip.genRotMat([0,180,0]))
+    R.append(mmnip.genRotMat([0,180,0]))
+    R.append(mmnip.genRotMat([0,180,0]))
+
     R.append(mmnip.genRotMat([0,270,0]))
     R.append(mmnip.genRotMat([0,270,0]))
     R.append(mmnip.genRotMat([0,270,0]))
