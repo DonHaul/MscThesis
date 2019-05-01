@@ -2,7 +2,7 @@
 # Software License Agreement (BSD License)
 import numpy as np
 import cv2
-import pickler as pickle
+import pickler2 as pickle
 
 import aruco #findPoses function is here
 
@@ -24,18 +24,20 @@ import visu
 
 def main():
 
-    R,t = synth.FakeArucoReal() #<-- MUST BE REMOVED LATER
+    #R,t = synth.FakeArucoReal() #<-- MUST BE REMOVED LATER
 
+    arucoModelPickle = pickle.Pickle()
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
-    ola = pickle.Out("static/CameraPoseR NEW2CamAruco4.pickle")
-    R =ola["R"]
+    
+    pick =arucoModelPickle.Out("static/ArucoRot.pickle")
 
+    R = pick['R']
     
     cameraName = "abretesesamo"
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
-    camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
+    camInfo = pickle.Pickle().Out("static/CameraInfo 20-04-2019.pickle")
 
     showVideo = 1
     calc= 1  #0 is R 1 is t
@@ -74,12 +76,11 @@ def main():
     print("sums")
     print(sum(x))
 
-    solsplit2 = np.split(x,len(t))
+    solsplit2 = np.split(x,ig.Nmarkers)
     visu.ViewRefs(R,solsplit2,refSize=0.1)
 
-    pickle.In("ArucoModel","R",R)
-    pickle.In("ArucoModel","t",solsplit2)
-
+    arucoModelPickle.In("ArucoModel","R",R)
+    arucoModelPickle.In("ArucoModel","t",solsplit2)
 
 
 

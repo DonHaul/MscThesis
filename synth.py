@@ -130,7 +130,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
             #generate the samples  'from' Camera i 'to' sample i
             #'ObsId' = 'to'                 #'camId = to ObsId = 'from'
             #assign them to each camera
-            print("from camera:"+str(i)+" to Id:"+str(r))
+            #print("from camera:"+str(i)+" to Id:"+str(r))
             #print(np.dot(R[r],Rcam[i].T))
             #raw_input()
             
@@ -138,7 +138,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
             #noise=10
             o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r],Rcam[i].T)),'t':tcr}
 
-            visu.ViewRefs([np.eye(3),o['R']])
+            #visu.ViewRefs([np.eye(3),o['R']])
 
             obs.append(o)
             

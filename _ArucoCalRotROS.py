@@ -11,7 +11,7 @@ import numpy as np
 import visu
 import matmanip as mmnip
 
-import snapper
+#import snapper
 
 def main():
     showVideo = 1
@@ -28,7 +28,7 @@ def main():
 
     ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc)
      
-    snapper.Start(ig.GetImg)
+    #snapper.Start(ig.GetImg)
 
     # all of the parameters
     cb_params =	{}
@@ -47,26 +47,43 @@ def main():
 
     cv2.destroyAllWindows()
     
-    rotsols = algos.TotalLeastSquares(ig.ATA,3,ig.Nmarkers)
 
 
-    visu.ViewRefs(rotsols)
+    print("global1")
+    rotSols = algos.RProbSolv1(ig.ATA,3,ig.Nmarkers)    
+    visu.ViewRefs(rotSols)
+
+
     
-    Rrel = mmnip.genRotRel(rotsols)
+    pickle.In("ArucoRot","Rglob",rotSols)
 
-    visu.ViewRefs(Rrel)
+    
+    print("local1")
+    
+    rr = mmnip.genRotRel(rotSols)
+    visu.ViewRefs(rr)
 
-    permuter = [[0,-1,0],[1,0,0],[0,0,-1]]
+    pickle.In("ArucoRot","Rloc",rr)
+    
+    print("localleft1")
+    rr = mmnip.globalRotateRotsl(rotSols)
+    visu.ViewRefs(rr)
 
-    finalR=  mmnip.PermuteCols(Rrel,permuter)
+    pickle.In("ArucoRot","Rlocleft",rr)
 
-    visu.ViewRefs(finalR)
+    print("localweird mode")
 
-    #pickle.In("ArucoRot","Rglobal",rotsols,putDate=False)
+    Rrelations = []
 
-    #pickle.In("ArucoRot","Rlocal",Rrel,putDate=False)
+    #generate R between each things
+    for j in range(0,len(rotSols)):
+        Rrelations.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12
 
-    #pickle.In("Tests","ATA",ig.ATA)
+    
+    visu.ViewRefs(Rrelations)
+
+
+
 
 if __name__ == '__main__':
     main()

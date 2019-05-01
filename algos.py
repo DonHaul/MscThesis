@@ -189,7 +189,7 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
 
 def RProbSolv1(C,Nleast=1,Nmarkers=1):
 
-    solution = TotalLeastSquares(C,Nleast,Nmarkers)
+    solution = TotalLeastSquares(C,Nleast)
 
     rotsols=[] 
 
@@ -276,7 +276,7 @@ def RProbSolv2(C,Nleast=1,Nmarkers=1):
     return rotestimate
 
 
-def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
+def TotalLeastSquares(C,Nleast=1):
     
     '''
     Get the X that minimizes AX=0 through svd, and splits it up

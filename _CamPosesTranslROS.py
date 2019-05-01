@@ -5,7 +5,7 @@ import synth
 
 import rospy
 
-import pickler as pickle
+import pickler2 as pickle
 
 import matmanip as mmnip
 
@@ -33,9 +33,9 @@ from sensor_msgs.msg import Image
 def main():
 
     #Load aruco Model
-    arucoModel = pickle.Out("static/ArucoModel 23-04-2019 13-45-37.pickle")
+    arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
-    CameraPose = pickle.Out("static/CameraPoseR 25-04-2019 20-08-11.pickle")
+    CameraPose = pickle.Out("static/CamRot 01-05-2019 16-18-24.pickle")
 
     Rcam = CameraPose['R']
 

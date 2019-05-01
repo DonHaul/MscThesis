@@ -11,13 +11,14 @@ def main():
 
     R,t = synth.FakeArucoReal()
 
-
+    R= matmanip.genRotRel(R)
 
     #pprint.pprint(t)
 
     visu.ViewRefs(R,t)
     
     #correct
+    obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
 
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
     #ola = pickle.Out("static/ArucoRot.pickle")

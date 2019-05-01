@@ -31,6 +31,8 @@ def main():
 
     R,t = synth.FakeArucoReal()
 
+    #Rcam = mmnip.genRotRel(Rcam)
+
     visu.ViewRefs(Rcam+R,tcam+t)
 
     #similar to output from ROS (I think)
@@ -43,7 +45,7 @@ def main():
 
     print(obsT)
 
-    obsGen.ObservationViewer(obsR)
+    #obsGen.ObsViewer(obsR)
     #quit()
 
      # TRANSLATION STUFF

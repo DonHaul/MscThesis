@@ -5,7 +5,7 @@ import synth
 
 import rospy
 
-import pickler as pickle
+import pickler2 as pickle
 
 import matmanip as mmnip
 
@@ -33,7 +33,7 @@ from sensor_msgs.msg import Image
 def main():
 
     #Load aruco Model
-    arucoModel = pickle.Out("static/ArucoModel 23-04-2019 13-45-37.pickle")
+    arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
      
 
@@ -48,7 +48,7 @@ def main():
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
-    camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
+    camInfo =pickle.Pickle().Out("static/CameraInfo 20-04-2019.pickle")
 
     arucoGetters=[]
 
@@ -78,16 +78,29 @@ def main():
 
 
     
-    rotsols = algos.TotalLeastSquares(g.ATA,3,g.N_cams)
-
-
-    visu.ViewRefs(rotsols)
     
-    Rrel = mmnip.genRotRel(rotsols)
+    print("global1")
+    rotSols = algos.RProbSolv1(g.ATA,3,g.N_cams)
+   
+    visu.ViewRefs(rotSols)
 
-    visu.ViewRefs(Rrel)
+    cameraRot=pickle.Pickle()
+    
+    cameraRot.In("CamRot","Rglob",rotSols)
 
-    pickle.In("CameraPoseR","R",Rrel)
+    
+    print("local1")
+    
+    rr = mmnip.genRotRel(rotSols)
+    visu.ViewRefs(rr)
+
+    cameraRot.In("CamRot","Rloc",rr)
+    
+    print("localleft1")
+    rr = mmnip.globalRotateRotsl(rotSols)
+    visu.ViewRefs(rr)
+
+    cameraRot.In("CamRot","Rlocleft",rr)
 
     
 

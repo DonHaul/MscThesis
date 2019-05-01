@@ -2,12 +2,8 @@ import open3d
 import matmanip as mnip
 import visu
 import numpy as np
+import pickler2 as pickle
 
-R0 = mnip.genRotMat([0,0,0])
+arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
-R1 = mnip.genRotMat([0,90,0])
-print(R0)
-print(R1)
-visu.ViewRefs([R0,R1])
-
-visu.ViewRefs([R0,R1,np.dot(R1,R0.T)])
+visu.ViewRefs(arucoModel['R'],arucoModel['t'],refSize=0.1)

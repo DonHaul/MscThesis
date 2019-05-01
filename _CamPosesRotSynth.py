@@ -47,23 +47,36 @@ def main():
     C = np.dot(B.T,B) #C = B'B
 
     
-    rotSols = algos.TotalLeastSquares(C,3,len(Rcam)) 
+    rotSols = algos.RProbSolv1(C,3,len(Rcam)) 
 
-    print("global")
+  
     visu.ViewRefs(rotSols)
 
+    print("global2")
+    #rotSols = algos.RProbSolv1(C,3,len(R))    
+    #visu.ViewRefs(rotSols)
+     
+    
+    print("local1")
+    
+    rr = mmnip.genRotRel(rotSols)
+    visu.ViewRefs(rr)
+    
+    print("localleft1")
+    rr = mmnip.globalRotateRotsl(rotSols)
+    visu.ViewRefs(rr)
 
-    rotSoles = mmnip.genRotRel(rotSols)    
+    print("localweird mode")
 
-    print("local")
-    visu.ViewRefs(rotSoles)
+    Rrelations = []
 
-    permuter = [[0,1,0],[1,0,0],[0,0,1]]
+    #generate R between each things
+    for j in range(0,len(rotSols)):
+        Rrelations.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12
 
-    finalR=  mmnip.AxisSwapper(rotSoles,permuter)
+    
+    visu.ViewRefs(Rrelations)
 
-    print("swapped")
-    visu.ViewRefs(finalR)
 
 
 

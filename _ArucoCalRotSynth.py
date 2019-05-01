@@ -41,7 +41,7 @@ def main():
 
 
     print("global1")
-    rotSols = algos.RProbSolv2(C,3,len(R))    
+    rotSols = algos.RProbSolv1(C,3,len(R))    
     visu.ViewRefs(rotSols)
 
     print("global2")
