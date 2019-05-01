@@ -11,6 +11,7 @@ import numpy as np
 import visu
 import matmanip as mmnip
 
+import snapper
 
 def main():
     showVideo = 1
@@ -27,6 +28,8 @@ def main():
 
     ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc)
      
+    snapper.Start(ig.GetImg)
+
     # all of the parameters
     cb_params =	{}
      # all of the functions
@@ -59,13 +62,11 @@ def main():
 
     visu.ViewRefs(finalR)
 
-    pickle.In("ArucoRot","Rglobal",rotsols,putDate=False)
+    #pickle.In("ArucoRot","Rglobal",rotsols,putDate=False)
 
-    pickle.In("ArucoRot","Rlocal",Rrel,putDate=False)
+    #pickle.In("ArucoRot","Rlocal",Rrel,putDate=False)
 
-    pickle.In("Tests","ATA",ig.ATA)
-
-    pickle.In
+    #pickle.In("Tests","ATA",ig.ATA)
 
 if __name__ == '__main__':
     main()

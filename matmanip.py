@@ -162,6 +162,25 @@ def genRotRel(rotsols,ref=0):
 
     return Rrelations
 
+def globalRotateRotsl(rotsols,ref=0):
+    '''Rotates given matrics to be rotations relative to one them
+
+    Does:
+        R[i] = R w->i  Tranforms it into   R[i]= R ref->i 
+
+    Args:
+        rotsols list([3x3]) rotation matrices: list of all the rotation matrices to be rotated/transformed
+        ref (int,optional): which of the matrices should they all be relative to? 
+    '''
+    
+    Rrelations = []
+
+    #generate R between each things
+    for j in range(0,len(rotsols)):
+        Rrelations.append(np.dot(rotsols[ref].T,rotsols[j])) #Rw2*R1w' = R12
+
+    return Rrelations
+
 
 def CheckSymmetric(a, tol=1e-8):
     '''

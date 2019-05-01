@@ -11,6 +11,17 @@ import cv2
 import visu
 
 
+def ObsViewer(obs,key="R",fro="from",to="to",pause=True,show=False):
+    
+    for o in obs:
+        print("from:" + str(o[fro])+" to:"+str(o[to]))
+        print(o[key])
+        if show:
+            visu.ViewRefs([np.eye(3),o[key]])
+        if pause:
+            raw_input()
+
+
 
 def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
     '''

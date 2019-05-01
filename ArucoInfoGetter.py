@@ -39,12 +39,19 @@ class ArucoInfoGetter(object):
         #eventual R (if it exists), used on the translation part
         self.R = R
 
+        self.img=[]
+
+    def GetImg(self):
+        return self.img
+
     def callback(self,data,args):
         '''callback called everytime a new image comes from ROS'''
                 
 
         #fetches ros image
         img = roscv.rosImg2RGB(data)
+
+        self.img = img
 
         #calculates rotations
         if (self.calc == 0):
@@ -76,3 +83,5 @@ class ArucoInfoGetter(object):
         elif(self.showVid == 2):
             cv2.imshow("Image window", img)
             cv2.waitKey(0)
+
+        

@@ -176,11 +176,31 @@ def Scenev2():
 
     R.append(mmnip.genRotMat([0,0,0]))
     R.append(mmnip.genRotMat([0,180,0]))
-    R.append(mmnip.genRotMat([0,-90,0]))
+    #R.append(mmnip.genRotMat([0,-90,0]))
     
     t.append(np.array([0,0,-100]))
     t.append(np.array([0,0,0]))
-    t.append(np.array([50,0,-50]))
+    #t.append(np.array([50,0,-50]))
+    
+
+    return R,t
+
+
+def Scenev3():
+    '''
+    Generate a scene with 3 cameras
+    '''
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,0,0]))
+    R.append(mmnip.genRotMat([0,45,0]))
+    #R.append(mmnip.genRotMat([0,-90,0]))
+    
+    t.append(np.array([0,0,-100]))
+    t.append(np.array([0,0,0]))
+    #t.append(np.array([50,0,-50]))
     
 
     return R,t

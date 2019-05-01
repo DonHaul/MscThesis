@@ -1,40 +1,13 @@
-import rospy
-import numpy as np
-from sensor_msgs.msg import PointCloud2
-from ast import literal_eval
-import struct
-from matplotlib import pyplot as plt
-import rosinterface
 import open3d
-import pointclouder
+import matmanip as mnip
+import visu
+import numpy as np
 
-rospy.init_node('my_name_is_jeff', anonymous=True)
+R0 = mnip.genRotMat([0,0,0])
 
+R1 = mnip.genRotMat([0,90,0])
+print(R0)
+print(R1)
+visu.ViewRefs([R0,R1])
 
-cameraNames=["abretesesamo,ervilhamigalhas"]
-
-topicDepth ="abretesesamo/depth_registered/points"
-
-pcROSlist = []
-
-pcs = []
-
-for name in cameraNames:
-    msg = rospy.wait_for_message(topicDepth, PointCloud2)
-
-    pcrgb, pcpos =  rosinterface.pcROS2rgbpos(msg)
-    
-    pcs.append(pointclouder.Points2Cloud(pcpos,pcrgb))
-
-#Rotate and trnaslate point clouds at this point
-
-#see individual clouds
-for pc in pcs:
-    #see 1 clouds
-    open3d.draw_geometries([pc])
-
-#see all clouds
-open3d.draw_geometries(pcs)
-
-finalPc = pointclouder.MergeClouds(pcs)
-
+visu.ViewRefs([R0,R1,np.dot(R1,R0.T)])

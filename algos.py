@@ -171,6 +171,123 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     Returns:
         rotsols: Split up lower eigenvalued, eigenvectors (the least significat)
     '''
+    #print(C)
+    u,s,vh = np.linalg.svd(C)
+    
+    #if symettirc, u.T = vh
+
+    #IF there is indeed a null space, then svd breaks
+    #print("vh")
+    #print(vh)
+    #print("u")
+    #print(u.T)
+    #print("UVH")
+    #print(np.dot(u,vh))
+
+    return u[:,-Nleast:]
+
+
+def RProbSolv1(C,Nleast=1,Nmarkers=1):
+
+    solution = TotalLeastSquares(C,Nleast,Nmarkers)
+
+    rotsols=[] 
+
+    solsplit = np.split(solution,Nmarkers)  
+
+    #get actual rotation matrices by doing the procrustes
+    for sol in solsplit:
+        print("opt1")
+        print(np.linalg.det(sol))
+        print(np.dot(sol.T,sol))
+
+        r,t=procrustes(np.eye(3),sol)
+        rotsols.append(r)
+
+
+    return rotsols
+
+def RProbSolv2(C,Nleast=1,Nmarkers=1):
+
+    solution = TotalLeastSquares(C,Nleast,Nmarkers)   
+
+
+
+    Icol=(np.array([1,0,0,0,1,0,0,0,1])[np.newaxis]).T
+
+    qmao=np.array([[1,0,0,0,0,0],
+    [0,1,0,0,0,0],
+    [0,0,1,0,0,0],
+    [0,1,0,0,0,0],
+    [0,0,0,1,0,0],
+    [0,0,0,0,1,0],
+    [0,0,1,0,0,0],
+    [0,0,0,0,1,0],
+    [0,0,0,0,0,1],
+    ])
+
+    
+
+
+
+
+    solsplit = np.split(solution,Nmarkers)  
+    
+
+    print("before")
+    for sol in solsplit:
+        print(np.linalg.det(sol))
+        print(np.dot(sol.T,sol))
+
+
+
+    iii = np.empty((0,1))
+    vacols=np.empty((0,9))
+
+    #get actual rotation matrices by doing the procrustes
+    for sol in solsplit:
+        vacols = np.vstack([vacols,np.kron(sol,sol)])
+
+        iii = np.vstack([iii,Icol])
+    
+    x = LeastSquares(np.dot(vacols,qmao),iii)
+
+    Q=np.array([[x[0],x[1],x[2]],
+    [x[1],x[3],x[4]],
+    [x[2],x[4],x[5]]])
+    Q=np.squeeze(Q)
+    
+    u,s,v=np.linalg.svd(Q)
+    
+    G=np.squeeze(np.dot(u,np.diag(np.sqrt(s))))
+    
+    
+    rotestimate=[]
+    print("after")
+    for sol in solsplit:
+        ps=np.dot(sol,G)
+        print(np.linalg.det(ps))
+        print(np.dot(ps.T,ps))
+        r,t=procrustes(np.eye(3),ps)
+        print(np.linalg.det(r))
+        print(np.dot(r.T,r))
+        rotestimate.append(r)
+
+    return rotestimate
+
+
+def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
+    
+    '''
+    Get the X that minimizes AX=0 through svd, and splits it up
+
+    Args:
+        C: matrix A in the equation
+        Nleast: how many of the eigenvectors with the smallest eigenvalues do we want?
+        Nmarkers: total number of markers, it is used to split up the fetched lowest eigenvectors 
+    Returns:
+        rotsols: Split up lower eigenvalued, eigenvectors (the least significat)
+    '''
 
     #print(C)
     u,s,vh = np.linalg.svd(C)
@@ -204,70 +321,9 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     #print(ns)
     #print("sol")
     #print(solution)
-    Icol=(np.array([1,0,0,0,1,0,0,0,1])[np.newaxis]).T
-    print(Icol)
-    qmao=np.array([[1,0,0,0,0,0],
-    [0,1,0,0,0,0],
-    [0,0,1,0,0,0],
-    [0,1,0,0,0,0],
-    [0,0,0,1,0,0],
-    [0,0,0,0,1,0],
-    [0,0,1,0,0,0],
-    [0,0,0,0,1,0],
-    [0,0,0,0,0,1],
-    ])
-    print(qmao)
-    print("LOL")
-    
-    #print(np.kron(sol,sol).shape)
-    #split in 3x3 matrices, dat are close to the rotation matrices but not quite
-    rotsols=[] 
+   
 
-
-    solsplit = np.split(solution,Nmarkers)  
-    iii = np.empty((0,1))
-    vacols=np.empty((0,9))
-    #get actual rotation matrices by doing the procrustes
-    for sol in solsplit:
-        #print(np.linalg.det(sol))
-        #print(np.dot(sol.T,sol))
-        #print(np.kron(sol,sol).shape)
-        vacols = np.vstack([vacols,np.kron(sol,sol)])
-
-        iii = np.vstack([iii,Icol])
-
-        r,t=procrustes(np.eye(3),sol)
-        rotsols.append(r)
-    print(vacols.shape)
-    print("ha")
-
-
-    x = LeastSquares(np.dot(vacols,qmao),iii)
-
-    Q=np.array([[x[0],x[1],x[2]],
-    [x[1],x[3],x[4]],
-    [x[2],x[4],x[5]]])
-    Q=np.squeeze(Q)
-    u,s,v=np.linalg.svd(Q)
-    print(Q.shape)
-    G=np.squeeze(np.dot(u,np.diag(np.sqrt(s))))
-    
-    print("GG")
-    print(u.shape)
-    print(np.diag(np.sqrt(s)).shape)
-    print(G.shape)
-    rotestimate=[]
-    for sol in solsplit:
-        ps=np.dot(sol,G)
-        print("each")
-        print(np.linalg.det(ps))
-        print(np.dot(ps.T,ps))
-        r,t=procrustes(np.eye(3),ps)
-        print(np.linalg.det(r))
-        print(np.dot(r.T,r))
-        rotestimate.append(r)
-
-    return rotsols
+    return solution
 
 
 
