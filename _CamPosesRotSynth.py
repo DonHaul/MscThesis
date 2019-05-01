@@ -25,13 +25,17 @@ def main():
     
     Rcam, tcam = synth.Scenev1()
 
+    Rcam = mmnip.genRotRel(Rcam)
     
 
     #visu.ViewScene(R,t)
 
     R,t = synth.FakeAruco()
+    R = mmnip.genRotRel(R)
 
     visu.ViewRefs(Rcam+R,tcam+t)
+
+    visu.ViewRefs(Rcam)
 
     #similar to output from ROS (I think)
     camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,noise=1)

@@ -18,7 +18,7 @@ def main():
     R = mmnip.genRotRel(R)
     #visu.ViewRefs(R)
     #print(np.dot(R[0],R[1]).T)
-    R = mmnip.genRotRel(R)
+
 
     print(np.dot(R[0],R[1]).T)
     
