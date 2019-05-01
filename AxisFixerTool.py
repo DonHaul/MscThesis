@@ -7,7 +7,7 @@ import matmanip as mmnip
 
 curPickle = pickle.Pickle()
 
-refsUnchanged = curPickle.Out("pickles/ArucoRot 01-05-2019 15-23-53.pickle")
+refsUnchanged = curPickle.Out("pickles/CamRot 01-05-2019 16-41-47.pickle")
 
 loc = refsUnchanged['Rloc']
 
@@ -25,5 +25,4 @@ for r in newRefs:
     print(np.dot(r.T,r))
 
 savePickle = pickle.Pickle()
-
-savePickle.In("ArucoRot","R",newRefs,putDate=False)
+savePickle.In("CamRot-NEW2camArucco_4","R",newRefs,putDate=False)

@@ -59,9 +59,16 @@ class Pickle():
         Returns:
             p (dict):dictionary with that file's information
         '''
-        f= open(name,"rb")
-        p  =  pickle.load(f)
-        f.close
+        p={}
+
+        try:
+            f= open(name,"rb")
+            p  =  pickle.load(f)
+            f.close
+        except IOError:
+            print("ERROR: No Such File")
+
+            
 
         #whenever reading a pickle, it imports variables to _pickledata
         for key, value in p.iteritems():

@@ -27,7 +27,7 @@ def main():
 
     Rcam = mmnip.genRotRel(Rcam)
     
-
+    print(Rcam)
     #visu.ViewScene(R,t)
 
     R,t = synth.FakeAruco()

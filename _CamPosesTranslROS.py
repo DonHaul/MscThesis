@@ -35,11 +35,12 @@ def main():
     #Load aruco Model
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
-    CameraPose = pickle.Out("static/CamRot 01-05-2019 16-18-24.pickle")
+    camPosePickle = pickle.Pickle()
+    CameraPose = camPosePickle.Out("static/CamRot-NEW2camArucco_4.pickle")
 
     Rcam = CameraPose['R']
 
-    #visu.ViewRefs(Rcam)
+    visu.ViewRefs(Rcam)
 
     showVideo = 1
     calc = 1  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
@@ -53,7 +54,7 @@ def main():
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
-    camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
+    camInfo = pickle.Pickle().Out("static/CameraInfo 20-04-2019.pickle")
 
     arucoGetters=[]
 
@@ -96,6 +97,7 @@ def main():
     print(solsplit2[1]-solsplit2[0])
 
 
+    camPosePickle.In("CamPose_NEW2camAruco_4","t",solsplit2)
 
 
 
