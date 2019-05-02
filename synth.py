@@ -123,8 +123,8 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
         #For each observed marker
         for r in rnds:
             
-
-            tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
+            tcr =np.dot(R[r].T, tcam[i] - t[r]) # t from camera r to observatin i  
+            #tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
 
 
             #generate the samples  'from' Camera i 'to' sample i

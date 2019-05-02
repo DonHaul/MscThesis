@@ -23,15 +23,15 @@ def main():
     #mesh.paint_uniform_color([1, 0.706, 0])
     #draw_geometries([mesh])
     
-    Rcam, tcam = synth.Scenev1()
+    Rcam, tcam = synth.Scenev3()
 
-    Rcam = mmnip.genRotRelRight(Rcam)
+    #Rcam = mmnip.genRotRelRight(Rcam)
     
     print(Rcam)
     #visu.ViewScene(R,t)
 
     R,t = synth.FakeAruco()
-    R = mmnip.genRotRelRight(R)
+    #R = mmnip.genRotRelRight(R)
 
     visu.ViewRefs(Rcam+R,tcam+t)
 

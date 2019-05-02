@@ -25,18 +25,17 @@ def main():
     #draw_geometries([mesh])
     
     Rcam, tcam = synth.Scenev1()
-    Rcam = mmnip.genRotRel(Rcam)
 
     visu.ViewRefs(Rcam,tcam)
 
     #visu.ViewScene(R,t)
 
     R,t = synth.FakeArucoReal()
-    R = mmnip.genRotRel(R)
 
     #Rcam = mmnip.genRotRel(Rcam)
 
     visu.ViewRefs(Rcam+R,tcam+t)
+   
 
     #similar to output from ROS (I think)
     camsObs =synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)

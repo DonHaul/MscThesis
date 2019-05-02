@@ -126,43 +126,16 @@ def GenerateCameraPairObs(camsObs,R,t):
                     obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']])})
 
 
-                    
-                    #AND MATCHERU THEM
-
-                    #confusing as fuck i, know
-                    # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
-                    # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-                    #Feito erradamente moreless empiricamente
-                    Rbetweenaruco = np.dot(R[obsjR['obsId']],R[obsiR['obsId']].T)
-
-                    #print("Rbetweenaruco")
-                    #print(Rbetweenaruco.shape)
+                    #Get aruco transformation parameters
+                    Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
-                    #print("tbetweenaruco")
-                    #print(tbetweenaruco.shape)
+                   
 
-                    #print("R[obsjR['obsId']].T")
-                    #print(R[obsjR['obsId']].T.shape)
+                    #transform from marker1  coordinates to marker2 coordinates
+                    new_t =  mmnip.Transform(obsiR['t'],Rbetweenaruco, tbetweenaruco)
 
-                    #print("t[obsiR['obsId']]")
-                    #print(t[obsiR['obsId']].shape)
-
-                    #print("t[obsjR['obsId']]")
-                    #print(t[obsjR['obsId']].shape)
-
-                    new_R = np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T])
-                    
-                    #print("obsiR['t']")
-                    #print(obsiR['t'].shape)
-
-                    #print("oako")
-                    #print(mmnip.InvertT(Rbetweenaruco.T, tbetweenaruco).shape)
-                    #print("obsiR['R']")
-                    #print(obsiR['R'].shape)
-
-                    new_t =  mmnip.Transform(mmnip.InvertT(Rbetweenaruco.T, tbetweenaruco),obsiR['R'],  obsiR['t'])
-                    
-                    tij = mmnip.Transform(mmnip.InvertT(new_R.T, new_t),obsjR['R'],obsjR['t'])
+                    #transform from marker2 coordinates to camera j coordinates                    
+                    tij = mmnip.Transform(new_t, obsjR['R'].T, mmnip.InvertT(obsjR['R'], obsjR['t']))
 
                     obsT.append({"from":i,"to":j,"t": tij})
 
