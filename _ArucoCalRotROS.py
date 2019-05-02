@@ -2,7 +2,7 @@
 import ArucoInfoGetter
 import rospy
 import algos
-import pickler as pickle
+import pickler2 as pickle
 from sensor_msgs.msg import Image
 
 import cv2
@@ -23,7 +23,7 @@ def main():
 
     rospy.init_node('my_name_is_jeff', anonymous=True)
 
-    camInfo = pickle.Out("static/CameraInfo 20-04-2019.pickle")
+    camInfo = pickle.Pickle().Out("static/CameraInfo 20-04-2019.pickle")
 
 
     ig = ArucoInfoGetter.ArucoInfoGetter(camInfo['K'],camInfo['D'],showVideo,calc)
@@ -68,7 +68,7 @@ def main():
     rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
     
-
+    pickle.Pickle().In("ROTTARUCOv2","R",rr)
 
 if __name__ == '__main__':
     main()

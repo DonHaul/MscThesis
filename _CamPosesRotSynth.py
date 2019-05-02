@@ -25,13 +25,13 @@ def main():
     
     Rcam, tcam = synth.Scenev1()
 
-    Rcam = mmnip.genRotRel(Rcam)
+    Rcam = mmnip.genRotRelRight(Rcam)
     
     print(Rcam)
     #visu.ViewScene(R,t)
 
     R,t = synth.FakeAruco()
-    R = mmnip.genRotRel(R)
+    R = mmnip.genRotRelRight(R)
 
     visu.ViewRefs(Rcam+R,tcam+t)
 
@@ -63,23 +63,9 @@ def main():
     
     print("local1")
     
-    rr = mmnip.genRotRel(rotSols)
+    rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
     
-    print("localleft1")
-    rr = mmnip.globalRotateRotsl(rotSols)
-    visu.ViewRefs(rr)
-
-    print("localweird mode")
-
-    Rrelations = []
-
-    #generate R between each things
-    for j in range(0,len(rotSols)):
-        Rrelations.append(np.dot(rotSols[j].T,rotSols[0])) #Rw2*R1w' = R12
-
-    
-    visu.ViewRefs(Rrelations)
 
 
 

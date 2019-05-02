@@ -26,12 +26,18 @@ def main():
 
     #R,t = synth.FakeArucoReal() #<-- MUST BE REMOVED LATER
 
-    arucoModelPickle = pickle.Pickle()
+    #arucoModelPickle = pickle.Pickle()
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
     
-    pick =arucoModelPickle.Out("static/ArucoRot.pickle")
+    #pick =arucoModelPickle.Out("static/ArucoRot.pickle")
+    
+    #R = pick['R']
 
-    R = pick['R']
+    ola= pickle.Pickle().Out("pickles/ROTTARUCOv2 02-05-2019 02-02-25.pickle")
+    print(ola)
+    R=ola['R']
+    visu.ViewRefs(R)
+
     
     cameraName = "abretesesamo"
 

@@ -92,15 +92,15 @@ def translationProbDef(observations,rotRel,N):
             continue
 
         #See problem definition in my thesis in order to understand this black magic
-        Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
-        A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]=  np.eye(3)
+        Ident[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= np.eye(3)
+        A[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]=  np.eye(3)
         
 
         #print(obs)
         #print(obs['to'])
         #print(rotRel[obs['to']])
         #print(obs['t'])
-        b[cnt*3:cnt*3+3,0]=-np.dot( rotRel[obs['to']],obs['t'])
+        b[cnt*3:cnt*3+3,0]=np.dot( rotRel[obs['to']],obs['t'])
 
         cnt=cnt+1
     

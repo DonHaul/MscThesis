@@ -7,11 +7,13 @@ import visu
 
 import pickler as pickle
 
+import observationgenner as obsGen
+
 def main():
 
     R,t = synth.FakeArucoReal()
 
-    R= matmanip.genRotRel(R)
+    
 
     #pprint.pprint(t)
 
@@ -23,6 +25,9 @@ def main():
     #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
     #ola = pickle.Out("static/ArucoRot.pickle")
     #R =ola["RlocalPermutated"]
+
+    #obsGen.ObsViewer(obst,"t")
+
 
     # TRANSLATION STUFF
     A,b = probdefs.translationProbDef(obst,R,len(t))

@@ -11,7 +11,7 @@ import observationgenner as obsgen
 def main():
 
 
-    R,t = synth.Scenev3() #in world coordinates
+    R,t = synth.FakeArucoReal() #in world coordinates
     
     visu.ViewRefs(R)
 

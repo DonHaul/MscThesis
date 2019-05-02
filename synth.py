@@ -136,7 +136,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
             
             #same as R w->r *(R w->cam transposed)
             #noise=10
-            o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r],Rcam[i].T)),'t':tcr}
+            o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r].T,Rcam[i])),'t':tcr}
 
             #visu.ViewRefs([np.eye(3),o['R']])
 
