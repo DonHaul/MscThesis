@@ -188,7 +188,7 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     return u[:,-Nleast:]
 
 
-def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip="ola"):
+def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
 
     
 
@@ -211,8 +211,8 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip="ola"):
         #print("opt1")
 
         dett = np.linalg.det(sol)
-        #print(np.linalg.det(sol))
-        #print(np.dot(sol.T,sol))
+        print(np.linalg.det(sol))
+        print(np.dot(sol.T,sol))
 
         r,t=procrustes(np.eye(3),sol)
 

@@ -7,6 +7,22 @@ This module contains all the problem definitions
 import numpy as np
 
 
+def rotationProbDefN2(observations,N):
+    if(N>2):
+        print("Wrong Function")
+
+    A=np.zeros((3,3))
+
+    fro = observations[0]['from']
+
+    for obs in observations:
+        if(obs['from']==fro):
+            A = A + obs['R']
+        else:
+            A = A + obs['R'].T
+
+    return A
+
 def rotationProbDef(observations,N):
     '''Problem Definition for getting Rotations between a set of referentials
 
@@ -30,6 +46,8 @@ def rotationProbDef(observations,N):
     cnt = 0
     for obs in observations:
         
+        #print(np.linalg.det(obs['R']))
+        #print(np.dot(obs['R'].T,obs['R']))
 
         if obs['to'] > 12 or obs['from'] > 12:
             print("skippity: weird index found")
@@ -38,6 +56,7 @@ def rotationProbDef(observations,N):
         #fills the matrices according to the observed pairs
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
         A[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= obs['R']
+
 
         #print("from camera:"+str(obs['from'])+" to camera:"+str(obs['to']))
         #print(obs['R'])
