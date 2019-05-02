@@ -123,8 +123,8 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
         #For each observed marker
         for r in rnds:
             
-            tcr =np.dot(R[r].T, tcam[i] - t[r]) # t from camera r to observatin i  
-            #tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
+            #tcr =np.dot(R[r].T, tcam[i] - t[r]) # t from camera r to observatin i  
+            tcr =np.dot(Rcam[i].T, t[r] - tcam[i]) # t from observation r to camera i  
 
 
             #generate the samples  'from' Camera i 'to' sample i
@@ -136,7 +136,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
             
             #same as R w->r *(R w->cam transposed)
             #noise=10
-            o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(R[r].T,Rcam[i])),'t':tcr}
+            o ={ "obsId":r,"R": np.dot(mmnip.genRandRotMatrix(noise), np.dot(Rcam[i].T,R[r])),'t':tcr}
 
             #visu.ViewRefs([np.eye(3),o['R']])
 

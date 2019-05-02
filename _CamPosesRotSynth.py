@@ -23,7 +23,7 @@ def main():
     #mesh.paint_uniform_color([1, 0.706, 0])
     #draw_geometries([mesh])
     
-    Rcam, tcam = synth.Scenev3()
+    Rcam, tcam = synth.Scenev1()
 
     #Rcam = mmnip.genRotRelRight(Rcam)
     
