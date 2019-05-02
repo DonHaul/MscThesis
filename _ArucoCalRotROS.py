@@ -49,19 +49,25 @@ def main():
     
 
 
+
     print("global1")
-    rotSols = algos.RProbSolv1(ig.ATA,3,ig.Nmarkers)    
     
-    #converts to world coordinates
-    rotSols = mmnip.Transposer(rotSols)
+    rotSols = algos.RProbSolv1(ig.ATA,3,ig.Nmarkers)  
     visu.ViewRefs(rotSols)
-   
-    
+
+    #converts to world coordinates or into them
+    #rotSols = mmnip.Transposer(rotSols)
+    #visu.ViewRefs(rotSols)
+
+    #converts in first ref coordinates , 
+    #rr = mmnip.genRotRelRight(rotSols)
+    #visu.ViewRefs(rr)
+
+
     #converts in first ref coordinates , 
     rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
-
-
+    
 
 
 if __name__ == '__main__':

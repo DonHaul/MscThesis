@@ -59,7 +59,7 @@ class ArucoInfoGetter(object):
             img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=False)
 
             
-            obsgen.ObsViewer(obsR,pause=False)
+            #obsgen.ObsViewer(obsR,pause=False)
 
             #only if there are observations it makes the A matrix
             if  ids is not None and len(ids)>1:

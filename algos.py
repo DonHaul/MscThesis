@@ -6,6 +6,7 @@ This module contains some of the well known algorithms, that help in the thesis
 
 import numpy as np
 #import scipy.linalg
+import pickler2 as pickle
 
 def LeastSquaresNumpy(A,b):
     '''
@@ -189,19 +190,36 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
 
 def RProbSolv1(C,Nleast=1,Nmarkers=1):
 
+    
+
     solution = TotalLeastSquares(C,Nleast)
 
     rotsols=[] 
 
+  
+
     solsplit = np.split(solution,Nmarkers)  
+
+    if(np.linalg.det(solsplit[0])<0):
+        print("FLIPPING")
+        for i in range(0,len(solsplit)):
+            solsplit[i]= np.flip(solsplit[i],axis=1)
+
 
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
-        print("opt1")
-        print(np.linalg.det(sol))
-        print(np.dot(sol.T,sol))
+        #print("opt1")
+
+        dett = np.linalg.det(sol)
+        #print(np.linalg.det(sol))
+        #print(np.dot(sol.T,sol))
 
         r,t=procrustes(np.eye(3),sol)
+
+        #if(dett>0):
+        #    print("TRANSPOSED IT")
+        #    r=r.T
+
         rotsols.append(r)
 
 
@@ -209,7 +227,7 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1):
 
 def RProbSolv2(C,Nleast=1,Nmarkers=1):
 
-    solution = TotalLeastSquares(C,Nleast,Nmarkers)   
+    solution = TotalLeastSquares(C,Nleast)   
 
 
 
@@ -305,6 +323,7 @@ def TotalLeastSquares(C,Nleast=1):
 
     print("s")
     print(s)
+    print(len(s))
     #print("u")
     #print(u)
     #print("nullspace")

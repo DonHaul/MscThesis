@@ -66,7 +66,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #raw_input()
             
             #generate a R observation w/ noise
-            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1].T,R[r2]))})
+            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1].T,R[r2]).T)})
             
             #generate a t observation  w/ noise
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset
@@ -276,7 +276,7 @@ def FakeAruco2Markers():
     return R,t
 
    
-def FakeArucoReal():
+def FakeArucoReal9():
     '''Generate aruco model with 12 markers'''
 
     R=[]

@@ -82,6 +82,7 @@ def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captur
 
                 #generate R observations
                 if(captureR):
+                    #obsR={"to":(ids[i]+markerIDoffset),"from":(ids[j]+markerIDoffset),"R":np.dot(rots[i].T,rots[j])} #THE CORRECT WAY
                     obsR={"to":(ids[i]+markerIDoffset),"from":(ids[j]+markerIDoffset),"R":np.dot(rots[i].T,rots[j])}
                     observationsR.append(obsR)
                 

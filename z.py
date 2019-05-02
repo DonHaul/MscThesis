@@ -1,3 +1,4 @@
+
 import open3d
 import matmanip as mnip
 import visu
@@ -8,28 +9,28 @@ import synth
 
 
 
-R,t = synth.Scenev1()
+ola = pickle.Pickle().Out("pickles/wow 02-05-2019 01-07-33.pickle")
 
-visu.ViewRefs(R,t)
+print(ola['sol'])
 
-print("Riw")
-for r in R:
-    print(r)
+sols = ola['sol']
+
+sols = np.flip(sols,axis=1)
+
+solsplit = np.split(sols,12)  
+
+#get actual rotation matrices by doing the procrustes
+for sol in solsplit:
+    print("opt1")
+
+    dett = np.linalg.det(sol)
+    print(np.linalg.det(sol))
+    print(np.dot(sol.T,sol))
+
+    #r,t=procrustes(np.eye(3),sol)
+
+    #if(dett>0):
+    #    print("TRANSPOSED IT")
+    #    r=r.T
 
 
-print("tiw")
-for r in t:
-    print(r)
-
-newR=[]
-newt = []
-
-ref =1
-
-newR = mnip.genRotRelLeft(R,ref)
-
-for i in range(0,len(t)):
-    newt.append(np.dot(R[ref].T,t[i])+mnip.InvertT(R[ref],t[ref]))
-
-
-visu.ViewRefs(newR,newt)
