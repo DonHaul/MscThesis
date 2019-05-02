@@ -83,25 +83,16 @@ def main():
     rotSols = algos.RProbSolv1(g.ATA,3,g.N_cams)
    
     visu.ViewRefs(rotSols)
-
-    cameraRot=pickle.Pickle()
+    print("global2")
+    #rotSols = algos.RProbSolv1(C,3,len(R))    
+    #visu.ViewRefs(rotSols)
+     
     
-    cameraRot.In("CamRot","Rglob",rotSols)
-
-    
-    print("local1")
-    
-    rr = mmnip.genRotRel(rotSols)
+    print("local1")    
+    rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
 
-    cameraRot.In("CamRot","Rloc",rr)
-    
-    print("localleft1")
-    rr = mmnip.globalRotateRotsl(rotSols)
-    visu.ViewRefs(rr)
-
-    cameraRot.In("CamRot","Rlocleft",rr)
-
+    pickle.Pickle().In("CamRot","R",rr)
     
 
     

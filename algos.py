@@ -188,7 +188,7 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     return u[:,-Nleast:]
 
 
-def RProbSolv1(C,Nleast=1,Nmarkers=1):
+def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip="ola"):
 
     
 
@@ -199,8 +199,8 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1):
   
 
     solsplit = np.split(solution,Nmarkers)  
-
-    if(np.linalg.det(solsplit[0])<0):
+    print(canFlip)
+    if(np.linalg.det(solsplit[0])<0 and canFlip==True):
         print("FLIPPING")
         for i in range(0,len(solsplit)):
             solsplit[i]= np.flip(solsplit[i],axis=1)

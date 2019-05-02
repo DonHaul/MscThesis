@@ -51,18 +51,16 @@ def main():
     C = np.dot(B.T,B) #C = B'B
 
     
-    rotSols = algos.RProbSolv1(C,3,len(Rcam)) 
+    rotSols = algos.RProbSolv1(C,3,len(Rcam),canFlip=True) 
 
   
     visu.ViewRefs(rotSols)
-
     print("global2")
     #rotSols = algos.RProbSolv1(C,3,len(R))    
     #visu.ViewRefs(rotSols)
      
     
-    print("local1")
-    
+    print("local1")    
     rr = mmnip.genRotRelLeft(rotSols)
     visu.ViewRefs(rr)
     

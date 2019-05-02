@@ -27,20 +27,25 @@ def main():
 
     print(sys.argv)
 
-    camPoses= pickle.Pickle().Out("static/CamPose_NEW2camAruco_4 01-05-2019 16-55-43.pickle")
+    camPoses= pickle.Pickle().Out("pickles/CamPose_NEW2camAruco_4 02-05-2019 03-47-15.pickle")
     
 
     R= camPoses['R']
     print(R)
-    tt= camPoses['t']
+    t= camPoses['t']
+
+
     
-    t=[]
-    for t2 in tt:
-        t.append(t2-tt[0])
+    t[0] = mmnip.InvertT(R[0],t[0])
+    t[1] = mmnip.InvertT(R[1],t[1])
+    R[1]=R[1].T
+    #t=[]
+    #for t2 in tt:
+    #    t.append(t2-tt[0])
         
     print(t)
 
-    t[1]= np.array([[-0.72],[0],[0.58]])
+    #t[1]= np.array([[-0.72],[0],[0.58]])
     #print(a)
 
     visu.ViewRefs(R)

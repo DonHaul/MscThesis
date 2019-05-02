@@ -68,6 +68,7 @@ class img_gather(object):
     def showImg(self):
         '''Displays images from all cameras
         '''
+        
         cv2.imshow("Image window ",self.images)           
         cv2.waitKey(1)
         
