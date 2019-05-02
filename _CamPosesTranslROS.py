@@ -36,7 +36,7 @@ def main():
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
     camPosePickle = pickle.Pickle()
-    CameraPose = camPosePickle.Out("pickles/CamRot 02-05-2019 03-36-35.pickle")
+    CameraPose = camPosePickle.Out("pickles/CamRot 02-05-2019 14-08-09.pickle")
 
     Rcam = CameraPose['R']
 
@@ -47,7 +47,7 @@ def main():
 
 
 
-    camsName = ["abretesesamo","ervilhamigalhas"]
+    camsName = ["abretesesamo","ervilhamigalhas","broken"]
 
     #create gather class
     g = gather.img_gather(len(camsName),arucoModel,calc,Rcam)

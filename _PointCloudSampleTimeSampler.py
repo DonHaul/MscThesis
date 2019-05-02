@@ -23,11 +23,11 @@ import sys
 def main():
     
 
-    camsName=["abretesesamo","ervilhamigalhas"]
+    camsName=["abretesesamo","ervilhamigalhas","broken"]
 
     print(sys.argv)
 
-    camPoses= pickle.Pickle().Out("pickles/CamPose_NEW2camAruco_4 02-05-2019 03-47-15.pickle")
+    camPoses= pickle.Pickle().Out("pickles/CamPose_NEW2camAruco_4 02-05-2019 14-09-42.pickle")
     
 
     R= camPoses['R']
@@ -35,10 +35,14 @@ def main():
     t= camPoses['t']
 
 
-    
-    t[0] = mmnip.InvertT(R[0],t[0])
-    t[1] = mmnip.InvertT(R[1],t[1])
-    R[1]=R[1].T
+    #t[0] = mmnip.InvertT(R[0],t[0])
+    #R[0]=R[0].T
+    #t[0] = mmnip.InvertT(R[0],t[0])
+    #t[1] = mmnip.InvertT(R[1],t[1])
+    #R[1]=R[1].T
+
+    #t[2] = mmnip.InvertT(R[2],t[2])
+    #R[2]=R[2].T
     #t=[]
     #for t2 in tt:
     #    t.append(t2-tt[0])
@@ -48,7 +52,7 @@ def main():
     #t[1]= np.array([[-0.72],[0],[0.58]])
     #print(a)
 
-    visu.ViewRefs(R)
+    visu.ViewRefs(R,t,refSize=0.1)
     
 
     pcl =[]#list in time
@@ -66,7 +70,7 @@ def main():
 
                 print(points.shape)
 
-                pointsvs= mmnip.Transform(points.T,R[i].T,mmnip.InvertT(R[i],t[i]) )
+                pointsvs= mmnip.Transform(points.T,R[i],t[i])
                 #rotation and translation is done here
                 print(pc)
 

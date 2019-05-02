@@ -36,12 +36,13 @@ def main():
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
      
+    visu.ViewRefs(arucoModel['R'],arucoModel['t'],refSize=0.1)
 
     showVideo = 1
     calc = 0  #0 is R 1 is t 2 is R for cameras, 4 is t for cameras
 
 
-    camsName = ["abretesesamo","ervilhamigalhas"]
+    camsName = ["abretesesamo","ervilhamigalhas","broken"]
 
     #create gather class
     g = gather.img_gather(len(camsName),arucoModel,calc)
