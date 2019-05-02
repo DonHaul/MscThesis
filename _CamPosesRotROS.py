@@ -77,7 +77,10 @@ def main():
     cv2.destroyAllWindows()
 
 
-    
+    if(g.N_cams==2):
+        B = g.lol/g.count
+        print("2 CAMS")
+        visu.ViewRefs([np.eye(3),B])
     
     print("global1")
     rotSols = algos.RProbSolv1(g.ATA,3,g.N_cams)

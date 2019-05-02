@@ -13,6 +13,9 @@ def rotationProbDefN2(observations,N):
 
     A=np.zeros((3,3))
 
+    #print(observations)
+    if(len(observations)==0):
+        return A
     fro = observations[0]['from']
 
     for obs in observations:

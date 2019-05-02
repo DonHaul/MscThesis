@@ -11,6 +11,8 @@ import numpy as np
 import visu
 import matmanip as mmnip
 
+import probdefs
+
 #import snapper
 
 def main():
@@ -52,12 +54,21 @@ def main():
 
     print("global1")
     
+
+
+    #B = probdefs.rotationProbDef(obsR,len(R))  #95% confidence that it is correct
+
+    #C = np.dot(B.T,B) #C = B'B
+
+    print("global1")
+    
+
     rotSols = algos.RProbSolv1(ig.ATA,3,ig.Nmarkers)  
     visu.ViewRefs(rotSols)
 
     #converts to world coordinates or into them
-    #rotSols = mmnip.Transposer(rotSols)
-    #visu.ViewRefs(rotSols)
+    rotSolsNotUsed = mmnip.Transposer(rotSols)
+    visu.ViewRefs(rotSolsNotUsed)
 
     #converts in first ref coordinates , 
     #rr = mmnip.genRotRelRight(rotSols)

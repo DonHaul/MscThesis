@@ -64,6 +64,10 @@ class img_gather(object):
 
         #A.T b initialized
         self.ATb = np.zeros((N_cams*3,1)) 
+
+        self.count=0
+
+        self.lol=np.zeros((3,3))
         
     def showImg(self):
         '''Displays images from all cameras
@@ -105,6 +109,10 @@ class img_gather(object):
 
                 A = probdefs.rotationProbDef(obsR,self.N_cams)
                 self.ATA = self.ATA + np.dot(A.T,A)
+
+                if(self.N_cams)==2:
+                    self.lol = self.lol+probdefs.rotationProbDefN2(obsR,self.N_cams)
+                    self.count=self.count+1
             
             #translation problem
             elif self.calc ==1:

@@ -42,6 +42,8 @@ class ArucoInfoGetter(object):
 
         self.img=[]
 
+        self.count=0
+
     def GetImg(self):
         return self.img
 
@@ -63,9 +65,16 @@ class ArucoInfoGetter(object):
 
             #only if there are observations it makes the A matrix
             if  ids is not None and len(ids)>1:
-                A =  probdefs.rotationProbDef(obsR,self.Nmarkers)
+                
+                
+                if self.Nmarkers==2:
+                    ATA =probdefs.rotationProbDefN2(obsgen,self.Nmarkers)
+                    count=count+1
+                    self.ATA=self.ATA + ATA
+                else:
+                    A =  probdefs.rotationProbDef(obsR,self.Nmarkers)
 
-                self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
+                    self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
 
         #calculates translations
         elif (self.calc == 1):
@@ -73,6 +82,7 @@ class ArucoInfoGetter(object):
             img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.K,self.D,self.markerIDoffset,self.Nmarkers,captureR=True,captureT=True)
             
             if  ids is not None and len(ids)>1:
+
                 A,b =  probdefs.translationProbDef(obsT,self.R,self.Nmarkers)
 
                 self.ATA = self.ATA + np.dot(A.T,A) #way to save the matrix in a compact manner
