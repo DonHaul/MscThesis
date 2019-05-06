@@ -13,6 +13,83 @@ import matmanip as mmnip
 
 import visu
 
+def SampleGeneratorMultiNoise(R,t,samples=1000,noise = [0.00001],noiset=0.0001):
+    ''' Generates observations(Rotations and translations) between a set of Referentials
+
+    Args:
+        R: List of rotations of the referentials in world coordinates (Riw)
+        t: List of translations of the referentials in world coordinates (tiw)
+        samples: Approximated number of samples to generate
+        noise: Noise scale in degrees that will be added to the rotations observed
+        noiset: Noise scale in degrees that will be added to the tranlations observed
+
+    Returns:
+        obsR: Dictionary with the Rotation Observations. Each Observations Contains
+            -from: Where the rotation comes from
+            -to: Where the rotation is going to
+            -R: The rotation itself
+        obst: Dictionary with the Translation Observations. Each Observations Contains
+            -from: Where the rotation comes from
+            -to: Where the rotation is going to
+            -t: The translation itself
+    '''
+
+    #initializes array that tells if this rotation r[i] has atleast one observation
+    r = np.zeros([len(R),1])  
+
+    #for a while (this loop only occurs 1 time if we are lucky)
+    while True:
+
+        obsR = []
+        obst = []
+
+        #generates samples
+        for i in range(0,samples):
+
+            #for each observation        
+
+            #pick 2 different ids
+            r1 =  random.randint(0, len(R)-1)
+            r2 = r1
+            while r2==r1:
+                r2 = random.randint(0, len(R)-1)
+            
+
+
+            t1w = t[r1] #translation of referantial 1 in world coordinates
+            t2w = t[r2] #translation of referantial 2 in world coordinates
+                        
+            t12 =np.dot(R[r2].T, t1w - t2w) #translation of referantial 1 in referantial 2's coordinates
+            
+            #print("from:"+str(r2)+"to:"+str(r1))
+            #print(np.dot(R[r1],R[r2].T))
+            #raw_input()
+            obsRR=[]
+            obstt = []
+
+            noiss = mmnip.genRandRotMatrix(noise)
+
+            for n in noiss:
+                #generate a R observation w/ noise
+                obsR.append({"from":r2,"to":r1,"R":np.dot(n,np.dot(R[r1].T,R[r2]).T)})
+                
+                #generate a t observation  w/ noise
+                obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset
+            
+            #sets this cameras as having observations
+            r[r1]=1
+            r[r2]=1
+
+            obsRR.append(obsR)
+            obstt.append(obst)
+
+        #there is at least one observation per marker then, exit, else generate more samples
+        if sum(r)==len(R):
+            break
+
+    return obsRR,obstt
+
+
 def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
     ''' Generates observations(Rotations and translations) between a set of Referentials
 

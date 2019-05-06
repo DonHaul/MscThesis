@@ -94,6 +94,35 @@ def PermuteRows(matList,permuter):
     
     return finalR
 
+def genRandRotMatrixMultiNoise(noise):
+
+    #print("noise is:"+str(noise))
+
+    #generate noise
+    a = np.random.rand(3,1)*noise
+
+    noises = []
+
+    for n in noise:
+        a=a*n
+
+        #make it have 0 mean
+        b =np.ones((3,1))*(n/2)
+        c=a-b
+
+        noises.append(genRotMat(np.squeeze(c)))
+    #print("a")
+    #print(a)
+    #print(a.shape)
+    #print("b")
+    #print(b)
+    #print(b.shape)
+    #print("c")
+    #print(c)
+    #print(c.shape)
+
+    return  noises
+
 def genRandRotMatrix(noise):
 
     #print("noise is:"+str(noise))
