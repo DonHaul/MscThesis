@@ -99,11 +99,13 @@ def genRandRotMatrixMultiNoise(noise):
     #print("noise is:"+str(noise))
 
     #generate noise
-    a = np.random.rand(3,1)*noise
+    a = np.random.rand(3,1)
 
     noises = []
 
     for n in noise:
+
+        print(type(n))
         a=a*n
 
         #make it have 0 mean

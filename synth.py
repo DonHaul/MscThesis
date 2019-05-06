@@ -34,17 +34,25 @@ def SampleGeneratorMultiNoise(R,t,samples=1000,noise = [0.00001],noiset=0.0001):
             -t: The translation itself
     '''
 
+    #print("from:"+str(r2)+"to:"+str(r1))
+    #print(np.dot(R[r1],R[r2].T))
+    #raw_input()
+    obsRR=[]
+    obstt = []
+
+
     #initializes array that tells if this rotation r[i] has atleast one observation
     r = np.zeros([len(R),1])  
 
     #for a while (this loop only occurs 1 time if we are lucky)
     while True:
 
-        obsR = []
-        obst = []
+
+
 
         #generates samples
         for i in range(0,samples):
+
 
             #for each observation        
 
@@ -61,15 +69,18 @@ def SampleGeneratorMultiNoise(R,t,samples=1000,noise = [0.00001],noiset=0.0001):
                         
             t12 =np.dot(R[r2].T, t1w - t2w) #translation of referantial 1 in referantial 2's coordinates
             
-            #print("from:"+str(r2)+"to:"+str(r1))
-            #print(np.dot(R[r1],R[r2].T))
-            #raw_input()
-            obsRR=[]
-            obstt = []
 
-            noiss = mmnip.genRandRotMatrix(noise)
+
+            print(noise)
+            noiss = mmnip.genRandRotMatrixMultiNoise(noise)
+
+            obsR = []
+            obst = []
 
             for n in noiss:
+
+                
+                
                 #generate a R observation w/ noise
                 obsR.append({"from":r2,"to":r1,"R":np.dot(n,np.dot(R[r1].T,R[r2]).T)})
                 
