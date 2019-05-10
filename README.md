@@ -21,6 +21,15 @@ rosbag record --split --size=1024 -b 0 /ervilhamigalhas/depth_registered/points 
 ### 2 rgb + depth
 rosbag record --split --size=1024 -b 0 /ervilhamigalhas/depth_registered/image_raw /abretesesamo/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color
 
+### 3 rgb + depth
+rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /abretesesamo/depth_registered/image_raw /fernando/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color /fernando/rgb/image_color
+
+
 ### 2 rgb + depth + pc2
 rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /abretesesamo/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color /ervilhamigalhas/depth_registered/points /abretesesamo/depth_registered/points
+
+
+### camera calibration  script
+
+rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.01225 image:=/ervilhamigalhas/rgb/image_color camera:=ervilhamigalhas --no-service-check
 
