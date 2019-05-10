@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/mario/ros_ws/install/setup.sh
