@@ -23,7 +23,7 @@ import sys
 def main():
     
 
-    camsName=["abretesesamo","ervilhamigalhas","broken"]
+    camsName=["abretesesamo","ervilhamigalhas"]
 
     print(sys.argv)
 
@@ -63,25 +63,27 @@ def main():
             pcs_frame=[]
             for i in range(0,len(camsName)):
 
-    
+                print("hello1")
                 pc,rgb,depth = rosinterface.GetPointCloudRGBD(camsName[i],globalthings.camInfo['K'])
-
+                print("hello2")
                 points =  np.asarray(pc.points)
 
-                print(points.shape)
-
+                #print(points.shape)
+                print("hello3")
                 pointsvs= mmnip.Transform(points.T,R[i],t[i])
                 #rotation and translation is done here
                 print(pc)
-
+                print("hello4")
                 pc.points = open3d.Vector3dVector(pointsvs.T)
 
-
-
+                
+                print("hello4")
                 pcs_frame.append(pc)
 
+                print("hello5")
             fullPc = pointclouder.MergeClouds(pcs_frame)
-                
+            
+            print("hello6")
             refe = open3d.create_mesh_coordinate_frame(1, origin = [0, 0, 0])
 
             visu.draw_geometry([fullPc,refe])

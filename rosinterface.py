@@ -13,6 +13,23 @@ import struct
 import matmanip as mnip
 import pointclouder
 
+def getAllPluggedCameras():
+
+    cameraNames=[]
+
+    topiclist = rospy.get_published_topics()
+
+    for topic in topiclist:
+        
+        if "/depth_registered/image_raw" in topic[0] or "/rgb/image_color" in topic[0]:
+            name = topic[0].split('/')[1]
+
+            if name not in cameraNames:
+                cameraNames.append(name)
+
+
+    return cameraNames
+
 def FetchDepthRegisteredRGB(cameraName,topicRGB = "/rgb/image_color", topicDepth ="/depth_registered/image_raw"):
     '''Gets rgb + depth (REGISTERED) of a certain camera
     Registered means - the dpeth is already aligned with the RGB
