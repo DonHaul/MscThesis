@@ -1,0 +1,2 @@
+convert_bag_images:multiple_kinects_launch
+-DCATKIN_DEVEL_PREFIX=/home/mario/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/mario/ros_ws/install -G Unix Makefiles

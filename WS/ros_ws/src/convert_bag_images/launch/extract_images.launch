@@ -1,0 +1,14 @@
+<launch>
+    <arg name="bag_file" default="test.bag" />
+    <arg name="save_folder" default="/home/candeiasalexandre/images_test"/>
+
+    <node pkg="rosbag" type="play" name="rosbag" required="true" args="$(arg bag_file)"/>
+
+    <node name="image_converter" pkg="image_transport" type="republish" respawn="false" required="true" output="screen" args="compressed in:=/camera/rgb/image_color raw out:=/image_converter/image_raw/"/>
+    
+    <node name="image_saver" pkg="image_view" type="image_saver" respawn="false" required="true" output="screen" cwd="ROS_HOME">
+    <remap from="image" to="/image_converter/image_raw/"/>
+    <param name="filename_format" value="$(arg save_folder)/image%08d.png"/>
+    </node>
+
+</launch>

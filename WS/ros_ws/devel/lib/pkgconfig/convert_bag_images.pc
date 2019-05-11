@@ -1,0 +1,8 @@
+prefix=/home/mario/ros_ws/devel
+
+Name: convert_bag_images
+Description: Description of convert_bag_images
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/mario/ros_ws/devel/lib 
+Requires: 

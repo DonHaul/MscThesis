@@ -1,0 +1,6 @@
+<launch>
+
+    <include file="$(find multiple_kinects_launch)/launch/abretesesamo.launch" />
+    <include file="$(find multiple_kinects_launch)/launch/ervilhamigalhas.launch" />
+
+</launch>
