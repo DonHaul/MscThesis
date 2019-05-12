@@ -89,6 +89,73 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
     return observations ,img
 
 
+
+def Cam2ArucoObsMaker2(img,K,D,arucoData):
+    '''
+    this function creates observations between this camera and every aruco marker it sees
+
+    if the camera sees markers 1 2 and 3
+
+    it will generate Rcam_1 Rcam_2 and Rcam_3
+
+    THIS FUNCTION WILL GENERATE SAMPLES FOR A SINGLE CAMERA
+    
+    Args:
+        K - intrinsic camera matrix
+        D - distortion parameters
+        det_corners - all detected corners
+        hello - image that has the aruco detections added to it on top
+        ids - all detected ids
+
+    Returns:
+        observations (dict array):All marker observations made by this camera
+            obsId: observed aruco marker
+            t: translation from obsId to camera (marker position in world coordinates)
+            R: rotation from camera to obsId
+    '''
+    
+    #fetches detected markers
+    det_corners, ids, rejected = aruco.FindMarkers(img, K)
+
+    #changes image
+    hello = img.astype(np.uint8).copy() 
+    hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+    
+    #list of all observations generated
+    observations =[]
+
+    #if more than one marker was detected
+    if  ids is not None and len(ids)>1:
+
+        #finds rotations and vectors and draws referentials on image
+        rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids),arucoData['size'])
+
+        #squeeze
+        ids = ids.squeeze()
+
+
+        #generates samples
+        for i in ids:                
+                 
+                 #only valid markers
+                if i not in arucoData['ids']:
+                    print("Invalid marker id: "+str(i))
+                    continue 
+
+                #initializes observation
+                o ={"obsId":arucoData['idmap'][str(i)]}
+
+                #generate R observations
+                o['R']=rots[i]
+
+                #generate t observations
+                o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
+                
+                observations.append(o)
+ 
+    return observations ,img
+
+
 def GenerateCameraPairObs(camsObs,R,t):
     '''
     Generate observations between 2 cameras, by doing Transformations throught the aruco

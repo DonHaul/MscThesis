@@ -12,16 +12,10 @@ import observationgenner as obsGen
 
 
 class CamPoseGetter(object):
-    def __init__(self,N_cams,arucoModel,calc,Rcam=None):
+    def __init__(self,N_cams,arucoData,arucoModel,intrinsics,calc,Rcam=None):
       
         #number of camera
         self.N_cams = N_cams
-
-        #stasticial var with the total number of times it receives information for each camera
-        self.gatherCounter = [0]*N_cams
-
-        #Array with 0 and 1 telling from which camera it received info from
-        self.gatherReady = np.zeros((N_cams),dtype=np.uint8)
 
         #Array where several camera images will be concatenated into
         self.images =  np.zeros((480,640*N_cams,3),dtype=np.uint8)
@@ -29,7 +23,10 @@ class CamPoseGetter(object):
         #list of empty lists where observations will be saved (first dim tells camera, second dim is the observations for that cam)
         self.Allobs = [ [] for i in range(self.N_cams) ]
 
+        #intrinsic Params
+        self.intrinsics = intrinsics
 
+        self.arucoData=arucoData
 
         #get aruco model
         self.R = arucoModel['R']
@@ -40,6 +37,10 @@ class CamPoseGetter(object):
 
         for tt in arucoModel['t']:
             self.t.append(np.squeeze(tt))
+
+        #Array where several camera images will be concatenated into
+        self.images =  np.zeros((480,640*N_cams,3),dtype=np.uint8)
+
         
         #self.t = arucoModel['t']
         #print(self.t)
@@ -68,13 +69,70 @@ class CamPoseGetter(object):
         self.count=0
 
         self.lol=np.zeros((3,3))
+
+        self.arucoData['idmap'] = markerIdMapper(arucoData['ids'])
+        
+
+    def markerIdMapper(arr):
+
+    IdMap={}
+    print(type(IdMap))
+    for i in range(0,len(arr)):
+        IdMap[str(arr[i])]=i
+        print(type(IdMap))
+
+    
+    return IdMap
     
     def callback(self,*args):
 
-        for i in range(0,self.N_cams):
-            print(i)
-
+        print(self.N_cams)
+        print(len(args))
         print("YEET")
+
+        #iterate throguh cameras
+        for i in range(0,self.N_cams):
+            img = roscv.rosImg2RGB(args[i])
+
+            #get observations of this camera, and image with the detected markers and referentials shown
+            obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][i],self.intrinsics['D'][i],arucoData)
+
+            #set image
+            self.images[0:480,i*640:i*640+640,0:3]=img
+
+            #get new observations of that camera
+            self.Allobs[camId]=obs  # WRONG SHOULD IT BE concantenate lists OR =?
+
+        #Generate Pairs from all of the camera observations
+        obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
+
+        #rotation problem
+        if self.calc == 0:
+
+            A = probdefs.rotationProbDef(obsR,self.N_cams)
+            self.ATA = self.ATA + np.dot(A.T,A)
+
+            if(self.N_cams)==2:
+                self.lol = self.lol+probdefs.rotationProbDefN2(obsR,self.N_cams)
+                self.count=self.count+1
+        
+        #translation problem
+        elif self.calc ==1:
+
+            
+            A,b =  probdefs.translationProbDef(obsT,self.Rcam,self.N_cams)
+
+            self.ATA = self.ATA + np.dot(A.T,A)
+            self.ATb = self.ATb + np.dot(A.T,b)
+
+        #set them all as unready
+        self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)
+
+        #clear observations
+        self.Allobs = [ [] for i in range(self.N_cams) ]
+
+        self.showImg()
+
 
     def showImg(self):
         '''Displays images from all cameras

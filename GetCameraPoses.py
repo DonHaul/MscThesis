@@ -7,7 +7,6 @@ import numpy as np
 
 import pickler2 as pickle
 
-
 import message_filters
 
 import CamPoseGetter
@@ -25,7 +24,14 @@ def main(argv):
         camNames = rosinterface.getAllPluggedCameras()
 
     #fetch K of existing cameras
-    Ks = getKs(camNames)
+    intrinsics = getKDs(camNames)
+
+
+
+    
+    print("lol")
+    print(intrinsics)
+    print("gay")
 
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
@@ -37,7 +43,7 @@ def main(argv):
     #Load aruco Model
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
-    camposegetter=CamPoseGetter.CamPoseGetter(len(camNames),arucoData,arucoModel,settings,0)
+    camposegetter=CamPoseGetter.CamPoseGetter(len(camNames),arucoData,arucoModel,intrinsics,0,None)
 
     camSub = []
 
@@ -47,15 +53,17 @@ def main(argv):
 
     ts = message_filters.ApproximateTimeSynchronizer(camSub,10, 1.0/freq, allow_headerless=True)
     ts.registerCallback(camposegetter.callback)
-    
+
+    print("Fetching Messages")    
     try:
         rospy.spin()
     except KeyboardInterrupt:
         print("shut")
 
 
-def getKs(camNames):
+def getKDs(camNames):
     K={}
+    D={}
 
     for name in camNames:
         filedict = getJsonFromFile("./static/camcalib_" + name +".json")
@@ -68,8 +76,11 @@ def getKs(camNames):
 
         
         K[name]=k
+        D[name]=np.asarray(filedict['D'], dtype=np.float32)
 
-    return K
+        intrinsic = {"K":K,"D":D}
+
+    return intrinsic
 
 def getJsonFromFile(filename):
 

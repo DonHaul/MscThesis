@@ -115,7 +115,7 @@ def FindMarkers(img,K):
     return det_corners, ids, rejected
 
 
-def FindPoses(K,D,det_corners,img,n):
+def FindPoses(K,D,det_corners,img,n,size):
     '''
     Estimates rotation and translation of each aruco
 
@@ -128,7 +128,7 @@ def FindPoses(K,D,det_corners,img,n):
     '''
 
     #get pose
-    rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,0.0875,K,D)
+    rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,size,K,D)
 
     #the third parameter is corner coordinates
 
