@@ -1,5 +1,6 @@
 {
     "_comment":["minimum observations per marker","should translation and rotation be calculated simultaneously"],
     "observations":30,
-    "simultaneousCapture":false
+    "simultaneousCapture":false,
+    "synchronousFreq":300
 }

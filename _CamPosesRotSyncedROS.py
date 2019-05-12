@@ -80,7 +80,7 @@ def main():
     image_sub1 = message_filters.Subscriber(camsName[0]+"/rgb/image_color", Image)
     image_sub2 = message_filters.Subscriber(camsName[1]+"/rgb/image_color", Image)
 
-    freq=400
+    freq=1
 
     # all of the parameters
     cb_params =	{}
