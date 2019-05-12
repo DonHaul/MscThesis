@@ -9,16 +9,19 @@ import cv2
 import aruco
 import probdefs
 import observationgenner as obsGen
+import rosinterface as IRos
 
 
 class CamPoseGetter(object):
-    def __init__(self,N_cams,arucoData,arucoModel,intrinsics,calc,Rcam=None):
+    def __init__(self,camNames,arucoData,arucoModel,intrinsics,calc,Rcam=None):
       
         #number of camera
-        self.N_cams = N_cams
+        self.N_cams = len(camNames)
+
+        self.camNames = camNames
 
         #Array where several camera images will be concatenated into
-        self.images =  np.zeros((480,640*N_cams,3),dtype=np.uint8)
+        self.images =  np.zeros((480,640*self.N_cams,3),dtype=np.uint8)
 
         #list of empty lists where observations will be saved (first dim tells camera, second dim is the observations for that cam)
         self.Allobs = [ [] for i in range(self.N_cams) ]
@@ -39,7 +42,7 @@ class CamPoseGetter(object):
             self.t.append(np.squeeze(tt))
 
         #Array where several camera images will be concatenated into
-        self.images =  np.zeros((480,640*N_cams,3),dtype=np.uint8)
+        self.images =  np.zeros((480,640*self.N_cams,3),dtype=np.uint8)
 
         
         #self.t = arucoModel['t']
@@ -61,44 +64,42 @@ class CamPoseGetter(object):
         self.Rcam = Rcam
 
         #A.T A initialized
-        self.ATA = np.zeros((N_cams*3,N_cams*3))
+        self.ATA = np.zeros((self.N_cams*3,self.N_cams*3))
 
         #A.T b initialized
-        self.ATb = np.zeros((N_cams*3,1)) 
+        self.ATb = np.zeros((self.N_cams*3,1)) 
 
         self.count=0
 
         self.lol=np.zeros((3,3))
 
-        self.arucoData['idmap'] = markerIdMapper(arucoData['ids'])
+        self.arucoData['idmap'] = self.markerIdMapper(arucoData['ids'])
         
 
-    def markerIdMapper(arr):
+    def markerIdMapper(self,arr):
 
-    IdMap={}
-    print(type(IdMap))
-    for i in range(0,len(arr)):
-        IdMap[str(arr[i])]=i
-        print(type(IdMap))
-
-    
-    return IdMap
+        IdMap={}
+       
+        for i in range(0,len(arr)):
+            IdMap[str(arr[i])]=i
+       
+        return IdMap
     
     def callback(self,*args):
 
-        print(self.N_cams)
-        print(len(args))
-        print("YEET")
+        #print(self.N_cams)
+        #print(len(args))
+        #print("YEET")
 
         #iterate throguh cameras
-        for i in range(0,self.N_cams):
-            img = roscv.rosImg2RGB(args[i])
+        for camId in range(0,self.N_cams):
+            img = IRos.rosImg2RGB(args[camId])
 
             #get observations of this camera, and image with the detected markers and referentials shown
-            obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][i],self.intrinsics['D'][i],arucoData)
+            obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
             #set image
-            self.images[0:480,i*640:i*640+640,0:3]=img
+            self.images[0:480,camId*640:camId*640+640,0:3]=img
 
             #get new observations of that camera
             self.Allobs[camId]=obs  # WRONG SHOULD IT BE concantenate lists OR =?

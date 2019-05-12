@@ -135,15 +135,15 @@ def Cam2ArucoObsMaker2(img,K,D,arucoData):
 
 
         #generates samples
-        for i in ids:                
+        for i in range(0,len(ids)):                
                  
                  #only valid markers
-                if i not in arucoData['ids']:
-                    print("Invalid marker id: "+str(i))
+                if ids[i] not in arucoData['ids']:
+                    print("Invalid marker id: "+str(ids[i]))
                     continue 
 
                 #initializes observation
-                o ={"obsId":arucoData['idmap'][str(i)]}
+                o ={"obsId":arucoData['idmap'][str(ids[i])]}
 
                 #generate R observations
                 o['R']=rots[i]

@@ -43,7 +43,7 @@ def main(argv):
     #Load aruco Model
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
-    camposegetter=CamPoseGetter.CamPoseGetter(len(camNames),arucoData,arucoModel,intrinsics,0,None)
+    camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,0,None)
 
     camSub = []
 
