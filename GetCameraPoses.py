@@ -20,7 +20,7 @@ import matmanip as mmnip
 
 import commandline
 
-import state
+import StateManager
 
 import visu
 
@@ -37,7 +37,7 @@ def main(argv):
     intrinsics = getKDs(camNames)
 
     #has all states that may change
-    stateru = state.State()
+    stateru = StateManager.State(len(camNames))
 
 
 
@@ -47,10 +47,10 @@ def main(argv):
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
     #sets class where image thread will run
-    camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru,None)
+    camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
 
     #sets thread where state changer will be
-    commandline.Start(stateru)
+    commandline.Start(stateru,rospy)
 
     camSub = []
 
@@ -70,24 +70,7 @@ def main(argv):
 
     cv2.destroyAllWindows()
 
-
-    if(camposegetter.N_cams==2):
-        B = camposegetter.lol/g.count
-        print("2 CAMS")
-        visu.ViewRefs([np.eye(3),B])
-    
-    print("global1")
-    rotSols = algos.RProbSolv1(camposegetter.ATA,3,camposegetter.N_cams)
-   
-    visu.ViewRefs(rotSols)
-    print("global2")
-    #rotSols = algos.RProbSolv1(C,3,len(R))    
-    #visu.ViewRefs(rotSols)
-     
-    
-    print("local1")    
-    rr = mmnip.genRotRelLeft(rotSols)
-    visu.ViewRefs(rr)
+    print("Finished Elegantly")
 
 
 

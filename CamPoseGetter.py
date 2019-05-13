@@ -13,11 +13,9 @@ import rosinterface as IRos
 
 
 class CamPoseGetter(object):
-    def __init__(self,camNames,arucoData,arucoModel,intrinsics,stateru,Rcam=None):
+    def __init__(self,camNames,arucoData,arucoModel,intrinsics,stateru):
         
         self.state = stateru
-
-        self.calc=0
 
         #number of camera
         self.N_cams = len(camNames)
@@ -37,9 +35,6 @@ class CamPoseGetter(object):
 
         #get aruco model
         self.R = arucoModel['R']
-
-        #self.R = synth
-
         self.t = []
 
         for tt in arucoModel['t']:
@@ -50,32 +45,21 @@ class CamPoseGetter(object):
 
        
 
-        if(self.state.stateDict['state']==0):
+        if(self.state.state==0):
             print("R problem Definition")
-        elif(self.state.stateDict['state']==1):
+        elif(self.state.state==1):
             print("t problem Definition")
         else:
             print("SOMETHING WENT WRONG")
 
-        #known camera rotations (if they exist)
-        self.Rcam = Rcam
-
-        #A.T A initialized
-        self.ATA = np.zeros((self.N_cams*3,self.N_cams*3))
-
         #A.T b initialized
         self.ATb = np.zeros((self.N_cams*3,1)) 
 
-        self.count=0
 
         self.lol=np.zeros((3,3))
 
         self.arucoData['idmap'] = self.markerIdMapper(arucoData['ids'])
         
-
-    def SetState(st):
-        self.state=st
-
     def markerIdMapper(self,arr):
 
         IdMap={}
@@ -108,26 +92,25 @@ class CamPoseGetter(object):
         obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
         #rotation problem
-        if self.calc == 0:
+        if self.state.state == 0:
 
             A = probdefs.rotationProbDef(obsR,self.N_cams)
-            self.ATA = self.ATA + np.dot(A.T,A)
+            self.state.ATAR = self.state.ATAR + np.dot(A.T,A)
 
-            if(self.N_cams)==2:
-                self.lol = self.lol+probdefs.rotationProbDefN2(obsR,self.N_cams)
-                self.count=self.count+1
+            #if(self.N_cams)==2:
+            #    self.lol = self.lol+probdefs.rotationProbDefN2(obsR,self.N_cams)
+            #    self.count=self.count+1
         
         #translation problem
-        elif self.calc ==1:
+        elif self.state.state ==1:
 
             
-            A,b =  probdefs.translationProbDef(obsT,self.Rcam,self.N_cams)
+            A,b =  probdefs.translationProbDef(obsT,self.state.R,self.N_cams)
 
-            self.ATA = self.ATA + np.dot(A.T,A)
-            self.ATb = self.ATb + np.dot(A.T,b)
-
-        #set them all as unready
-        self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)
+            self.state.ATAt = self.state.ATAt + np.dot(A.T,A)
+            self.state.ATb = self.state.ATb + np.dot(A.T,b)
+        else:
+            print("This State does nothing")
 
         #clear observations
         self.Allobs = [ [] for i in range(self.N_cams) ]
