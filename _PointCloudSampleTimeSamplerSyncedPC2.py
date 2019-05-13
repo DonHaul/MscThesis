@@ -5,8 +5,13 @@ import algos
 import pickler as pickle
 import message_filters
 
+from sensor_msgs import point_cloud2
 
 from sensor_msgs.msg import PointCloud2
+
+import struct
+
+
 
 import cv2
 import open3d
@@ -64,7 +69,7 @@ def main(argv):
     camSub=[]
     #getting subscirpters to use message fitlers on
     for name in camNames:
-        camSub.append(message_filters.Subscriber(name+"/depth_registered/points", PointCloud2))
+        camSub.append(message_filters.Subscriber("abretesesamo/depth_registered/points", PointCloud2))
 
 
     ts = message_filters.ApproximateTimeSynchronizer(camSub,10, 1.0/freq, allow_headerless=True)
@@ -135,37 +140,50 @@ class PCGetter(object):
                 #iterate throguh cameras
         for camId in range(0,self.N_cams):
             
+            ola = point_cloud2.read_points_list(args[camId], skip_nans=True)
+     
+            x=[]
+            y=[]
+            z=[]
+            r=[]
+            g=[]
+            b=[]
+            for point in ola:
+                x.append(point[0])
+                y.append(point[1])
+                z.append(point[2])
 
-            #RGB
-            rgb = IRos.rosImg2RGB(args[camId*2])
-            #depth
-            depth_reg = IRos.rosImg2Depth(args[camId*2+1])
+                rgb = point[3]
 
-            K = self.intrinsics['K'][self.camNames[camId]]
-
-            #points,colors = mmnip.depthimg2xyz(depth_reg,rgb,self.intrinsics['K'][self.camNames[camId]])
-            points = mmnip.depthimg2xyz2(depth_reg,K)
-            points = points.reshape((480*640, 3))
-
-            print(points.shape)
-            points= mmnip.Transform(points.T, self.scene[0][camId],self.scene[1][camId]).T
+                ba = bytearray(struct.pack("f", rgb))  
 
 
-            #print(colors.shape)
-            rgb1 = rgb.reshape((480*640, 3))#colors
+                count = 0
+                for bytte in ba:
+                    if(count==0):
+                        r.append(bytte)
+                    if(count==1):
+                        g.append(bytte)
+                    if(count==2):
+                        b.append(bytte)
+                        
+                    count=count+1
+                   
+            r=np.asarray(r)
+            g=np.asarray(g)
+            b=np.asarray(b)
+
+            rgb = np.vstack([r,g,b])
+            xyz = np.vstack([x,y,z])
             
-            pc = pointclouder.Points2Cloud(points,rgb1)
+            print(rgb.shape)
 
-            #points =  np.asarray(pc.points)
-
-            #print(points,shape)
-
+            print(xyz.shape)
             
-            #rotation and translation is done here
-            #print(pc)
-            #print("hello4")
-            #pc.points = open3d.Vector3dVector(pointsvs)
+            xyz= mmnip.Transform(xyz, self.scene[0][camId],self.scene[1][camId])
+            
 
+            pc = pointclouder.Points2Cloud(xyz.T,rgb.T)
 
             pcs.append(pc)
 

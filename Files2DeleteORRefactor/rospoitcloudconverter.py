@@ -63,12 +63,15 @@ for i in range(0, msg.height*msg.width):
     #boi = struct.unpack('!f', mss)
     #print("fetched",boi)
 
+
+    print(255-ord(rgb[0])))
        
     b.append(255-ord(rgb[0])) #com ou sem 255-
     g.append(255- ord(rgb[1]))
     r.append(255 -ord(rgb[2]))
-    alpha.append(255-ord(rgb[3  ]))
-
+    
+    
+    p
     #count=count+1
     #print(count)
 
