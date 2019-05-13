@@ -13,6 +13,16 @@ import CamPoseGetter
 
 from sensor_msgs.msg import Image
 
+import algos
+import cv2
+
+import matmanip as mmnip
+
+import commandline
+
+import state
+
+import visu
 
 def main(argv):
 
@@ -23,27 +33,24 @@ def main(argv):
     if camNames is None:
         camNames = rosinterface.getAllPluggedCameras()
 
-    #fetch K of existing cameras
+    #fetch K of existing cameras on the files
     intrinsics = getKDs(camNames)
 
+    #has all states that may change
+    stateru = state.State()
 
 
-    
-    print("lol")
-    print(intrinsics)
-    print("gay")
 
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
-
-    print(arucoData)
-
-    
-
 
     #Load aruco Model
     arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
 
-    camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,0,None)
+    #sets class where image thread will run
+    camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru,None)
+
+    #sets thread where state changer will be
+    commandline.Start(stateru)
 
     camSub = []
 
@@ -59,6 +66,31 @@ def main(argv):
         rospy.spin()
     except KeyboardInterrupt:
         print("shut")
+
+
+    cv2.destroyAllWindows()
+
+
+    if(camposegetter.N_cams==2):
+        B = camposegetter.lol/g.count
+        print("2 CAMS")
+        visu.ViewRefs([np.eye(3),B])
+    
+    print("global1")
+    rotSols = algos.RProbSolv1(camposegetter.ATA,3,camposegetter.N_cams)
+   
+    visu.ViewRefs(rotSols)
+    print("global2")
+    #rotSols = algos.RProbSolv1(C,3,len(R))    
+    #visu.ViewRefs(rotSols)
+     
+    
+    print("local1")    
+    rr = mmnip.genRotRelLeft(rotSols)
+    visu.ViewRefs(rr)
+
+
+
 
 
 def getKDs(camNames):

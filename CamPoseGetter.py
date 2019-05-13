@@ -13,8 +13,12 @@ import rosinterface as IRos
 
 
 class CamPoseGetter(object):
-    def __init__(self,camNames,arucoData,arucoModel,intrinsics,calc,Rcam=None):
-      
+    def __init__(self,camNames,arucoData,arucoModel,intrinsics,stateru,Rcam=None):
+        
+        self.state = stateru
+
+        self.calc=0
+
         #number of camera
         self.N_cams = len(camNames)
 
@@ -44,18 +48,11 @@ class CamPoseGetter(object):
         #Array where several camera images will be concatenated into
         self.images =  np.zeros((480,640*self.N_cams,3),dtype=np.uint8)
 
-        
-        #self.t = arucoModel['t']
-        #print(self.t)
-        #print("t is above")
+       
 
-        #0 is for R problem definition
-        #1 is for t problem definition
-        self.calc = calc    
-
-        if(self.calc==0):
+        if(self.state.stateDict['state']==0):
             print("R problem Definition")
-        elif(self.calc==1):
+        elif(self.state.stateDict['state']==1):
             print("t problem Definition")
         else:
             print("SOMETHING WENT WRONG")
@@ -76,6 +73,9 @@ class CamPoseGetter(object):
         self.arucoData['idmap'] = self.markerIdMapper(arucoData['ids'])
         
 
+    def SetState(st):
+        self.state=st
+
     def markerIdMapper(self,arr):
 
         IdMap={}
@@ -89,7 +89,7 @@ class CamPoseGetter(object):
 
         #print(self.N_cams)
         #print(len(args))
-        #print("YEET")
+        #print(self.state.stateDict)
 
         #iterate throguh cameras
         for camId in range(0,self.N_cams):
