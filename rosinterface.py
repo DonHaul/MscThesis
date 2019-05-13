@@ -94,6 +94,15 @@ def rgbmatrixfix(rgb):
     return newrgb
 
 
+def rosImg2Depth(rosimg):
+    
+    br = CvBridge()
+
+    #converts it
+    depth = br.imgmsg_to_cv2(rosimg, desired_encoding= "passthrough")
+
+    return depth
+
 def rosImg2RGB(rosimg):
     '''
     Converts from  ros image to rgn matrix

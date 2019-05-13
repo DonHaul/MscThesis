@@ -3,57 +3,80 @@ import ArucoInfoGetter
 import rospy
 import algos
 import pickler as pickle
-from sensor_msgs.msg import Image
+import message_filters
 
+from sensor_msgs.msg import Image
 import cv2
 import open3d
 import numpy as np
 import visu
 import matmanip as mmnip
 import time
-import rosinterface
+import rosinterface as IRos
 import pointclouder
-import globalthings
 
+import commandline
+
+import StateManager
+
+import json
 
 import pickler2 as pickle
 
+import FileIO
+
 import sys
+
 
 def main(argv):
     
-    
-    camsName=["abretesesamo","ervilhamigalhas"]
+    freq=10
 
-    print(sys.argv)
-
-    camPoses= pickle.Pickle().Out("pickles/CamPose_NEW2camAruco_4 02-05-2019 14-09-42.pickle")
-    
-
-    R= camPoses['R']
-    print(R)
-    t= camPoses['t']
-
-
-    #t[0] = mmnip.InvertT(R[0],t[0])
-    #R[0]=R[0].T
-    #t[0] = mmnip.InvertT(R[0],t[0])
-    #t[1] = mmnip.InvertT(R[1],t[1])
-    #R[1]=R[1].T
-
-    #t[2] = mmnip.InvertT(R[2],t[2])
-    #R[2]=R[2].T
-    #t=[]
-    #for t2 in tt:
-    #    t.append(t2-tt[0])
+    filename=""
+    if(len(argv)>1):
+        filename=argv[1]
+    else:
+        print("Scene File Needed")
+        quit()
         
-    print(t)
-
-    #t[1]= np.array([[-0.72],[0],[0.58]])
-    #print(a)
-
-    visu.ViewRefs(R,t,refSize=0.1)
+    #R,t,camNames
+    scene = LoadScene(filename)
     
+    print(R,t,camNames)
+    camNames=IRos.getAllPluggedCameras()
+
+
+    stateru = StateManager.State(len(camNames))
+
+    commandline.Start(stateru,rospy)
+
+    #fetch K of existing cameras on the files
+    intrinsics = FileIO.getKDs(camNames)
+
+    rospy.init_node('ora_ora_ora_ORAA', anonymous=True)
+
+    pcer = PCGetter(camNames,intrinsics,stateru,scene)
+
+    camSub=[]
+    #getting subscirpters to use message fitlers on
+    for name in camNames:
+        camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
+        camSub.append(message_filters.Subscriber(name+"/depth_registered/image_raw", Image))
+
+
+    ts = message_filters.ApproximateTimeSynchronizer(camSub,10, 1.0/freq, allow_headerless=True)
+    ts.registerCallback(pcer.callback)
+    print("callbacks registered")
+
+
+
+
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("shut")
+
+
 
     pcl =[]#list in time
 
@@ -97,8 +120,84 @@ def main(argv):
 
     #vis.destroy_window()
 
-   
+def LoadJson(filename,mode="r"):
+    f=open(filename,mode)
+    scene = json.load(f)
+    f.close()
+
+    return scene
+
+def LoadScene(filename):
+
+    scene = LoadJson(filename)
+
+
+    R=[]
+    t=[]
+    camNames=[]
+    for cam in  scene['cameras']:
+        R.append(np.asarray(cam['R'], dtype=np.float32))
+        t.append(np.asarray(cam['t'], dtype=np.float32))
+        camNames.append(np.asarray(cam['name']))
+
+
+    return R,t,camNames
+
+class PCGetter(object):
+
+    def __init__(self,camNames,intrinsics,stateru,scene):
+        print("initiated")
+
+        self.camNames = camNames
+        self.N_cams= len(camNames)
+
+        self.state = stateru
+
+        self.scene = scene
+
+        #intrinsic Params
+        self.intrinsics = intrinsics
+
+    def callback(self,*args):
+
+        print("Callbacktime")
+
+        pcs=[]
+        
+
+                #iterate throguh cameras
+        for camId in range(0,self.N_cams):
+            
+
+            #RGB
+            rgb = IRos.rosImg2RGB(args[camId*2])
+            #depth
+            depth_reg = IRos.rosImg2Depth(args[camId*2+1])
+
+            points = mmnip.depthimg2xyz(depth_reg,self.intrinsics['K'][self.camNames[camId]])
+            points = points.reshape((480*640, 3))
+
+
+
+            rgb1 = rgb.reshape((480*640, 3))
+
+            pc = pointclouder.Points2Cloud(points,rgb1)
+
+            points =  np.asarray(pc.points)
+
+            pointsvs= mmnip.Transform(points.T, self.scene[i]['R'],self.scene[i]['t'])
+            #rotation and translation is done here
+            #print(pc)
+            #print("hello4")
+            pc.points = open3d.Vector3dVector(pointsvs.T)
+
+
+            pcs.append(pc)
+
+        self.state.pc = pointclouder.MergeClouds(pcs)
+
+            
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main(sys.argv)

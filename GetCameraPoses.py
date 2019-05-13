@@ -11,14 +11,16 @@ import pickler2 as pickle
 
 import message_filters
 
+from sensor_msgs.msg import Image
 import random
 
 import CamPoseGetter
 
-from sensor_msgs.msg import Image
 
 import algos
 import cv2
+
+import FileIO
 
 import matmanip as mmnip
 
@@ -38,7 +40,7 @@ def main(argv):
         camNames = rosinterface.getAllPluggedCameras()
 
     #fetch K of existing cameras on the files
-    intrinsics = getKDs(camNames)
+    intrinsics = FileIO.getKDs(camNames)
 
     #has all states that may change
     stateru = StateManager.State(len(camNames))
@@ -83,9 +85,9 @@ def main(argv):
     print("t is:")
     print(stateru.t)
 
-    SaveCameraPoses(stateru.R,stateru.t)
+    SaveCameraPoses(stateru.R,stateru.t,camNames)
 
-def SaveCameraPoses(R=[],t=[]):
+def SaveCameraPoses(R,t,camNames):
 
 
     f=open("static/names.json","r")
@@ -98,8 +100,8 @@ def SaveCameraPoses(R=[],t=[]):
     fullfile={}
     fullfile["cameras"]=[]
 
-    for RR,tt in zip(R,t):
-        ["cameras"].append({"R":RR.tolist(),"t":tt.tolist()})
+    for RR,tt,cc in zip(R,t,camNames):
+        fullfile["cameras"].append({"R":RR.tolist(),"t":tt.tolist(),"name":cc})
 
     saveName = filename+" " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     f = open("./scenes/"+saveName+".json","w")
@@ -108,40 +110,9 @@ def SaveCameraPoses(R=[],t=[]):
     
     f.close()
 
-def getKDs(camNames):
-    K={}
-    D={}
 
-    for name in camNames:
-        filedict = getJsonFromFile("./static/camcalib_" + name +".json")
 
-        #if file does not exist
-        if(filedict==None):
-            filedict = getJsonFromFile("./static/camcalib_default.json")
 
-        k = np.asarray(filedict['K'], dtype=np.float32)
-
-        
-        K[name]=k
-        D[name]=np.asarray(filedict['D'], dtype=np.float32)
-
-        intrinsic = {"K":K,"D":D}
-
-    return intrinsic
-
-def getJsonFromFile(filename):
-
-    try:
-        f=open(filename,"r")
-    
-        data = json.load(f)
-        f.close()
-
-        return data
-
-    except IOError:
-      print "Error: File does not appear to exist."
-      return None
 
 
 

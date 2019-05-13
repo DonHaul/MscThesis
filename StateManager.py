@@ -22,7 +22,9 @@ class State(object):
         self.ATAt = np.zeros((self.N_cams*3,self.N_cams*3))
 
         #A.T b initialized
-        self.ATb = np.zeros((self.N_cams*3,1)) 
+        self.ATb = np.zeros((self.N_cams*3,1))
+
+        self.pc=None
 
     def CalcRthenStartT(self):
         #if(camposegetter.N_cams==2):
