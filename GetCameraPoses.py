@@ -5,9 +5,13 @@ import json
 import rosinterface
 import numpy as np
 
+import datetime
+
 import pickler2 as pickle
 
 import message_filters
+
+import random
 
 import CamPoseGetter
 
@@ -73,8 +77,36 @@ def main(argv):
     print("Finished Elegantly")
 
 
+    print("R is:")
+    print(stateru.R)
+
+    print("t is:")
+    print(stateru.t)
+
+    SaveCameraPoses(stateru.R,stateru.t)
+
+def SaveCameraPoses(R=[],t=[]):
 
 
+    f=open("static/names.json","r")
+
+    arr = json.load(f)
+
+    filename = random.choice(arr)
+    f.close()
+
+    fullfile={}
+    fullfile["cameras"]=[]
+
+    for RR,tt in zip(R,t):
+        ["cameras"].append({"R":RR.tolist(),"t":tt.tolist()})
+
+    saveName = filename+" " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    f = open("./scenes/"+saveName+".json","w")
+
+    json.dump(fullfile,f)
+    
+    f.close()
 
 def getKDs(camNames):
     K={}
@@ -110,6 +142,8 @@ def getJsonFromFile(filename):
     except IOError:
       print "Error: File does not appear to exist."
       return None
+
+
 
 def ParsingInputs(argv):
     parser = OptionParser()

@@ -10,7 +10,9 @@ class State(object):
 
         self.N_cams=N_cams
         self.state=0
+
         self.R=None
+        self.t=None
 
 
         #A.T A initialized
@@ -51,4 +53,6 @@ class State(object):
     
         solsplit2 = np.split(x,self.N_cams)
         visu.ViewRefs(self.R,solsplit2,refSize=0.1)
+
+        self.t=solsplit2
 

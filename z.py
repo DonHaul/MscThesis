@@ -1,16 +1,33 @@
-import keyboard #Using module keyboard
+import json
+import numpy as np
+
+R=[]
+
+R.append(np.random.rand(3,3))
+R.append(np.random.rand(3,3))
+R.append(np.random.rand(3,3))
+
+t=[]
+
+t.append(np.random.rand(3,))
+t.append(np.random.rand(3,))
+t.append(np.random.rand(3,))
+
+print(R)
+print(t)
+
+cameras=[]
+
+for RR,tt in zip(R,t):
+    print(tt,RR)
+
+    cameras.append({"R":RR.tolist(),"t":tt.tolist()})
 
 
+print(cameras)
 
-while True:  #making a loop
-    try:  #used try so that if user pressed other than the given key error will not be shown
-        if keyboard.is_pressed('a'): #if key 'a' is pressed 
-            print('You Pressed A Key!')
-            break #finishing the loop
-        else:
-            pass
-    except:
-        print("yo")
-        break  #if user pressed other than the given key the loop will break
+f = open("lol.json","w")
 
-print("yare are desan")
+json.dump(cameras,f)
+
+f.close()

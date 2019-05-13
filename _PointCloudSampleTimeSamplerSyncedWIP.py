@@ -20,9 +20,9 @@ import pickler2 as pickle
 
 import sys
 
-def main():
+def main(argv):
     
-
+    
     camsName=["abretesesamo","ervilhamigalhas"]
 
     print(sys.argv)
@@ -101,4 +101,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
