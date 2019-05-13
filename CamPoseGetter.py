@@ -33,14 +33,28 @@ class CamPoseGetter(object):
 
         self.arucoData=arucoData
 
-        #get aruco model
-        self.R = arucoModel['R']
+        self.R = []
         self.t = []
+
+        for marker in arucoModel['markers']:
+            #get aruco model
+
+            RR = np.asarray(marker['R'])
+            tt = np.squeeze(np.asarray(marker['t']))
+
+            print(tt)
+
+            self.R.append(RR)
+            self.t.append(tt)
+
+        #self.R= np.asarray(self.R)
+        #self.t= np.asarray(self.t)
+
 
         self.count = 0
 
-        for tt in arucoModel['t']:
-            self.t.append(np.squeeze(tt))
+        #for tt in arucoModel['t']:
+        #    self.t.append(np.squeeze(tt))
 
         #Array where several camera images will be concatenated into
         self.images =  np.zeros((480,640*self.N_cams,3),dtype=np.uint8)

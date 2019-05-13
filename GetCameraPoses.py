@@ -45,12 +45,12 @@ def main(argv):
     #has all states that may change
     stateru = StateManager.State(len(camNames))
 
-
+    
 
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
     #Load aruco Model
-    arucoModel = pickle.Pickle().Out("static/ArucoModel 01-05-2019 15-38-20.pickle")
+    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 13-05-2019 17:11:11.json")
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
@@ -85,9 +85,9 @@ def main(argv):
     print("t is:")
     print(stateru.t)
 
-    SaveCameraPoses(stateru.R,stateru.t,camNames)
+    SaveCameraPoses(stateru.R,stateru.t,camNames,"cameras")
 
-def SaveCameraPoses(R,t,camNames):
+def SaveCameraPoses(R,t,camNames,objectname="cameras"):
 
 
     f=open("static/names.json","r")
@@ -98,10 +98,10 @@ def SaveCameraPoses(R,t,camNames):
     f.close()
 
     fullfile={}
-    fullfile["cameras"]=[]
+    fullfile[objectname]=[]
 
     for RR,tt,cc in zip(R,t,camNames):
-        fullfile["cameras"].append({"R":RR.tolist(),"t":tt.tolist(),"name":cc})
+        fullfile[objectname].append({"R":RR.tolist(),"t":tt.tolist(),"name":cc})
 
     saveName = filename+" " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     f = open("./scenes/"+saveName+".json","w")
