@@ -61,7 +61,7 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
     if  ids is not None and len(ids)>1:
 
         #finds rotations and vectors and draws referentials on image
-        rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids))
+        rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids),arucoData['size'])
 
         #squeeze
         ids = ids.squeeze()
@@ -71,12 +71,12 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
         for i in range(0,len(ids)):                
                  
                  #only valid markers
-                if i not in range(2,14):
-                    #print("Invalid marker id: "+str(i))
+                if ids[i] not in arucoData['ids']:
+                    print("Invalid marker id: "+str(ids[i]))
                     continue 
 
                 #initializes observation
-                o ={"obsId":i+markerIDoffset}
+                o ={"obsId":arucoData['idmap'][str(ids[i])]}
 
                 #generate R observations
                 o['R']=rots[i]

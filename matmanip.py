@@ -269,7 +269,7 @@ def InverseTransform(totransform,R,t):
     '''
     return np.dot(R.T,totransform)-np.dot(R.T,t)
 
-def depthimg2xyz(depthimg,K):
+def depthimg2xyz2(depthimg,K):
 
     fx=K[0,0]
     fy=K[1,1]
@@ -288,3 +288,36 @@ def depthimg2xyz(depthimg,K):
     depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
 
     return depthcoords
+
+def depthimg2xyz(depthimg,rgb,K):
+
+    fx=K[0,0]
+    fy=K[1,1]
+    cx=K[0,2]
+    cy=K[1,2]
+    
+    depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
+
+    #u,v =np.indices((480,640))
+    points=[]
+    colors = []
+
+    #u=u-cx
+    #v=v-cy
+    #depthcoords[:,:,2]= depthimg/1000.0
+    #depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
+    #depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
+
+    for v in range(depthimg.shape[1]):
+        for u in range(depthimg.shape[0]):
+            color = rgb[u,v,:] 
+            Z = depthimg[u,v] / 1000.0
+            if Z==0: continue
+            X = (u - cx) * Z / fx
+            Y = (v - cy) * Z / fy
+            points.append([X,Y,Z])
+            colors.append(color)
+
+
+
+    return np.asarray(points),np.asarray(colors) 

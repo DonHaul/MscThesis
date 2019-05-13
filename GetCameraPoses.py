@@ -64,7 +64,7 @@ def main(argv):
     for name in camNames:
         camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
 
-    ts = message_filters.ApproximateTimeSynchronizer(camSub,10, 1.0/freq, allow_headerless=True)
+    ts = message_filters.ApproximateTimeSynchronizer(camSub,20, 1.0/freq, allow_headerless=True)
     ts.registerCallback(camposegetter.callback)
 
     print("Fetching Messages")    
@@ -106,11 +106,13 @@ def SaveCameraPoses(R,t,camNames):
     saveName = filename+" " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     f = open("./scenes/"+saveName+".json","w")
 
+
+
     json.dump(fullfile,f)
     
     f.close()
 
-
+    print("Saved File: "+str(saveName))
 
 
 

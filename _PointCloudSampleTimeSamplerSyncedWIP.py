@@ -21,6 +21,8 @@ import StateManager
 
 import json
 
+import open3d
+
 import pickler2 as pickle
 
 import FileIO
@@ -42,7 +44,7 @@ def main(argv):
     #R,t,camNames
     scene = LoadScene(filename)
     
-    print(R,t,camNames)
+    print(scene)
     camNames=IRos.getAllPluggedCameras()
 
 
@@ -80,43 +82,7 @@ def main(argv):
 
     pcl =[]#list in time
 
-    try:
-        while True:
-            #get clouds here
-            pcs_frame=[]
-            for i in range(0,len(camsName)):
-
-                print("hello1")
-                pc,rgb,depth = rosinterface.GetPointCloudRGBD(camsName[i],globalthings.camInfo['K'])
-                print("hello2")
-                points =  np.asarray(pc.points)
-
-                #print(points.shape)
-                print("hello3")
-                pointsvs= mmnip.Transform(points.T,R[i],t[i])
-                #rotation and translation is done here
-                print(pc)
-                print("hello4")
-                pc.points = open3d.Vector3dVector(pointsvs.T)
-
-                
-                print("hello4")
-                pcs_frame.append(pc)
-
-                print("hello5")
-            fullPc = pointclouder.MergeClouds(pcs_frame)
-            
-            print("hello6")
-            refe = open3d.create_mesh_coordinate_frame(1, origin = [0, 0, 0])
-
-            visu.draw_geometry([fullPc,refe])
-            #if save_image:
-            # vis.capture_screen_image("temp_%04d.jpg" % i)
-
-            #time.sleep(1)
-    except KeyboardInterrupt:
-        print('interrupted!')
-    
+    open3d.write_point_cloud("./tmp/wow.ply", stateru.pc)
 
     #vis.destroy_window()
 
@@ -160,7 +126,7 @@ class PCGetter(object):
 
     def callback(self,*args):
 
-        print("Callbacktime")
+        #print("Callbacktime")
 
         pcs=[]
         
@@ -174,22 +140,30 @@ class PCGetter(object):
             #depth
             depth_reg = IRos.rosImg2Depth(args[camId*2+1])
 
-            points = mmnip.depthimg2xyz(depth_reg,self.intrinsics['K'][self.camNames[camId]])
+            K = self.intrinsics['K'][self.camNames[camId]]
+
+            #points,colors = mmnip.depthimg2xyz(depth_reg,rgb,self.intrinsics['K'][self.camNames[camId]])
+            points = mmnip.depthimg2xyz2(depth_reg,K)
             points = points.reshape((480*640, 3))
 
+            print(points.shape)
+            points= mmnip.Transform(points.T, self.scene[0][camId],self.scene[1][camId]).T
 
 
-            rgb1 = rgb.reshape((480*640, 3))
-
+            #print(colors.shape)
+            rgb1 = rgb.reshape((480*640, 3))#colors
+            
             pc = pointclouder.Points2Cloud(points,rgb1)
 
-            points =  np.asarray(pc.points)
+            #points =  np.asarray(pc.points)
 
-            pointsvs= mmnip.Transform(points.T, self.scene[i]['R'],self.scene[i]['t'])
+            #print(points,shape)
+
+            
             #rotation and translation is done here
             #print(pc)
             #print("hello4")
-            pc.points = open3d.Vector3dVector(pointsvs.T)
+            #pc.points = open3d.Vector3dVector(pointsvs)
 
 
             pcs.append(pc)

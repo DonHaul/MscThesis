@@ -6,7 +6,7 @@ This module contains aruco marker detection stuff
 import cv2
 import numpy as np
 
-def ArucoObservationMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT=False):
+def ArucoObservationMaker(img,K,D,Nmarkers,arucoData,captureR=True,captureT=False):
     '''
     Finds Markers and makes observations
 
@@ -36,11 +36,11 @@ def ArucoObservationMaker(img,K,D,markerIDoffset,Nmarkers,captureR=True,captureT
     hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
 
     #make observations, and draw referentials
-    obsR,obsT,hello = ObservationMaker(K,D,det_corners,hello,ids,markerIDoffset,captureR,captureT)
+    obsR,obsT,hello = ObservationMaker(K,D,det_corners,hello,ids,arucoData,captureR,captureT)
 
     return hello ,ids,obsR,obsT #<- ids parameter doenst need to be here - WRONG
 
-def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captureT=False):
+def ObservationMaker(K,D,det_corners,img,ids,arucoData,captureR=True,captureT=False):
     '''
     Generates Observations
 
@@ -63,7 +63,7 @@ def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captur
     if  ids is not None and len(ids)>1:
 
         #finds rotations and vectors and draws referentials on image
-        rots,tvecs,img = FindPoses(K,D,det_corners,img,len(ids))
+        rots,tvecs,img = FindPoses(K,D,det_corners,img,len(ids),arucoData['size'])
         #this rots and tvecs are in camera coordinates
 
         #squeeze
@@ -75,21 +75,29 @@ def ObservationMaker(K,D,det_corners,img,ids,markerIDoffset,captureR=True,captur
         for i in range(0,len(ids)):                
             for j in range(i+1,len(ids)):
                 
-                if ids[j] not in range(2,14) or ids[i] not in range(2,14):
-                    continue
+                #only valid markers
+                if ids[i] not in arucoData['ids']:
+                    print("Invalid marker id: "+str(ids[i]))
+                    continue 
+
+                                 #only valid markers
+                if ids[j] not in arucoData['ids']:
+                    print("Invalid marker id: "+str(ids[i]))
+                    continue 
 
                 #print("observing "+str(i)+" and "+str(j))
 
                 #generate R observations
                 if(captureR):
                     #obsR={"to":(ids[i]+markerIDoffset),"from":(ids[j]+markerIDoffset),"R":np.dot(rots[i].T,rots[j])} #THE CORRECT WAY
-                    obsR={"to":(ids[i]+markerIDoffset),"from":(ids[j]+markerIDoffset),"R":np.dot(rots[i].T,rots[j])}
+                    obsR={"to":arucoData['idmap'][str(ids[i])],"from":arucoData['idmap'][str(ids[j])],"R":np.dot(rots[i].T,rots[j])}
                     observationsR.append(obsR)
+                
                 
                 
                 if(captureT):
                     #generate t observations
-                    obsT={"from":(ids[i]+markerIDoffset),"to":(ids[j]+markerIDoffset),"t":np.squeeze(np.dot(rots[j].T,(tvecs[i]-tvecs[j]).T))} 
+                    obsT={"from":arucoData['idmap'][str(ids[i])],"to":arucoData['idmap'][str(ids[j])],"t":np.squeeze(np.dot(rots[j].T,(tvecs[i]-tvecs[j]).T))} 
                     observationsT.append(obsT)
 
     return observationsR , observationsT ,img

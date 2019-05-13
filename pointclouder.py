@@ -30,7 +30,7 @@ def MergeClouds(clouds):
 
     for cloud in clouds:
         
-        print(np.asarray(cloud.points).shape)
+        #print(np.asarray(cloud.points).shape)
         xyz= np.vstack((xyz, np.asarray(cloud.points)))
         rgb= np.vstack((rgb, np.asarray(cloud.colors)))
 

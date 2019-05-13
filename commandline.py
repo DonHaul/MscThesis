@@ -5,6 +5,7 @@ import datetime
 import time
 import state
 import visu
+import open3d
 
 def worker(statev,rospy):
     x=""
@@ -13,6 +14,8 @@ def worker(statev,rospy):
         x= raw_input("Enter command")
         if "pc" in x:
             visu.draw_geometry([statev.pc])
+            #print("wow")
+            
         elif "R" in x:
             print("calculating R")
             statev.CalcRthenStartT()
