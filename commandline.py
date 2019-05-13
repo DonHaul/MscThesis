@@ -3,7 +3,7 @@ import cv2
 import Queue as queue
 import datetime
 import time
-import state
+
 import visu
 import open3d
 
@@ -13,8 +13,14 @@ def worker(statev,rospy):
     while x!="q":
         x= raw_input("Enter command")
         if "pc" in x:
-            visu.draw_geometry([statev.pc])
+            
             #print("wow")
+            ola = x.split(" ")
+            if(len(ola)==1):
+                visu.draw_geometry([statev.pc])
+            else:
+                time.sleep(int(ola[1]))
+                visu.draw_geometry([statev.pc])
             
         elif "R" in x:
             print("calculating R")

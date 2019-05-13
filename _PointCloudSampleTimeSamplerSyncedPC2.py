@@ -161,11 +161,11 @@ class PCGetter(object):
                 count = 0
                 for bytte in ba:
                     if(count==0):
-                        r.append(bytte)
+                        r.append(255-bytte)
                     if(count==1):
-                        g.append(bytte)
+                        g.append(255-bytte)
                     if(count==2):
-                        b.append(bytte)
+                        b.append(255-bytte)
                         
                     count=count+1
                    
