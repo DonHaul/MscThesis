@@ -43,12 +43,17 @@ def main(argv):
         
     #R,t,camNames
     scene = LoadScene(filename)
+    scene=list(scene)
+    mmnip.isRotation(scene[0])
+ 
+    scene[0]=mmnip.genRotRelLeft(scene[0])
     
     visu.ViewRefs(scene[0],scene[1],refSize=0.1)
 
-    print(scene)
-    camNames=IRos.getAllPluggedCameras()
+    print(scene[0])
+    camNames=scene[2]#IRos.getAllPluggedCameras()
     print(camNames)
+    #quit()
 
     stateru = StateManager.State(len(camNames))
 
@@ -106,7 +111,7 @@ def LoadScene(filename):
     for cam in  scene['cameras']:
         R.append(np.asarray(cam['R'], dtype=np.float32))
         t.append(np.asarray(cam['t'], dtype=np.float32))
-        camNames.append(np.asarray(cam['name']))
+        camNames.append(cam['name'])
 
 
     return R,t,camNames
@@ -149,7 +154,7 @@ class PCGetter(object):
             points = points.reshape((480*640, 3))
 
             print(points.shape)
-            points= mmnip.Transform(points.T, self.scene[0][camId].T, self.scene[1][camId]).T
+            points= mmnip.Transform(points.T, self.scene[0][camId], self.scene[1][camId]).T
 
 
             #print(colors.shape)
