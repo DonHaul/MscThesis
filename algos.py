@@ -7,6 +7,8 @@ This module contains some of the well known algorithms, that help in the thesis
 import numpy as np
 #import scipy.linalg
 import pickler2 as pickle
+import matmanip as mmnip
+import visu
 
 def LeastSquaresNumpy(A,b):
     '''
@@ -200,11 +202,12 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
 
     solsplit = np.split(solution,Nmarkers)  
     print(canFlip)
+
+    proceye = np.eye(3)
+
     if(np.linalg.det(solsplit[0])<0 and canFlip==True):
         print("FLIPPING")
-        for i in range(0,len(solsplit)):
-            solsplit[i]= np.flip(solsplit[i],axis=1)
-
+        proceye[0,0]=-1
 
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
@@ -214,7 +217,7 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
         print(np.linalg.det(sol))
         print(np.dot(sol.T,sol))
 
-        r,t=procrustes(np.eye(3),sol)
+        r,t=procrustes(proceye,sol)
 
         #if(dett>0):
         #    print("TRANSPOSED IT")
@@ -222,8 +225,28 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
 
         rotsols.append(r)
 
+    #if flipped
+    #if proceye[0,0] == -1:
+        
+    visu.ViewRefs(rotsols)
 
-    return rotsols
+    #converts in first ref coordinates , 
+    rr = mmnip.genRotRelLeft(rotsols) #IF FLIPPED      
+    visu.ViewRefs(rr)
+    #    return rr
+    #else:
+
+        #converts to world coordinates or into them 
+    rotSolsNotUsed = mmnip.Transposer(rotsols)  #IF UNFLIPPED
+    visu.ViewRefs(rotSolsNotUsed)
+
+        #converts in first ref coordinates , 
+    rr = mmnip.genRotRelRight(rotSolsNotUsed) #IFUNFLIPPED
+    visu.ViewRefs(rr)
+
+    return rr
+
+    return "NANI"
 
 def RProbSolv2(C,Nleast=1,Nmarkers=1):
 

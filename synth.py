@@ -311,7 +311,23 @@ def FakeArucoReal9():
 
     return R,t
 
+def TiltedCams():
 
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([-45,0,0]))
+    R.append(mmnip.genRotMat([0,-90,0]))
+
+  
+    
+    t.append(np.array([0,0,0]))
+    t.append(np.array([0,0,10]))
+    t.append(np.array([0,0,20]))
+
+    return R,t
    
 def FakeArucoReal():
     '''Generate aruco model with 12 markers'''

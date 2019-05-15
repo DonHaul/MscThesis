@@ -45,7 +45,7 @@ class State(object):
         rr = mmnip.genRotRelLeft(rotSols)
         visu.ViewRefs(rr)
 
-        self.R=rr
+        self.R=rotSols
 
         self.state=1
 
