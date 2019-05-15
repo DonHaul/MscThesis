@@ -204,6 +204,6 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #transform from marker2 coordinates to camera j coordinates                    
                     tij = mmnip.Transform(new_t, obsjR['R'],  obsjR['t'])
 
-                    obsT.append({"from":i,"to":j,"t": tij})
+                    obsT.append({"from":j,"to":i,"t": tij})
 
     return obsR,obsT

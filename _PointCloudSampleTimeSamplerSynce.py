@@ -44,9 +44,11 @@ def main(argv):
     #R,t,camNames
     scene = LoadScene(filename)
     
+    visu.ViewRefs(scene[0],scene[1],refSize=0.1)
+
     print(scene)
     camNames=IRos.getAllPluggedCameras()
-
+    print(camNames)
 
     stateru = StateManager.State(len(camNames))
 
@@ -147,7 +149,7 @@ class PCGetter(object):
             points = points.reshape((480*640, 3))
 
             print(points.shape)
-            points= mmnip.Transform(points.T, self.scene[0][camId], self.scene[1][camId]).T
+            points= mmnip.Transform(points.T, self.scene[0][camId].T, self.scene[1][camId]).T
 
 
             #print(colors.shape)
