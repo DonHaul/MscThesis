@@ -226,25 +226,26 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
         rotsols.append(r)
 
     #if flipped
-    #if proceye[0,0] == -1:
-        
-    visu.ViewRefs(rotsols)
-
-    #converts in first ref coordinates , 
-    rr = mmnip.genRotRelLeft(rotsols) #IF FLIPPED      
-    visu.ViewRefs(rr)
-    #    return rr
-    #else:
-
-        #converts to world coordinates or into them 
-    rotSolsNotUsed = mmnip.Transposer(rotsols)  #IF UNFLIPPED
-    visu.ViewRefs(rotSolsNotUsed)
+    if proceye[0,0] == -1:
+        print("FLIPPITY")
+        visu.ViewRefs(rotsols)
 
         #converts in first ref coordinates , 
-    rr = mmnip.genRotRelRight(rotSolsNotUsed) #IFUNFLIPPED
-    visu.ViewRefs(rr)
+        rr2 = mmnip.genRotRelLeft(rotsols) #IF FLIPPED      
+        visu.ViewRefs(rr2)
+        return rr2
+    else:
+        print("NO FLIPPITY")
+        #converts to world coordinates or into them 
+        rotSolsNotUsed = mmnip.Transposer(rotsols)  #IF UNFLIPPED
+        visu.ViewRefs(rotSolsNotUsed)
 
-    return rr
+        #converts in first ref coordinates , 
+        rr1 = mmnip.genRotRelLeft(rotSolsNotUsed) #IFUNFLIPPED
+        print("YAOZA")
+        visu.ViewRefs(rr1)
+
+        return rr1
 
     return "NANI"
 

@@ -39,6 +39,9 @@ def main(argv):
     if camNames is None:
         camNames = rosinterface.getAllPluggedCameras()
 
+    print(camNames)
+    
+
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)
 

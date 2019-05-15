@@ -32,18 +32,11 @@ class State(object):
         #    print("2 CAMS")
         #    visu.ViewRefs([np.eye(3),B])
     
-        print("global1")
+        
         rotSols = algos.RProbSolv1(self.ATAR,3,self.N_cams)
-    
+        print("global1")
         visu.ViewRefs(rotSols)
-        print("global2")
-        #rotSols = algos.RProbSolv1(C,3,len(R))    
-        #visu.ViewRefs(rotSols)
-        
-        
-        print("local1")    
-        rr = mmnip.genRotRelLeft(rotSols)
-        visu.ViewRefs(rr)
+
 
         self.R=rotSols
 
