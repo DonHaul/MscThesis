@@ -87,7 +87,7 @@ class CamPoseGetter(object):
     
     def callback(self,*args):
 
-        print("callback: "+str(self.count))
+        #print("callback: "+str(self.count))
 
         self.count = self.count + 1
         #print(self.N_cams)
@@ -110,6 +110,7 @@ class CamPoseGetter(object):
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
+        print(len(obsR))
         #rotation problem
         if self.state.state == 0:
 
