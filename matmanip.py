@@ -143,6 +143,14 @@ def genRotMat(angle):
     aux = np.dot(Rx,Ry)
     return np.dot(aux,Rz)
 
+def isRotation(rotsols):
+    #from world coordinates to ref coordinates
+
+    #generate R between each things
+    for j in range(0,len(rotsols)):
+        print(np.linalg.det(rotsols[j]))
+        print(np.dot(rotsols[j].T,rotsols[j]))
+        
 def genRotRelLeft(rotsols,ref=0):
     #from world coordinates to ref coordinates
     

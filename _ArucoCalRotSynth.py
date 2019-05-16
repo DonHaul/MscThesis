@@ -11,14 +11,14 @@ import observationgenner as obsgen
 def main():
 
 
-    R,t = synth.FakeArucoReal() #in world coordinates
+    R,t = synth.TiltedCams() #in world coordinates
     
     visu.ViewRefs(R)
 
     #correct 100%
-    obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
+    obsR,obst = synth.SampleGenerator(R,t,noise=1.0,samples=10000)
 
-    obsgen.ObsViewer(obsR,pause=False,show=False)
+    #obsgen.ObsViewer(obsR,pause=False,show=False)
     
     #visu.ViewRefs([obsR[0]['R']])
 
@@ -43,20 +43,9 @@ def main():
         print("global1")
         
         rotSols = algos.RProbSolv1(C,3,len(R))
+        
+
         visu.ViewRefs(rotSols)
-
-        #converts to world coordinates or into them
-        rotSolsNotUsed = mmnip.Transposer(rotSols)
-        visu.ViewRefs(rotSolsNotUsed)
-
-        #converts in first ref coordinates , 
-        #rr = mmnip.genRotRelRight(rotSols)
-        #visu.ViewRefs(rr)
-
-
-        #converts in first ref coordinates , 
-        rr = mmnip.genRotRelLeft(rotSols)
-        visu.ViewRefs(rr)
     
     
 

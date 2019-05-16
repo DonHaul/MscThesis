@@ -41,6 +41,9 @@ def main(argv):
 
     camNames=["abretesesamo","fernando"]
 
+    print(camNames)
+    
+
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)
 
