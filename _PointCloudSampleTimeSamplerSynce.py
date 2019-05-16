@@ -45,8 +45,9 @@ def main(argv):
     scene = LoadScene(filename)
     
     print(scene)
-    camNames=IRos.getAllPluggedCameras()
+    #camNames=IRos.getAllPluggedCameras()
 
+    camNames=["abretesesamo","fernando"]
 
     stateru = StateManager.State(len(camNames))
 

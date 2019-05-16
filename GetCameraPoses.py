@@ -36,8 +36,10 @@ def main(argv):
 
     arucoData, arucoModel,settings,camNames = ParsingInputs(argv)
 
-    if camNames is None:
-        camNames = rosinterface.getAllPluggedCameras()
+    #if camNames is None:
+    #    camNames = rosinterface.getAllPluggedCameras()
+
+    camNames=["abretesesamo","fernando"]
 
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)
