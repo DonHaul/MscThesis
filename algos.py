@@ -51,8 +51,9 @@ def MeanSquaredError(a,b=None):
     return np.sqrt(np.sum(a**2))
 
 
+
 #this is how wikipedia does it
-def procrustes(X,Y):
+def procrustes(X,Y,fixReflection=True):
     '''
     Get closest matrix that minimizes R : min RX-Y such that R.T*R is Identity 
 
@@ -74,6 +75,7 @@ def procrustes(X,Y):
 
 
     if np.linalg.det(V) < 0: # == -1
+        print("ROTATION WAS A REFLECTION MATRIX")
         b = V[:,-1]
         b= b*-1
         V[:,-1] = b
@@ -199,11 +201,9 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
   
 
     solsplit = np.split(solution,Nmarkers)  
-    print(canFlip)
-    if(np.linalg.det(solsplit[0])<0 and canFlip==True):
-        print("FLIPPING")
-        for i in range(0,len(solsplit)):
-            solsplit[i]= np.flip(solsplit[i],axis=1)
+    #print(canFlip)
+    #if(np.linalg.det(solsplit[0])<0 and canFlip==True):
+    #    print("FLIPPING")
 
 
     #get actual rotation matrices by doing the procrustes
