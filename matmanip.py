@@ -215,7 +215,7 @@ def CheckSymmetric(a, tol=1e-8):
     return np.allclose(a, a.T, atol=tol)
 
 
-def Rt2Homo(R,t):
+def Rt2Homo(R=None,t=None):
     '''Creates Homography matrix from R and t
 
     Args:
@@ -224,6 +224,11 @@ def Rt2Homo(R,t):
     Returns;
         H [4x4] - homography matrix
     '''
+    
+    if(R is None):
+        R=np.eye(3)
+    if(t is None):
+        t= np.zeros((3,))
 
     H = np.eye(4)   #initializes H matrix
     H[0:3,0:3]=R    #sets R

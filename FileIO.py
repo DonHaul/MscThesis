@@ -22,6 +22,9 @@ def getKDs(camNames):
 
     return intrinsic
 
+
+
+
 def getJsonFromFile(filename):
 
     try:
@@ -35,3 +38,19 @@ def getJsonFromFile(filename):
     except IOError:
       print "Error: File does not appear to exist."
       return None
+
+def LoadScene(filename):
+
+    scene = getJsonFromFile(filename)
+
+
+    R=[]
+    t=[]
+    camNames=[]
+    for cam in  scene['cameras']:
+        R.append(np.asarray(cam['R'], dtype=np.float32))
+        t.append(np.asarray(cam['t'], dtype=np.float32))
+        camNames.append(cam['name'])
+
+
+    return R,t,camNames
