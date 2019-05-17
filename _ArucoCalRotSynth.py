@@ -16,10 +16,12 @@ def main():
 
 
     R,t = synth.TestScene51() #in world coordinates
-    
-    #R = mmnip.genRotRelLeft(R)
 
+    R = mmnip.genRotRelLeft(R)
+
+    #visu.ViewRefs(R,t,showRef=True,zaWordu=True)
     visu.ViewRefs(R)
+
 
     #correct 100%
     obsR,obst = synth.SampleGenerator(R,t,noise=0.0,samples=30)
@@ -59,8 +61,7 @@ def main():
 
         #converts to world coordinates or into them
         rotSolsNotUsed = mmnip.Transposer(rotSols)
-        visu.ViewRefs(rotSolsNotUsed)
-
+        
         #converts in first ref coordinates , 
         rr = mmnip.genRotRelLeft(rotSolsNotUsed)
 

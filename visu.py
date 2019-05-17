@@ -58,7 +58,7 @@ def draw_geometry(pcd):
 
     return vis
 
-def ViewRefs(R=None,t=None,refSize=10,showRef=False):
+def ViewRefs(R=None,t=None,refSize=10,showRef=False,zaWordu=False):
     '''ViewRefs - Displays a bunch of referentials on the screen
 
     Args:
@@ -106,8 +106,19 @@ def ViewRefs(R=None,t=None,refSize=10,showRef=False):
 
     if(showRef==True):
         mesh_sphere=open3d.create_mesh_sphere(radius = refSize*0.3)
+
+        P=np.eye(4)                 #Initialize P matrix - homographic transformation
+        P[0:3,0:3]= R[0]            #Set R
+        P[0:3,3]=np.squeeze(t[0])   #Set t
+
+        mesh_sphere.transform(P)
         mesh_sphere.paint_uniform_color([1, 0.1, 1])
         refs.append(mesh_sphere)
+
+    if(zaWordu==True):
+        refe = open3d.create_mesh_coordinate_frame(refSize*0.2, origin = [0, 0, 0])
+        refs.append(refe)
+
 
     draw_geometry(refs) #Draw them all
 

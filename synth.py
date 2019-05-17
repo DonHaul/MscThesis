@@ -319,16 +319,19 @@ def TestScene51():
     R=[]
     t=[]
 
-    R.append(mmnip.genRotMat([0,90,0]))
-    R.append(mmnip.genRotMat([-45,90,0]))
     R.append(mmnip.genRotMat([0,-90,0]))
+    R.append(mmnip.genRotMat([0,0,45]))
+    R.append(mmnip.genRotMat([0,45,0]))
+    R.append(mmnip.genRotMat([90,45,0]))
 
   
     
-    t.append(np.array([10,10,10]))
-    t.append(np.array([10,20,10]))
-    t.append(np.array([0,0,20]))
-    t.append(np.array([0,0,20]))
+    t.append(np.array([20,20,20]))
+    t.append(np.array([20,40,20]))
+    t.append(np.array([20,20,40]))
+    t.append(np.array([0,40,20]))
+
+    return R,t
 
 def TiltedCams():
 
