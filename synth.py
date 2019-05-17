@@ -314,6 +314,22 @@ def FakeArucoReal9():
 
     return R,t
 
+def TestScene51():
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([-45,90,0]))
+    R.append(mmnip.genRotMat([0,-90,0]))
+
+  
+    
+    t.append(np.array([10,10,10]))
+    t.append(np.array([10,20,10]))
+    t.append(np.array([0,0,20]))
+    t.append(np.array([0,0,20]))
+
 def TiltedCams():
 
 

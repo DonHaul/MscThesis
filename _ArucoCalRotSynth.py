@@ -15,7 +15,7 @@ import FileIO
 def main():
 
 
-    R,t = synth.TiltedCams() #in world coordinates
+    R,t = synth.TestScene51() #in world coordinates
     
     visu.ViewRefs(R,t)
 
