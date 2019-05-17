@@ -26,6 +26,14 @@ def worker(statev,rospy):
             statev.CalcRT2()
             rospy.signal_shutdown('Quit')
             break
+        elif "-" in x:
+            for i in range(3):
+                print(i)
+                time.sleep(1)
+            print("*SNAP*")
+            statev.readyToCapture=True
+
+
         elif "R" in x:
             print("calculating R")
             statev.CalcRthenStartT()

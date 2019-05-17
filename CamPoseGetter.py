@@ -93,6 +93,9 @@ class CamPoseGetter(object):
     def callback(self,*args):
 
         #print("callback: "+str(self.count))
+        #print(self.state.readyToCapture)
+        if(self.state.readyToCapture==False):
+            return
 
         self.count = self.count + 1
         #print(self.N_cams)
@@ -105,6 +108,10 @@ class CamPoseGetter(object):
 
             #get observations of this camera, and image with the detected markers and referentials shown
             obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
+
+            print("obslen "+str(len(obs)))
+            if camId==0 and len(obs)>0:
+                print(obs[0]['t'])
 
             #set image
             self.images[0:480,camId*640:camId*640+640,0:3]=img
@@ -136,7 +143,10 @@ class CamPoseGetter(object):
 
         if(self.N_cams)==2:
             rrr,ttt = probdefs.ProbDefN2(obsR,obsT,self.N_cams)
-            
+            print("moreless rotation:")
+            print(rrr/len(obsR))
+            print("moreless translation:")
+            print(ttt/len(obsT))
             self.state.R2 = self.state.R2 + rrr
             self.state.count=self.state.count+len(obsT)
             self.state.t2 = self.state.t2 + ttt
@@ -147,7 +157,10 @@ class CamPoseGetter(object):
         #clear observations
         self.Allobs = [ [] for i in range(self.N_cams) ]
 
-        #self.showImg()
+        self.showImg()
+
+        if(self.state.detectionMode=="snap"):
+            self.state.readyToCapture=False
 
 
     def showImg(self):
@@ -155,7 +168,8 @@ class CamPoseGetter(object):
         '''
         
         cv2.imshow("Image window ",self.images)           
-        cv2.waitKey(1)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         
 
 

@@ -125,8 +125,8 @@ def Cam2ArucoObsMaker2(img,K,D,arucoData):
     #list of all observations generated
     observations =[]
 
-    #if more than one marker was detected
-    if  ids is not None and len(ids)>1:
+    #if at least one marker is detected
+    if  ids is not None and len(ids)>0:
 
         #finds rotations and vectors and draws referentials on image
         rots,tvecs,img = aruco.FindPoses(K,D,det_corners,hello,len(ids),arucoData['size'])
@@ -134,6 +134,10 @@ def Cam2ArucoObsMaker2(img,K,D,arucoData):
         #squeeze
         ids = ids.squeeze()
 
+        #special 1 element case
+        ids = ids.tolist()
+        if(type(ids)==int):
+            ids=[ids]
 
         #generates samples
         for i in range(0,len(ids)):                
@@ -224,6 +228,6 @@ def GenerateCameraPairObs(camsObs,R,t):
 
                     #quit()
 
-                    obsT.append({"from":i,"to":j,"t": tij})
+                    obsT.append({"from":j,"to":i,"t": tij})
 
     return obsR,obsT

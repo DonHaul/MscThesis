@@ -6,7 +6,7 @@ import matmanip as mmnip
 #all variables that can change during the run should be here that are not local
 class State(object):
 
-    def __init__(self,N_cams):
+    def __init__(self,N_cams,detectionMode="realtime"):
 
         self.N_cams=N_cams
         self.state=0
@@ -19,7 +19,10 @@ class State(object):
         self.R2=np.zeros((3,3))
         self.t2=np.zeros((3,))
 
-        self.detectionMode="realtime"
+        self.detectionMode=detectionMode
+        self.readyToCapture=True
+        if self.detectionMode == "snap":
+            self.readyToCapture=False
 
         #A.T A initialized
         self.ATAR = np.zeros((self.N_cams*3,self.N_cams*3))
