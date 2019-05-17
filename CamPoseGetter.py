@@ -133,11 +133,12 @@ class CamPoseGetter(object):
         else:
             print("This State does nothing")
 
+
         if(self.N_cams)==2:
             rrr,ttt = probdefs.ProbDefN2(obsR,obsT,self.N_cams)
-            #print(ttt.shape)
+            
             self.state.R2 = self.state.R2 + rrr
-            self.state.count=self.state.count+1
+            self.state.count=self.state.count+len(obsT)
             self.state.t2 = self.state.t2 + ttt
 
             

@@ -25,9 +25,13 @@ def ProbDefN2(observationsR,observationsT,N):
         
         if(obs['from']==fro):
             R = R + obs['R']
+            #print("wow")
+            #print(obsT['t'])
             t = t + obsT['t']
         else:
             R = R + obs['R'].T
+            #print("unwow")
+            #print(obsT['t'])
             t = t + mmnip.InvertT(obs['R'],obsT['t']) 
 
     return R,t

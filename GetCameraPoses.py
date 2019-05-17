@@ -87,8 +87,8 @@ def main(argv):
 
     print(stateru.R.shape)
 
-    RR = [np.eye(3),stateru.R]
-    tt = [np.zeros((3,)),stateru.t]
+    RR = [stateru.R.T,np.eye(3)]
+    tt = [stateru.t,np.zeros((3,))]
 
     print("R is:")
     print(stateru.R)

@@ -193,18 +193,36 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #raw_input()
 
                     obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])})
+                    
+                    #print("obsJ")
+                    #print(obsjR['t'])
 
+                    #print("obsI")
+                    #print(obsiR['t'])
 
                     #Get aruco transformation parameters
                     Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
                    
+                    #print("Tbetween aruco")
+                    #print(tbetweenaruco)
 
                     #transform from marker1  coordinates to marker2 coordinates
                     new_t =  mmnip.Transform(mmnip.InvertT(obsiR['R'], obsiR['t']),Rbetweenaruco, tbetweenaruco)
 
+                    #print("new_T")
+                    #print(new_t)
+
+                    #print("new_T")
+                    #print( obsjR['t'])
+
+                    
                     #transform from marker2 coordinates to camera j coordinates                    
-                    tij = mmnip.Transform(new_t, obsjR['R'],  obsjR['t'])
+                    tij = mmnip.Transform(new_t, obsjR['R'], obsjR['t'] )
+
+                    #print(tij)
+
+                    #quit()
 
                     obsT.append({"from":i,"to":j,"t": tij})
 
