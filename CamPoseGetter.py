@@ -17,6 +17,11 @@ class CamPoseGetter(object):
         
         self.state = stateru
 
+        self.R2=np.zeros((3,3))
+
+
+        self.t2=np.zeros((3,1))
+
         #number of camera
         self.N_cams = len(camNames)
 
@@ -116,10 +121,6 @@ class CamPoseGetter(object):
 
             A = probdefs.rotationProbDef(obsR,self.N_cams)
             self.state.ATAR = self.state.ATAR + np.dot(A.T,A)
-
-            #if(self.N_cams)==2:
-            #    self.lol = self.lol+probdefs.rotationProbDefN2(obsR,self.N_cams)
-            #    self.count=self.count+1
         
         #translation problem
         elif self.state.state ==1:
@@ -131,6 +132,16 @@ class CamPoseGetter(object):
             self.state.ATb = self.state.ATb + np.dot(A.T,b)
         else:
             print("This State does nothing")
+
+        if(self.N_cams)==2:
+            rrr,ttt = probdefs.ProbDefN2(obsR,obsT,self.N_cams)
+            #print(ttt.shape)
+            self.state.R2 = self.state.R2 + rrr
+            self.state.count=self.state.count+1
+            self.state.t2 = self.state.t2 + ttt
+
+            
+
 
         #clear observations
         self.Allobs = [ [] for i in range(self.N_cams) ]

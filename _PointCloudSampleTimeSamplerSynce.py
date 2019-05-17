@@ -107,16 +107,23 @@ def LoadJson(filename,mode="r"):
 def LoadScene(filename):
 
     scene = LoadJson(filename)
-
+    print("load scene")
 
     R=[]
     t=[]
     camNames=[]
     for cam in  scene['cameras']:
         R.append(np.asarray(cam['R'], dtype=np.float32))
-        t.append(np.asarray(cam['t'], dtype=np.float32))
+
+        tt  =np.asarray(cam['t'], dtype=np.float32)
+        if len(tt.shape)==1:
+            tt = np.expand_dims(tt, axis=1)
+        t.append(tt)
+
         camNames.append(cam['name'])
 
+
+    
 
     return R,t,camNames
 

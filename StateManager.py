@@ -14,6 +14,11 @@ class State(object):
         self.R=None
         self.t=None
 
+        self.count=0
+
+        self.R2=np.zeros((3,3))
+        self.t2=np.zeros((3,))
+
         self.detectionMode="realtime"
 
         #A.T A initialized
@@ -51,6 +56,16 @@ class State(object):
         self.R=rr
 
         self.state=1
+
+        
+
+    def CalcRT2(self):
+        if(self.N_cams==2):
+            self.R = self.R2/self.count
+            print(self.t2.shape)
+            self.t = self.t2/self.count
+
+            self.R = algos.procrustesMatlabJanky(self.R,np.eye(3))
 
     def CalcT(self):
 

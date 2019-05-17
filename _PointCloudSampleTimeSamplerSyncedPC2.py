@@ -112,6 +112,9 @@ def LoadScene(filename):
         t.append(np.asarray(cam['t'], dtype=np.float32))
         camNames.append(np.asarray(cam['name']))
 
+    print("owow")
+    print(t.shape)
+    print("what is this")
 
     return R,t,camNames
 

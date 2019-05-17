@@ -5,26 +5,32 @@ This module contains all the problem definitions
 """
 
 import numpy as np
+import matmanip as mmnip
 
 
-def rotationProbDefN2(observations,N):
+def ProbDefN2(observationsR,observationsT,N):
     if(N>2):
         print("Wrong Function")
 
-    A=np.zeros((3,3))
+    R=np.zeros((3,3))
+    t=np.zeros((3,))
 
     #print(observations)
-    if(len(observations)==0):
-        return A
-    fro = observations[0]['from']
+    if(len(observationsR)==0):
+        return R
+    fro = observationsR[0]['from']
 
-    for obs in observations:
+    for obs , obsT in zip(observationsR,observationsT):
+
+        
         if(obs['from']==fro):
-            A = A + obs['R']
+            R = R + obs['R']
+            t = t + obsT['t']
         else:
-            A = A + obs['R'].T
+            R = R + obs['R'].T
+            t = t + mmnip.InvertT(obs['R'],obsT['t']) 
 
-    return A
+    return R,t
 
 def rotationProbDef(observations,N):
     '''Problem Definition for getting Rotations between a set of referentials

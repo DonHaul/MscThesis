@@ -151,7 +151,7 @@ def Cam2ArucoObsMaker2(img,K,D,arucoData):
 
 
                 #generate t observations
-                o['t']=np.squeeze(mmnip.InvertT(o['R'],tvecs[i].T).T) #WRONG - Not sure if this is the correct t
+                o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
                 
                 observations.append(o)
  

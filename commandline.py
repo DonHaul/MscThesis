@@ -21,7 +21,11 @@ def worker(statev,rospy):
             else:
                 time.sleep(int(ola[1]))
                 visu.draw_geometry([statev.pc])
-            
+        elif "lol" in x:
+            print("2 cams calc")
+            statev.CalcRT2()
+            rospy.signal_shutdown('Quit')
+            break
         elif "R" in x:
             print("calculating R")
             statev.CalcRthenStartT()

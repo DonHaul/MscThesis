@@ -58,7 +58,7 @@ def draw_geometry(pcd):
 
     return vis
 
-def ViewRefs(R=None,t=None,refSize=10):
+def ViewRefs(R=None,t=None,refSize=10,showRef=False):
     '''ViewRefs - Displays a bunch of referentials on the screen
 
     Args:
@@ -103,6 +103,11 @@ def ViewRefs(R=None,t=None,refSize=10):
         refe.transform(P)   #Transform it according tom p
 
         refs.append(refe)   #Add it to the Referentials array
+
+    if(showRef==True):
+        mesh_sphere=open3d.create_mesh_sphere(radius = refSize*0.3)
+        mesh_sphere.paint_uniform_color([1, 0.1, 1])
+        refs.append(mesh_sphere)
 
     draw_geometry(refs) #Draw them all
 
