@@ -14,6 +14,7 @@ class State(object):
         self.R=None
         self.t=None
 
+        self.detectionMode="realtime"
 
         #A.T A initialized
         self.ATAR = np.zeros((self.N_cams*3,self.N_cams*3))
@@ -32,18 +33,20 @@ class State(object):
         #    print("2 CAMS")
         #    visu.ViewRefs([np.eye(3),B])
     
-        print("global1")
+        
         rotSols = algos.RProbSolv1(self.ATAR,3,self.N_cams)
-    
-        visu.ViewRefs(rotSols)
-        print("global2")
-        #rotSols = algos.RProbSolv1(C,3,len(R))    
+        print("global1")
         #visu.ViewRefs(rotSols)
+
+
         
-        
-        print("local1")    
-        rr = mmnip.genRotRelLeft(rotSols)
-        visu.ViewRefs(rr)
+
+        #converts to world coordinates or into them
+        rotSolsNotUsed = mmnip.Transposer(rotSols)
+        visu.ViewRefs(rotSolsNotUsed)
+
+        #converts in first ref coordinates , 
+        rr = mmnip.genRotRelLeft(rotSolsNotUsed)
 
         self.R=rr
 

@@ -15,6 +15,7 @@ def ObsViewer(obs,key="R",fro="from",to="to",pause=True,show=False):
     
     for o in obs:
         print("from:" + str(o[fro])+" to:"+str(o[to]))
+        print("Det is:" + str(np.linalg.det(o[key])))
         print(o[key])
         if show:
             visu.ViewRefs([np.eye(3),o[key]])
@@ -148,8 +149,9 @@ def Cam2ArucoObsMaker2(img,K,D,arucoData):
                 #generate R observations
                 o['R']=rots[i]
 
+
                 #generate t observations
-                o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
+                o['t']=np.squeeze(mmnip.InvertT(o['R'],tvecs[i].T).T) #WRONG - Not sure if this is the correct t
                 
                 observations.append(o)
  

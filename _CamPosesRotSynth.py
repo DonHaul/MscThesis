@@ -15,6 +15,8 @@ import algos
 
 import observationgenner as obsGen
 
+import FileIO
+
 
 def main():
 
@@ -23,9 +25,9 @@ def main():
     #mesh.paint_uniform_color([1, 0.706, 0])
     #draw_geometries([mesh])
     
-    Rcam, tcam = synth.Scenev1()
+    Rcam, tcam = synth.TiltedCams()
 
-    #Rcam = mmnip.genRotRelRight(Rcam)
+    Rcam = mmnip.genRotRelRight(Rcam)
     
     print(Rcam)
     #visu.ViewScene(R,t)
@@ -52,18 +54,30 @@ def main():
 
     
     rotSols = algos.RProbSolv1(C,3,len(Rcam),canFlip=True) 
-
-  
-    visu.ViewRefs(rotSols)
-    print("global2")
-    #rotSols = algos.RProbSolv1(C,3,len(R))    
     #visu.ViewRefs(rotSols)
-     
-    
-    print("local1")    
-    rr = mmnip.genRotRelLeft(rotSols)
+
+    #converts to world coordinates or into them
+    rotSolsNotUsed = mmnip.Transposer(rotSols)
+    visu.ViewRefs(rotSolsNotUsed)
+
+    #converts in first ref coordinates , 
+    rr = mmnip.genRotRelLeft(rotSolsNotUsed)
+
+    qrr=[]
+    for r in rr:
+        print(np.linalg.det(r))
+        qrr.append(r.tolist())
+
     visu.ViewRefs(rr)
-    
+
+
+    #converts in first ref coordinates , 
+    #rr = mmnip.genRotRelLeft(rotSols)
+    #visu.ViewRefs(rr)
+
+    print(rr)
+    FileIO.putFileWithJson({'R':qrr},'R')
+
 
 
 

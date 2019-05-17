@@ -1,5 +1,7 @@
 import json
 import numpy as np
+import random
+import datetime
 
 def getKDs(camNames):
     K={}
@@ -22,6 +24,32 @@ def getKDs(camNames):
 
     return intrinsic
 
+
+def putFileWithJson(data,filename=None,folder=None):
+
+    if folder is None:
+        folder = "./tmp"
+    
+    if filename is None:
+        filename = ""
+
+    f=open("static/names.json","r")
+
+    arr = json.load(f)
+
+    animalName = random.choice(arr)
+    f.close()
+
+    saveName = folder + "/" + filename+" "+animalName + " " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    f = open(saveName+".json","w")
+
+    json.dump(data,f)
+    
+    f.close()
+
+    print("Saved File: "+str(saveName))
+
+
 def getJsonFromFile(filename):
 
     try:
@@ -35,3 +63,19 @@ def getJsonFromFile(filename):
     except IOError:
       print "Error: File does not appear to exist."
       return None
+
+def LoadScene(filename):
+
+    scene = getJsonFromFile(filename)
+
+
+    R=[]
+    t=[]
+    camNames=[]
+    for cam in  scene['cameras']:
+        R.append(np.asarray(cam['R'], dtype=np.float32))
+        t.append(np.asarray(cam['t'], dtype=np.float32))
+        camNames.append(cam['name'])
+
+
+    return R,t,camNames

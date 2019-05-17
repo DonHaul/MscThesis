@@ -7,6 +7,8 @@ This module contains some of the well known algorithms, that help in the thesis
 import numpy as np
 #import scipy.linalg
 import pickler2 as pickle
+import matmanip as mmnip
+import visu
 
 def LeastSquaresNumpy(A,b):
     '''
@@ -51,6 +53,66 @@ def MeanSquaredError(a,b=None):
     return np.sqrt(np.sum(a**2))
 
 
+#this is how the paper does it
+def procrustes3(X,Y,fixReflection=False):
+    '''
+    Get closest matrix that minimizes R : min X-RY such that R.T*R is Identity 
+
+    d = X
+    m = Y
+
+    ||d-Rm||^2
+
+    '''
+
+
+    
+
+    #get mean
+    muX = X.mean(1)
+    muY = Y.mean(1)
+
+    muX = np.expand_dims(muX, axis=1)
+    muY = np.expand_dims(muY, axis=1)
+    #center X and Y around mean
+    X0 = X - muX
+    Y0 = Y - muY
+
+    # optimum rotation matrix of Y
+    H = np.dot(Y0, X0.T)
+
+    #print(H.shape)
+    
+    U,s,Vt = np.linalg.svd(H)
+    V = Vt.T
+
+
+    #if np.linalg.det(V) < 0 and fixReflection==True: # == -1
+    #    print("ROTATION WAS A REFLECTION MATRIX")
+    #    b = V[:,-1]
+    #    b= b*-1
+    #    V[:,-1] = b
+
+
+    R = np.dot(V, U.T)
+    #print("R before bs")
+    #print(R)
+
+
+    if fixReflection == True:
+        eye = np.eye(3)
+        eye[2,2]=np.linalg.det(np.dot(U,V.T))
+
+        R= np.dot(np.dot(U,eye),V.T)
+
+
+
+
+    t = muX - np.dot(R,muY)
+
+ 
+    #t may be wrong
+    return R, t
 
 #this is how wikipedia does it
 def procrustes(X,Y,fixReflection=True):
@@ -59,6 +121,9 @@ def procrustes(X,Y,fixReflection=True):
 
     Gets x that minimzes Ax=b
     '''
+
+
+
 
     #get mean
     muX = X.mean(0)
@@ -70,11 +135,12 @@ def procrustes(X,Y,fixReflection=True):
 
     # optimum rotation matrix of Y
     H = np.dot(X0.T, Y0)
+    
     U,s,Vt = np.linalg.svd(H)
     V = Vt.T
 
 
-    if np.linalg.det(V) < 0: # == -1
+    if np.linalg.det(V) < 0 and fixReflection==True: # == -1
         print("ROTATION WAS A REFLECTION MATRIX")
         b = V[:,-1]
         b= b*-1
@@ -176,52 +242,37 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     '''
     #print(C)
     u,s,vh = np.linalg.svd(C)
-    
-    #if symettirc, u.T = vh
-
-    #IF there is indeed a null space, then svd breaks
-    #print("vh")
-    #print(vh)
-    #print("u")
-    #print(u.T)
-    #print("UVH")
-    #print(np.dot(u,vh))
 
     return u[:,-Nleast:]
 
 
 def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
 
-    
-
     solution = TotalLeastSquares(C,Nleast)
 
     rotsols=[] 
 
-  
-
-    solsplit = np.split(solution,Nmarkers)  
-    #print(canFlip)
-    #if(np.linalg.det(solsplit[0])<0 and canFlip==True):
-    #    print("FLIPPING")
-
-
+    solsplit = np.split(solution,Nmarkers)
+    print("Determinants")  
+    for s in solsplit:
+        print(np.linalg.det(s))
+    print("Determinants2")  
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
         #print("opt1")
 
-        dett = np.linalg.det(sol)
-        print(np.linalg.det(sol))
-        print(np.dot(sol.T,sol))
+        #dett = np.linalg.det(sol)
+        #print(np.linalg.det(sol))
+        #print(np.dot(sol.T,sol))
 
-        r,t=procrustes(np.eye(3),sol)
+        r = procrustesMatlabJanky(sol,np.eye(3))
 
+        print(np.linalg.det(r))
         #if(dett>0):
         #    print("TRANSPOSED IT")
         #    r=r.T
 
         rotsols.append(r)
-
 
     return rotsols
 
@@ -341,10 +392,34 @@ def TotalLeastSquares(C,Nleast=1):
     #print("sol")
     #print(solution)
    
+    print("SVD THING")
+    print(np.dot(solution.T,solution))
 
     return solution
 
 
+def procrustesMatlabJanky(arg1,arg2):
+    
+    #print("arg1 is this")
+    #print(arg1)
+
+    p2 = procrustesMatlab(arg1,arg2,reflection=True)[2]['rotation']
+    p3 = procrustesMatlab(arg1,arg2,reflection=False)[2]['rotation']
+    #print("normsare")
+    n2 = np.linalg.norm(arg1-np.dot(p2,arg2))
+    n3 = np.linalg.norm(arg1-np.dot(p3,arg2))
+    #print(n2)
+    #print(n3)
+
+    #print(p3)
+
+    if n2< n3:
+        return p2
+    else:
+        return p3
+
+
+    
 
 #copy of matlab procrustes function
 #https://stackoverflow.com/questions/18925181/procrustes-analysis-with-numpy
@@ -391,6 +466,7 @@ def procrustesMatlab(X, Y, scaling=True, reflection='best'):
 
     """
 
+
     n,m = X.shape
     ny,my = Y.shape
 
@@ -400,6 +476,7 @@ def procrustesMatlab(X, Y, scaling=True, reflection='best'):
     X0 = X - muX
     Y0 = Y - muY
 
+    
     ssX = (X0**2.).sum()
     ssY = (Y0**2.).sum()
 
@@ -416,6 +493,7 @@ def procrustesMatlab(X, Y, scaling=True, reflection='best'):
 
     # optimum rotation matrix of Y
     A = np.dot(X0.T, Y0)
+    
     U,s,Vt = np.linalg.svd(A,full_matrices=False)
     V = Vt.T
     T = np.dot(V, U.T)

@@ -52,9 +52,9 @@ def rotationProbDef(observations,N):
         #print(np.linalg.det(obs['R']))
         #print(np.dot(obs['R'].T,obs['R']))
 
-        if obs['to'] > 12 or obs['from'] > 12:
-            print("skippity: weird index found")
-            continue
+        #if obs['to'] > 12 or obs['from'] > 12:
+        #   print("skippity: weird index found")
+        #   continue
 
         #fills the matrices according to the observed pairs
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
@@ -109,9 +109,6 @@ def translationProbDef(observations,rotRel,N):
     for obs in observations:
 
 
-        if obs['to'] > 12 or obs['from'] > 12:
-            print("skippity: weird index found")
-            continue
 
         #See problem definition in my thesis in order to understand this black magic
         Ident[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= np.eye(3)

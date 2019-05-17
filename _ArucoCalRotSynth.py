@@ -8,19 +8,22 @@ import algos
 
 import observationgenner as obsgen
 
+import FileIO
+
 
 
 def main():
 
 
-    R,t = synth.FakeArucoReal() #in world coordinates
+    R,t = synth.TiltedCams() #in world coordinates
     
     visu.ViewRefs(R,t)
 
     #correct 100%
-    obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
+    obsR,obst = synth.SampleGenerator(R,t,noise=0.0,samples=30)
 
-    #obsgen.ObsViewer(obsR,pause=False,show=False)
+    print(len(obsR))
+    obsgen.ObsViewer(obsR,pause=False,show=False)
 
     if len(R)==2:
         
@@ -40,25 +43,39 @@ def main():
 
         C = np.dot(B.T,B) #C = B'B
 
-        print("global1")
+        #print("global1")
         
+        #u,s,vh = np.linalg.svd(C)
+        #print("WOWWOWOW")
+        #print(u.shape)
+        #print(vh.shape)
+        
+
+
         rotSols = algos.RProbSolv1(C,3,len(R))
         #visu.ViewRefs(rotSols)
 
         #converts to world coordinates or into them
         rotSolsNotUsed = mmnip.Transposer(rotSols)
-        #visu.ViewRefs(rotSolsNotUsed)
+        visu.ViewRefs(rotSolsNotUsed)
 
         #converts in first ref coordinates , 
-        #rr = mmnip.genRotRelRight(rotSols)
-        #visu.ViewRefs(rr)
+        rr = mmnip.genRotRelLeft(rotSolsNotUsed)
+
+        qrr=[]
+        for r in rr:
+            print(np.linalg.det(r))
+            qrr.append(r.tolist())
+
+        visu.ViewRefs(rr)
 
 
         #converts in first ref coordinates , 
         #rr = mmnip.genRotRelLeft(rotSols)
         #visu.ViewRefs(rr)
-    
-    
+
+        print(rr)
+        FileIO.putFileWithJson({'R':qrr},'R')
 
 
 if __name__ == '__main__':

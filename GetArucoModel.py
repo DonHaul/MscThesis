@@ -81,9 +81,9 @@ def main(argv):
     print("t is:")
     print(stateru.t)
 
-    SaveCameraPoses(stateru.R,stateru.t,camName)
+    SaveCameraPoses(stateru.R,stateru.t,camName,nameofthing = "markers")
 
-def SaveCameraPoses(R,t,camNames):
+def SaveCameraPoses(R,t,camNames,nameofthing = "cameras"):
 
 
     f=open("static/names.json","r")
@@ -94,10 +94,10 @@ def SaveCameraPoses(R,t,camNames):
     f.close()
 
     fullfile={}
-    fullfile["cameras"]=[]
+    fullfile[nameofthing]=[]
 
     for RR,tt,cc in zip(R,t,camNames):
-        fullfile["cameras"].append({"R":RR.tolist(),"t":tt.tolist(),"name":cc})
+        fullfile[nameofthing].append({"R":RR.tolist(),"t":tt.tolist(),"name":cc})
 
     saveName = filename+" " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     f = open("./scenes/"+saveName+".json","w")

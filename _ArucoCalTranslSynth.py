@@ -9,15 +9,32 @@ import pickler as pickle
 
 import observationgenner as obsGen
 
+import FileIO
+
 def main():
 
-    R,t = synth.FakeArucoReal()
+    R,t = synth.TiltedCams() #in world coordinates
 
-    
-
-    #pprint.pprint(t)
+    R = matmanip.genRotRelLeft(R)
 
     visu.ViewRefs(R,t)
+    print(t)
+
+    R = FileIO.getJsonFromFile("./tmp/R dugong 16-05-2019 23:28:35.json")['R']
+
+    R = np.asarray(R)
+
+    R = np.split(R,3,axis=0)
+    
+    RR = []
+
+    for r in R:
+        RR.append(np.squeeze(r))
+
+    print(RR)
+    #pprint.pprint(t)
+
+    R=RR
     
     #correct
     obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
@@ -44,7 +61,16 @@ def main():
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
-    visu.ViewRefs(R,solsplit2)
+    sol=[]
+    for wow in solsplit2:
+        sol.append(np.squeeze(wow))
+
+    print(sol)
+    visu.ViewRefs(R,sol)
+
+    #print(solsplit2)
+
+
 
     solt =[]
     #change t referential

@@ -39,6 +39,10 @@ def main(argv):
     if camNames is None:
         camNames = rosinterface.getAllPluggedCameras()
 
+    
+    print(camNames)
+    
+
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)
 
@@ -50,7 +54,7 @@ def main(argv):
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
     #Load aruco Model
-    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 13-05-2019 17:11:11.json")
+    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 16-05-2019 23:48:00.json")
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)

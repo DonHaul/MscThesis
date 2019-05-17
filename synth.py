@@ -66,7 +66,7 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
             #raw_input()
             
             #generate a R observation w/ noise
-            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1].T,R[r2]).T)})
+            obsR.append({"from":r2,"to":r1,"R":np.dot(mmnip.genRandRotMatrix(noise),np.dot(R[r1].T,R[r2]))})
             
             #generate a t observation  w/ noise
             obst.append({"from":r1,"to":r2,"t":t12+np.random.rand(3)*noiset}) #*noiset
@@ -103,6 +103,9 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
         noise: Noise added to the rotations
         noiset: Noise added to the translations
     '''
+
+    print("TYPUDES")
+    print(type(Rcam))
 
     #number of observations of a camera in a certain frame, prevent it from being bigger than all markers
     if(nObs>len(t)):
@@ -311,7 +314,23 @@ def FakeArucoReal9():
 
     return R,t
 
+def TiltedCams():
 
+
+    R=[]
+    t=[]
+
+    R.append(mmnip.genRotMat([0,90,0]))
+    R.append(mmnip.genRotMat([-45,0,0]))
+    R.append(mmnip.genRotMat([0,-90,0]))
+
+  
+    
+    t.append(np.array([0,0,0]))
+    t.append(np.array([0,0,10]))
+    t.append(np.array([0,0,20]))
+
+    return R,t
    
 def FakeArucoReal():
     '''Generate aruco model with 12 markers'''
