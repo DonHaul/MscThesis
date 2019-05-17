@@ -13,51 +13,43 @@ import FileIO
 
 def main():
 
-    R,t = synth.TiltedCams() #in world coordinates
+    R,t = synth.TestScene51() #in world coordinates
 
-    R = matmanip.genRotRelLeft(R)
+    #R = matmanip.genRotRelLeft(R)
 
-    visu.ViewRefs(R,t)
+    visu.ViewRefs(R,t,showRef=True)
     print(t)
 
-    R = FileIO.getJsonFromFile("./tmp/R dugong 16-05-2019 23:28:35.json")['R']
+    R1 = FileIO.getJsonFromFile("./tmp/R chinchilla 18-05-2019 00:27:47.json")['R']
 
-    R = np.asarray(R)
+    R1 = np.asarray(R1)
 
-    R = np.split(R,3,axis=0)
+    R1 = np.split(R1,4,axis=0)
     
     RR = []
 
-    for r in R:
+    for r in R1:
         RR.append(np.squeeze(r))
 
     print(RR)
     #pprint.pprint(t)
 
-    R=RR
+    R1=RR
     
     #correct
     obsR,obst = synth.SampleGenerator(R,t,noise=1,samples=1000)
 
-    #IMPORTING REAL ROTATIONS, SHOW WITH AND WITHOUT THIS
-    #ola = pickle.Out("static/ArucoRot.pickle")
-    #R =ola["RlocalPermutated"]
-
-    #obsGen.ObsViewer(obst,"t")
-
 
     # TRANSLATION STUFF
-    A,b = probdefs.translationProbDef(obst,R,len(t))
+    A,b = probdefs.translationProbDef(obst,R1,len(t))
 
     #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
     x= algos.LeastSquares(A,b)
     
-    print("LS,LSnp,LSinv")
-
-    x2 = np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
-
-    print(np.sqrt(np.sum(x**2)))
-    print(np.sqrt(np.sum(x2**2)))
+    #print("LS,LSnp,LSinv")
+    #x2 = np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
+    #print(np.sqrt(np.sum(x**2)))
+    #print(np.sqrt(np.sum(x2**2)))
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
@@ -66,7 +58,7 @@ def main():
         sol.append(np.squeeze(wow))
 
     print(sol)
-    visu.ViewRefs(R,sol)
+    visu.ViewRefs(R1,sol,showRef=True)
 
     #print(solsplit2)
 
