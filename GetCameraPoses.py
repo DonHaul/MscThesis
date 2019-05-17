@@ -47,7 +47,7 @@ def main(argv):
     intrinsics = FileIO.getKDs(camNames)
 
     #has all states that may change
-    stateru = StateManager.State(len(camNames))
+    stateru = StateManager.State(len(camNames),"realtime")
 
     
 
@@ -58,6 +58,8 @@ def main(argv):
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
+
+
 
     #sets thread where state changer will be
     commandline.Start(stateru,rospy)
@@ -87,8 +89,8 @@ def main(argv):
 
     print(stateru.R.shape)
 
-    RR = [stateru.R.T,np.eye(3)]
-    tt = [stateru.t,np.zeros((3,))]
+    RR = [np.eye(3),stateru.R]
+    tt = [np.zeros((3,)),stateru.t]
 
     print("R is:")
     print(stateru.R)

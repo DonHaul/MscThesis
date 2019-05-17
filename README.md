@@ -33,3 +33,6 @@ rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_r
 
 rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.01225 image:=/ervilhamigalhas/rgb/image_color camera:=ervilhamigalhas --no-service-check
 
+##
+rosrun rqt_tf_tree rqt_tf_tree 
+

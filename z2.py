@@ -5,6 +5,25 @@ import visu
 import algos
 import matmanip as mmnip
 import open3d
-mesh_sphere=open3d.create_mesh_sphere(radius = 1.0)
-mesh_sphere.paint_uniform_color([1, 0.1, 1])
-open3d.draw_geometries([mesh_sphere])
+
+a = np.array([[1],[2],[3]])
+
+b = np.array([4])
+print(b.shape)
+c = np.array([[1]])
+
+print(np.squeeze(a))
+
+print(np.squeeze(b))
+
+lol =(np.squeeze(c))
+
+print(lol)
+print(type(lol))
+
+lol = lol.tolist()
+if(type(lol)==int):
+    print("wow")
+
+print(len(lol))
+

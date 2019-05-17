@@ -17,7 +17,9 @@ def main():
 
     R,t = synth.TestScene51() #in world coordinates
     
-    visu.ViewRefs(R,t)
+    #R = mmnip.genRotRelLeft(R)
+
+    visu.ViewRefs(R)
 
     #correct 100%
     obsR,obst = synth.SampleGenerator(R,t,noise=0.0,samples=30)

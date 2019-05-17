@@ -17,7 +17,7 @@ def ProbDefN2(observationsR,observationsT,N):
 
     #print(observations)
     if(len(observationsR)==0):
-        return R
+        return R,t
     fro = observationsR[0]['from']
 
     for obs , obsT in zip(observationsR,observationsT):

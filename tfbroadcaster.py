@@ -13,10 +13,19 @@ import numpy as np
 # license removed for brevity
 import rospy
 from std_msgs.msg import String
+import sys
 
-def main():
 
-    scene = FileIO.LoadScene("./scenes/eland 15-05-2019 02:14:29.json")
+def main(argv):
+
+    if(len(argv)>1):
+        filename=argv[1]
+    else:
+        print("Scene File Needed")
+        quit()
+        
+    #R,t,camNames
+    scene = FileIO.LoadScene(filename)
     #print(scene)
     #quit()
 
@@ -41,6 +50,12 @@ def main():
                             rospy.Time.now(),
                             scene[2][i],
                             "world")
+
+            br.sendTransform(tf.transformations.translation_from_matrix(np.eye(4)),
+                            tf.transformations.quaternion_from_matrix(np.eye(4)),
+                            rospy.Time.now(),
+                            scene[2][i]+"_rgb_optical_frame",
+                            scene[2][i])
             hello_str = "hello world %s" % rospy.get_time()
             #rospy.loginfo(hello_str)
             #pub.publish(hello_str)
@@ -49,6 +64,6 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        main(sys.argv)
     except rospy.ROSInterruptException:
         pass
