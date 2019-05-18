@@ -25,13 +25,10 @@ def ProbDefN2(observationsR,observationsT,N):
         
         if(obs['from']==fro):
             R = R + obs['R']
-            #print("wow")
-            #print(obsT['t'])
             t = t + obsT['t']
+            
         else:
             R = R + obs['R'].T
-            #print("unwow")
-            #print(obsT['t'])
             t = t + mmnip.InvertT(obs['R'],obsT['t']) 
 
     return R,t
@@ -123,7 +120,7 @@ def translationProbDef(observations,rotRel,N):
 
         #See problem definition in my thesis in order to understand this black magic
         Ident[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= np.eye(3)
-        print(obs['to'])
+        #print(obs['to'])
         A[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]=  np.eye(3)
         
 

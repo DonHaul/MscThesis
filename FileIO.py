@@ -12,6 +12,7 @@ def getKDs(camNames):
 
         #if file does not exist
         if(filedict==None):
+            print("Calibration File Not Found")
             filedict = getJsonFromFile("./static/camcalib_default.json")
 
         k = np.asarray(filedict['K'], dtype=np.float32)

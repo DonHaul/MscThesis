@@ -93,6 +93,11 @@ def ViewRefs(R=None,t=None,refSize=10,showRef=False,zaWordu=False):
     for i in range(N):
         
         P=np.eye(4)                 #Initialize P matrix - homographic transformation
+
+        #print(P.shape)
+        #print("thing shape")
+        #print(P[0:3,0:3].shape)
+        #print(R[i])
         P[0:3,0:3]= R[i]            #Set R
         P[0:3,3]=np.squeeze(t[i])   #Set t
 

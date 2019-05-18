@@ -47,8 +47,6 @@ class CamPoseGetter(object):
             RR = np.asarray(marker['R'])
             tt = np.squeeze(np.asarray(marker['t']))
 
-            print(tt)
-
             self.R.append(RR)
             self.t.append(tt)
 
@@ -66,12 +64,6 @@ class CamPoseGetter(object):
 
        
 
-        if(self.state.state==0):
-            print("R problem Definition")
-        elif(self.state.state==1):
-            print("t problem Definition")
-        else:
-            print("SOMETHING WENT WRONG")
 
         #A.T b initialized
         self.ATb = np.zeros((self.N_cams*3,1)) 
@@ -109,9 +101,9 @@ class CamPoseGetter(object):
             #get observations of this camera, and image with the detected markers and referentials shown
             obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
-            print("obslen "+str(len(obs)))
-            if camId==0 and len(obs)>0:
-                print(obs[0]['t'])
+            #print("obslen "+str(len(obs)))
+            #if camId==0 and len(obs)>0:
+            #    print(obs[0]['t'])
 
             #set image
             self.images[0:480,camId*640:camId*640+640,0:3]=img
@@ -122,7 +114,7 @@ class CamPoseGetter(object):
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
-        print(len(obsR))
+        #print(len(obsR))
         #rotation problem
         if self.state.state == 0:
 

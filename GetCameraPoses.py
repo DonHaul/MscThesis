@@ -84,14 +84,17 @@ def main(argv):
 
     print("Finished Elegantly")
 
+
+    if(type(stateru.t)!=list):
+        stateru.t = [np.zeros(3,),stateru.t]
+        stateru.R = [np.eye(3),stateru.R]
+
+    visu.ViewRefs(stateru.R,stateru.t,refSize=1,showRef=True)
+
     
     print(type(stateru.t))
-    visu.ViewRefs([np.eye(3),stateru.R],[np.zeros((3,)),stateru.t],refSize=1,showRef=True)
+    visu.ViewRefs(stateru.R,stateru.t,refSize=0.1,showRef=True)
 
-    print(stateru.R.shape)
-
-    RR = [np.eye(3),stateru.R]
-    tt = [np.zeros((3,)),stateru.t]
 
     print("R is:")
     print(stateru.R)
@@ -99,7 +102,7 @@ def main(argv):
     print("t is:")
     print(stateru.t)
 
-    SaveCameraPoses(RR,tt,camNames,"cameras")
+    SaveCameraPoses(stateru.R,stateru.t,camNames,"cameras")
 
 def SaveCameraPoses(R,t,camNames,objectname="cameras"):
 

@@ -49,6 +49,6 @@ def worker(statev,rospy):
 
 
 def Start(statev,rospy):
-
+    print("Starting Commandline")
     t1 = threading.Thread(target=worker,args=(statev,rospy,))
     t1.start()

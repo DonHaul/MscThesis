@@ -197,28 +197,13 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #raw_input()
 
                     obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])})
-                    
-                    #print("obsJ")
-                    #print(obsjR['t'])
-
-                    #print("obsI")
-                    #print(obsiR['t'])
 
                     #Get aruco transformation parameters
                     Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
-                   
-                    #print("Tbetween aruco")
-                    #print(tbetweenaruco)
 
                     #transform from marker1  coordinates to marker2 coordinates
                     new_t =  mmnip.Transform(mmnip.InvertT(obsiR['R'], obsiR['t']),Rbetweenaruco, tbetweenaruco)
-
-                    #print("new_T")
-                    #print(new_t)
-
-                    #print("new_T")
-                    #print( obsjR['t'])
 
                     
                     #transform from marker2 coordinates to camera j coordinates                    
@@ -229,5 +214,68 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #quit()
 
                     obsT.append({"from":i,"to":j,"t": tij})
+
+    return obsR,obsT
+
+
+def GenerateCameraPairObsSelf(camsObs,R,t):
+    '''
+    Generate observations between 2 cameras, by doing Transformations throught the aruco
+
+    camObs (list of list of dicts) - first list dimensions tells us the camera, the second list is all the observations for that camera
+    R - rotations of the aruco model
+    t - translation of the aruco model
+    '''
+
+    #initialize observation lists
+    obsR = []
+    obsT = []
+
+    
+
+
+    #this double for loop makes all camera combinations
+    #between one camera
+    for i in range(0,len(camsObs)):
+        #and another camera
+        for j in range(0,len(camsObs)):
+            
+            #this double loop matches every possible observation in each camera        
+            #go through all the obs of one camera
+            for obsiR in camsObs[i]:
+                #and through all the obs of the other
+                for obsjR in camsObs[j]:
+                
+                    #confusing as fuck i, know
+                    # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
+                    # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
+                    
+                    #print("from camera:"+str(j)+" to camera:"+str(i))
+                    #print(np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']]))
+                    #raw_input()
+
+                    obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])})
+
+                    #Get aruco transformation parameters
+                    Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])
+                    tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
+
+                    #transform from marker1  coordinates to marker2 coordinates
+                    new_t =  mmnip.Transform(mmnip.InvertT(obsiR['R'], obsiR['t']),Rbetweenaruco, tbetweenaruco)
+
+                    
+                    #transform from marker2 coordinates to camera j coordinates                    
+                    tij = mmnip.Transform(new_t, obsjR['R'], obsjR['t'] )
+
+                    #print(tij)
+
+                    #quit()
+
+                    obsT.append({"from":i,"to":j,"t": tij})
+                    print("from:" + str(i) + " to: " +str(j))
+                    print("rot")
+                    print( np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T]))
+                    print("tij")
+                    print(tij)
 
     return obsR,obsT
