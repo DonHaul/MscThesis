@@ -17,10 +17,10 @@ def main():
 
     R,t = synth.TestScene51() #in world coordinates
 
-    R = mmnip.genRotRelLeft(R)
+    Raux = mmnip.genRotRelLeft(R)
 
     #visu.ViewRefs(R,t,showRef=True,zaWordu=True)
-    visu.ViewRefs(R)
+    visu.ViewRefs(Raux)
 
 
     #correct 100%

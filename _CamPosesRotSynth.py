@@ -25,19 +25,17 @@ def main():
     #mesh.paint_uniform_color([1, 0.706, 0])
     #draw_geometries([mesh])
     
-    Rcam, tcam = synth.TiltedCams()
+    Rcam, tcam = synth.TestScene51()
 
-    Rcam = mmnip.genRotRelRight(Rcam)
+    Raux = mmnip.genRotRelLeft(Rcam)
     
-    print(Rcam)
-    #visu.ViewScene(R,t)
+    visu.ViewRefs(Raux)
 
     R,t = synth.FakeAruco()
-    #R = mmnip.genRotRelRight(R)
 
-    visu.ViewRefs(Rcam+R,tcam+t)
+    #visu.ViewRefs(Rcam+R,tcam+t)
 
-    visu.ViewRefs(Rcam)
+    #visu.ViewRefs(Rcam)
 
     #similar to output from ROS (I think)
     camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,noise=1)
@@ -58,7 +56,7 @@ def main():
 
     #converts to world coordinates or into them
     rotSolsNotUsed = mmnip.Transposer(rotSols)
-    visu.ViewRefs(rotSolsNotUsed)
+    #visu.ViewRefs(rotSolsNotUsed)
 
     #converts in first ref coordinates , 
     rr = mmnip.genRotRelLeft(rotSolsNotUsed)

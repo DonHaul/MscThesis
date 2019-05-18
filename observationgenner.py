@@ -228,6 +228,6 @@ def GenerateCameraPairObs(camsObs,R,t):
 
                     #quit()
 
-                    obsT.append({"from":j,"to":i,"t": tij})
+                    obsT.append({"from":i,"to":j,"t": tij})
 
     return obsR,obsT

@@ -28,61 +28,37 @@ def main():
 
     R,t = synth.FakeAruco()
     
-    Rcam, tcam = synth.TiltedCams()
+    Rcam, tcam = synth.TestScene51()
 
-    Rcam = mmnip.genRotRelLeft(Rcam)
+    #Rcam = mmnip.genRotRelLeft(Rcam)
 
-    visu.ViewRefs(Rcam+R,tcam+t)
+    visu.ViewRefs(Rcam,tcam,showRef=True)
 
-    Rcam = FileIO.getJsonFromFile("./tmp/R boar 17-05-2019 00:25:21.json")['R']
+    Rcam1 = FileIO.getJsonFromFile("./tmp/R beaver 18-05-2019 00:56:30.json")['R']
 
-    Rcam = np.asarray(Rcam)
+    Rcam1 = np.asarray(Rcam1)
 
-    Rcam = np.split(Rcam,3,axis=0)
+    Rcam1 = np.split(Rcam1,4,axis=0)
     
     RR = []
 
-    for r in Rcam:
+    for r in Rcam1:
         RR.append(np.squeeze(r))
 
     print(RR)
     #pprint.pprint(t)
 
-    Rcam=RR
+    Rcam1=RR
 
-    visu.ViewRefs(Rcam+R,tcam+t)
-
-    print(Rcam[0].T)
-    print(type(Rcam[0]))
-
-    visu.ViewRefs(Rcam,tcam)
-
-    #visu.ViewScene(R,t)
-
-    
-
-    #Rcam = mmnip.genRotRel(Rcam)
-
-    
-   
-
-    
+    #visu.ViewRefs(Rcam+R,tcam+t)
 
     #similar to output from ROS (I think)
     camsObs =synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t)
 
-    #print(camsObs)
-    #print("ahdioad")
-
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
-    #print(obsT)
-
-    #obsGen.ObsViewer(obsR)
-    #quit()
-
-     # TRANSLATION STUFF
-    A,b = probdefs.translationProbDef(obsT,Rcam,len(t))
+    # TRANSLATION STUFF
+    A,b = probdefs.translationProbDef(obsT,Rcam1,len(t))
 
     #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
     x= algos.LeastSquares(A,b)
@@ -96,7 +72,7 @@ def main():
     #print(x2)
 
     solsplit2 = np.split(x,len(t))
-    visu.ViewRefs(Rcam,solsplit2)
+    visu.ViewRefs(Rcam1,solsplit2,showRef=True)
 
     solt =[]
     #change t referential
