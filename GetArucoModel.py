@@ -40,6 +40,9 @@ def main(argv):
 
     arucoData, arucoModel,settings,camNames = ParsingInputs(argv)
 
+    print(arucoData)
+    quit()
+
     if camNames is None:
         camNames = rosinterface.getAllPluggedCameras()
 

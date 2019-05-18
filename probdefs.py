@@ -115,6 +115,7 @@ def translationProbDef(observations,rotRel,N):
             
     cnt = 0
 
+
     #for each observation set up a line (3 of them actually) of the problem definition
     for obs in observations:
 
@@ -122,6 +123,7 @@ def translationProbDef(observations,rotRel,N):
 
         #See problem definition in my thesis in order to understand this black magic
         Ident[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= np.eye(3)
+        print(obs['to'])
         A[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]=  np.eye(3)
         
 

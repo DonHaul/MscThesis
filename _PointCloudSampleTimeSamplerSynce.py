@@ -44,10 +44,11 @@ def main(argv):
     #R,t,camNames
     scene = LoadScene(filename)
     scene=list(scene)
-    mmnip.isRotation(scene[0])
+    #mmnip.isRotation(scene[0])
  
-    scene[0]=mmnip.genRotRelLeft(scene[0])
-    
+    #scene[0]=mmnip.genRotRelLeft(scene[0])
+    scene[1][1]=mmnip.InvertT(scene[0][1].T,scene[1][1])
+
     print(scene)
     #camNames=IRos.getAllPluggedCameras()
 
@@ -55,9 +56,7 @@ def main(argv):
     #visu.ViewRefs(scene[0],scene[1],refSize=0.1)
 
     #print(scene[0])
-    camNames=scene[2]#IRos.getAllPluggedCameras()
-    #print(camNames)
-    #quit()
+    camNames=scene[2]
 
     stateru = StateManager.State(len(camNames))
 

@@ -31,11 +31,11 @@ def main():
     
     visu.ViewRefs(Raux)
 
-    R,t = synth.FakeAruco()
+    R,t = synth.TiltedCams()
 
     #visu.ViewRefs(Rcam+R,tcam+t)
 
-    #visu.ViewRefs(Rcam)
+    #visu.ViewRefs(R)
 
     #similar to output from ROS (I think)
     camsObs = synth.MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,noise=1)

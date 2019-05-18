@@ -17,7 +17,7 @@ def worker(statev,rospy):
             #print("wow")
             ola = x.split(" ")
             if(len(ola)==1):
-                visu.draw_geometry([statev.pc])
+                visu.draw_geometry([statev.pc,open3d.create_mesh_coordinate_frame(1, origin = [0, 0, 0])])   
             else:
                 time.sleep(int(ola[1]))
                 visu.draw_geometry([statev.pc])
@@ -27,9 +27,9 @@ def worker(statev,rospy):
             rospy.signal_shutdown('Quit')
             break
         elif "-" in x:
-            for i in range(3):
-                print(i)
-                time.sleep(1)
+            #for i in range(3):
+            #    print(i)
+            #    time.sleep(1)
             print("*SNAP*")
             statev.readyToCapture=True
 

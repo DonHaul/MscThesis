@@ -157,19 +157,27 @@ class CamPoseGetter(object):
         #clear observations
         self.Allobs = [ [] for i in range(self.N_cams) ]
 
-        self.showImg()
+        if self.state.showImg==True:
+            self.showImg(self.state.detectionMode)
 
         if(self.state.detectionMode=="snap"):
             self.state.readyToCapture=False
 
 
-    def showImg(self):
+    def showImg(self,mode):
         '''Displays images from all cameras
         '''
         
         cv2.imshow("Image window ",self.images)           
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        
+        if(mode=="snap"):
+            cv2.waitKey(0)
+
+        if mode=="realtime":
+            cv2.waitKey(1)
+
+        if(mode=="snap"):
+            cv2.destroyAllWindows()
         
 
 

@@ -26,7 +26,7 @@ def main():
     #mesh.paint_uniform_color([1, 0.706, 0])
     #draw_geometries([mesh])
 
-    R,t = synth.FakeAruco()
+    R,t = synth.TiltedCams()
     
     Rcam, tcam = synth.TestScene51()
 
@@ -34,7 +34,7 @@ def main():
 
     visu.ViewRefs(Rcam,tcam,showRef=True)
 
-    Rcam1 = FileIO.getJsonFromFile("./tmp/R beaver 18-05-2019 00:56:30.json")['R']
+    Rcam1 = FileIO.getJsonFromFile("./tmp/R stingray 18-05-2019 02:58:26.json")['R']
 
     Rcam1 = np.asarray(Rcam1)
 
@@ -57,8 +57,10 @@ def main():
 
     obsR, obsT = obsGen.GenerateCameraPairObs(camsObs,R,t)
 
+  
+
     # TRANSLATION STUFF
-    A,b = probdefs.translationProbDef(obsT,Rcam1,len(t))
+    A,b = probdefs.translationProbDef(obsT,Rcam1,len(Rcam1))
 
     #x, res, rank, s = np.linalg.lstsq(A,b,rcond=None) #(A'A)^(-1) * A'b
     x= algos.LeastSquares(A,b)
@@ -71,7 +73,7 @@ def main():
     print(np.sqrt(np.sum(x2**2)))
     #print(x2)
 
-    solsplit2 = np.split(x,len(t))
+    solsplit2 = np.split(x,len(Rcam1))
     visu.ViewRefs(Rcam1,solsplit2,showRef=True)
 
     solt =[]

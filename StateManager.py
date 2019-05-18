@@ -19,6 +19,8 @@ class State(object):
         self.R2=np.zeros((3,3))
         self.t2=np.zeros((3,))
 
+        self.showImg=False
+
         self.detectionMode=detectionMode
         self.readyToCapture=True
         if self.detectionMode == "snap":

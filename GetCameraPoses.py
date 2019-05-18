@@ -54,7 +54,7 @@ def main(argv):
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
     #Load aruco Model
-    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 16-05-2019 23:48:00.json")
+    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 18-05-2019 01:27:54.json")
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
@@ -84,7 +84,8 @@ def main(argv):
 
     print("Finished Elegantly")
 
-    print(stateru.t.shape)
+    
+    print(type(stateru.t))
     visu.ViewRefs([np.eye(3),stateru.R],[np.zeros((3,)),stateru.t],refSize=1,showRef=True)
 
     print(stateru.R.shape)
