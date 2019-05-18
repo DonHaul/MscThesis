@@ -47,7 +47,7 @@ def main(argv):
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
     #Load aruco Model
-    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 18-05-2019 01:27:54.json")
+    arucoModel = FileIO.getJsonFromFile("./static/arucoModel manatee 18-05-2019 17:25:02.json")
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter1.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
@@ -77,17 +77,11 @@ def main(argv):
 
     print("Finished Elegantly")
 
+    stateru.R2 = stateru.R2/stateru.count
 
-    if(type(stateru.t)!=list):
-        stateru.t = [np.zeros(3,),stateru.t]
-        stateru.R = [np.eye(3),stateru.R]
+    stateru.t = stateru.t2/stateru.count
 
-    visu.ViewRefs(stateru.R,stateru.t,refSize=1,showRef=True)
-
-    
-    print(type(stateru.t))
-    visu.ViewRefs(stateru.R,stateru.t,refSize=0.1,showRef=True)
-
+    stateru.R = algos.procrustesMatlabJanky(stateru.R2,np.eye(3))
 
     print("R is:")
     print(stateru.R)
@@ -95,7 +89,7 @@ def main(argv):
     print("t is:")
     print(stateru.t)
 
-    SaveCameraPoses(stateru.R,stateru.t,camNames,"cameras")
+    #SaveCameraPoses(stateru.R,stateru.t,camNames,"cameras")
 
 def SaveCameraPoses(R,t,camNames,objectname="cameras"):
 

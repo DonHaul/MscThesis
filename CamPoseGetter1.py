@@ -114,34 +114,17 @@ class CamPoseGetter(object):
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsGen.GenerateCameraPairObsSelf(self.Allobs,self.R,self.t)
 
-        #print(len(obsR))
-        #rotation problem
-        if self.state.state == 0:
-
-            A = probdefs.rotationProbDef(obsR,self.N_cams)
-            self.state.ATAR = self.state.ATAR + np.dot(A.T,A)
-        
-        #translation problem
-        elif self.state.state ==1:
-
+        rrr=np.zeros((3,3))
+        ttt=np.zeros((3,))
+        for oR,oT in zip(obsR,obsT):
             
-            A,b =  probdefs.translationProbDef(obsT,self.state.R,self.N_cams)
-
-            self.state.ATAt = self.state.ATAt + np.dot(A.T,A)
-            self.state.ATb = self.state.ATb + np.dot(A.T,b)
-        else:
-            print("This State does nothing")
+            ttt=oT['t']+ttt
+            rrr=oR['R']+rrr
 
 
-        if(self.N_cams)==2:
-            rrr,ttt = probdefs.ProbDefN2(obsR,obsT,self.N_cams)
-            print("moreless rotation:")
-            print(rrr/len(obsR))
-            print("moreless translation:")
-            print(ttt/len(obsT))
-            self.state.R2 = self.state.R2 + rrr
-            self.state.count=self.state.count+len(obsT)
-            self.state.t2 = self.state.t2 + ttt
+        self.state.R2 = self.state.R2 + rrr
+        self.state.count=self.state.count+len(obsT)
+        self.state.t2 = self.state.t2 + ttt
 
             
 

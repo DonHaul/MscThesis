@@ -217,6 +217,51 @@ def GenerateCameraPairObs(camsObs,R,t):
 
     return obsR,obsT
 
+def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
+
+    goodObservations=[]
+
+    oopsies = np.zeros((N,))
+
+
+
+    #for obsiR in camsObs[i]:
+    #    #and through all the obs of the other
+    #    for obsjR in camsObs[j]:
+
+
+    for i in range(0,len(obs)):
+        #and another camera
+        for j in range(i+1,len(obs)):
+            
+            print("M1: " + str(obs[j]['obsId'])+ " M2: " + str(obs[i]['obsId']))
+
+
+            Raux = np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T])
+
+            #Get aruco transformation parameters
+            Rbetweenaruco = np.dot(R[obs[j]['obsId']].T,R[obs[i]['obsId']])
+            tbetweenaruco = np.dot(R[obs[j]['obsId']].T, t[obs[i]['obsId']] - t[obs[j]['obsId']])
+            #transform from marker1  coordinates to marker2 coordinates
+            new_t =  mmnip.Transform(mmnip.InvertT(obs[i]['R'], obs[i]['t']),Rbetweenaruco, tbetweenaruco)
+            #transform from marker2 coordinates to camera j coordinates                    
+            taux = mmnip.Transform(new_t, obs[j]['R'], obs[j]['t'] )
+
+            print("rot")
+            print( np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T]))
+            print(np.linalg.norm(np.eye(3) - Raux))
+            print("tij")
+            print(np.linalg.norm(taux))
+
+            if np.linalg.norm(taux) > t_threshold or (np.linalg.norm(np.eye(3) - Raux))>R_threshold:
+                oopsies[obs[i]['obsId']] = oopsies[obs[i]['obsId']] + 1
+                oopsies[obs[j]['obsId']] = oopsies[obs[j]['obsId']] + 1
+
+
+    print("oopsies")
+    print(oopsies)
+
+    return goodObservations
 
 def GenerateCameraPairObsSelf(camsObs,R,t):
     '''
@@ -245,7 +290,13 @@ def GenerateCameraPairObsSelf(camsObs,R,t):
             for obsiR in camsObs[i]:
                 #and through all the obs of the other
                 for obsjR in camsObs[j]:
-                
+
+                    if obsjR['obsId']==obsiR['obsId']:
+                        print("skip")
+                        continue
+                    print("M1: " + str(obsjR['obsId'])+ " M2: " + str(obsiR['obsId']))
+
+
                     #confusing as fuck i, know
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
@@ -267,15 +318,14 @@ def GenerateCameraPairObsSelf(camsObs,R,t):
                     #transform from marker2 coordinates to camera j coordinates                    
                     tij = mmnip.Transform(new_t, obsjR['R'], obsjR['t'] )
 
-                    #print(tij)
-
-                    #quit()
-
                     obsT.append({"from":i,"to":j,"t": tij})
                     print("from:" + str(i) + " to: " +str(j))
                     print("rot")
                     print( np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T]))
+                    print(np.linalg.norm(np.eye(3) - np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])))
                     print("tij")
                     print(tij)
+                    print(np.linalg.norm(tij))
+
 
     return obsR,obsT

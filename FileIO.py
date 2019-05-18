@@ -41,14 +41,14 @@ def putFileWithJson(data,filename=None,folder=None):
     animalName = random.choice(arr)
     f.close()
 
-    saveName = folder + "/" + filename+" "+animalName + " " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    saveName = folder + "/" + filename+"_"+animalName + "_" +  datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     f = open(saveName+".json","w")
 
     json.dump(data,f)
     
     f.close()
 
-    print("Saved File: "+str(saveName))
+    print("Saved File: "+str(saveName)+".json")
 
 
 def getJsonFromFile(filename):

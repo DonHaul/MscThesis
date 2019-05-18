@@ -41,7 +41,7 @@ def main(argv):
     arucoData, arucoModel,settings,camNames = ParsingInputs(argv)
 
     print(arucoData)
-    quit()
+
 
     if camNames is None:
         camNames = rosinterface.getAllPluggedCameras()
@@ -83,6 +83,9 @@ def main(argv):
 
     print("t is:")
     print(stateru.t)
+
+    if stateru.R is None or stateru.t is None:
+        quit()
 
     SaveCameraPoses(stateru.R,stateru.t,camName,nameofthing = "markers")
 
@@ -136,6 +139,7 @@ def ParsingInputs(argv):
     if options['aruco'] is not None:
         f=open(options['aruco'],"r")
     else:
+        print("No Aruco Data File Specified: Using Defaul")
         f=open("./static/ArucoWand.json","r")
     
     arucoData = json.load(f)

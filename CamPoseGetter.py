@@ -101,6 +101,9 @@ class CamPoseGetter(object):
             #get observations of this camera, and image with the detected markers and referentials shown
             obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
+
+            wow = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']))
+
             #print("obslen "+str(len(obs)))
             #if camId==0 and len(obs)>0:
             #    print(obs[0]['t'])

@@ -112,12 +112,10 @@ class ArucoInfoGetterv3(object):
         self.Allobs = []
 
         #shiow video, or frame of just don't
-        if(self.showVid == 1):
+        if(self.state.showImg == True):
             cv2.imshow("Image window" , img)
-            cv2.waitKey(3)
-        elif(self.showVid == 2):
-            cv2.imshow("Image window", img)
-            cv2.waitKey(0)
+            cv2.waitKey(1)
+
 
 
     def showImg(self):
