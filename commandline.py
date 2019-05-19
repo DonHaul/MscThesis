@@ -17,7 +17,9 @@ def worker(statev,rospy):
             #print("wow")
             ola = x.split(" ")
             if(len(ola)==1):
-                visu.draw_geometry([statev.pc,open3d.create_mesh_coordinate_frame(1, origin = [0, 0, 0])])   
+                scene = visu.ViewRefs(statev.camPoses[0],statev.camPoses[1],view=False,refSize=1)
+                scene.append(statev.pc)
+                visu.draw_geometry(scene)   
             else:
                 time.sleep(int(ola[1]))
                 visu.draw_geometry([statev.pc])

@@ -58,7 +58,7 @@ def draw_geometry(pcd):
 
     return vis
 
-def ViewRefs(R=None,t=None,refSize=10,showRef=False,zaWordu=False):
+def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False):
     '''ViewRefs - Displays a bunch of referentials on the screen
 
     Args:
@@ -124,7 +124,7 @@ def ViewRefs(R=None,t=None,refSize=10,showRef=False,zaWordu=False):
         refe = open3d.create_mesh_coordinate_frame(refSize*0.2, origin = [0, 0, 0])
         refs.append(refe)
 
-
-    draw_geometry(refs) #Draw them all
+    if view==True:
+        draw_geometry(refs) #Draw them all
 
     return refs

@@ -292,9 +292,8 @@ def depthimg2xyz2(depthimg,K):
     depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
 
     u,v =np.indices((480,640))
-    
-    u=u-cx
-    v=v-cy
+    u=u-cy
+    v=v-cx
 
     depthcoords[:,:,2]= depthimg/1000.0
     depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
@@ -326,6 +325,7 @@ def depthimg2xyz(depthimg,rgb,K):
             color = rgb[u,v,:] 
             Z = depthimg[u,v] / 1000.0
             if Z==0: continue
+
             X = (u - cx) * Z / fx
             Y = (v - cy) * Z / fy
             points.append([X,Y,Z])

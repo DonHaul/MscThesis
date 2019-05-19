@@ -47,7 +47,7 @@ def main(argv):
     #mmnip.isRotation(scene[0])
  
     #scene[0]=mmnip.genRotRelLeft(scene[0])
-    scene[1][1]=mmnip.InvertT(scene[0][1].T,scene[1][1])
+    #scene[1][1]=mmnip.InvertT(scene[0][1].T,scene[1][1])
 
     print(scene)
     #camNames=IRos.getAllPluggedCameras()
@@ -58,7 +58,7 @@ def main(argv):
     #print(scene[0])
     camNames=scene[2]
 
-    stateru = StateManager.State(len(camNames))
+    stateru = StateManager.State(len(camNames),camPoses=scene)
 
     commandline.Start(stateru,rospy)
 

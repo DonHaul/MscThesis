@@ -6,7 +6,7 @@ import matmanip as mmnip
 #all variables that can change during the run should be here that are not local
 class State(object):
 
-    def __init__(self,N_cams,detectionMode="realtime"):
+    def __init__(self,N_cams,detectionMode="realtime",camPoses=None):
 
         self.N_cams=N_cams
         self.state=0
@@ -19,7 +19,7 @@ class State(object):
         self.R2=np.zeros((3,3))
         self.t2=np.zeros((3,))
 
-        self.showImg=True
+        self.showImg=False
 
         self.detectionMode=detectionMode
         self.readyToCapture=True
@@ -36,6 +36,10 @@ class State(object):
         self.ATb = np.zeros((self.N_cams*3,1))
 
         self.pc=None
+
+        self.cams={}
+
+        self.camPoses=camPoses
 
     def CalcRthenStartT(self):
         #if(camposegetter.N_cams==2):

@@ -219,16 +219,8 @@ def GenerateCameraPairObs(camsObs,R,t):
 
 def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
 
-    goodObservations=[]
-
     oopsies = np.zeros((N,))
-
-
-
-    #for obsiR in camsObs[i]:
-    #    #and through all the obs of the other
-    #    for obsjR in camsObs[j]:
-
+    observed = np.zeros((N,))
 
     for i in range(0,len(obs)):
         #and another camera
@@ -253,6 +245,10 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
             print("tij")
             print(np.linalg.norm(taux))
 
+            observed[obs[i]['obsId']]=1
+            observed[obs[j]['obsId']]=1
+            
+
             if np.linalg.norm(taux) > t_threshold or (np.linalg.norm(np.eye(3) - Raux))>R_threshold:
                 oopsies[obs[i]['obsId']] = oopsies[obs[i]['obsId']] + 1
                 oopsies[obs[j]['obsId']] = oopsies[obs[j]['obsId']] + 1
@@ -260,6 +256,17 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
 
     print("oopsies")
     print(oopsies)
+
+
+    goodObservations=[]
+
+    activeMarkersCount = np.count_nonzero(observed)
+
+    for o in obs:
+        if oopsies [ o['obsId']]<activeMarkersCount-1:
+            print("good sample found")
+            goodObservations.append(o)
+            
 
     return goodObservations
 
