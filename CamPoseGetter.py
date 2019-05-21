@@ -139,10 +139,10 @@ class CamPoseGetter(object):
 
         if(self.N_cams)==2:
             rrr,ttt = probdefs.ProbDefN2(obsR,obsT,self.N_cams)
-            print("moreless rotation:")
-            print(rrr/len(obsR))
-            print("moreless translation:")
-            print(ttt/len(obsT))
+            #print("moreless rotation:")
+            ##print(rrr/len(obsR))
+            #print("moreless translation:")
+            #print(ttt/len(obsT))
             self.state.R2 = self.state.R2 + rrr
             self.state.count=self.state.count+len(obsT)
             self.state.t2 = self.state.t2 + ttt
@@ -156,8 +156,11 @@ class CamPoseGetter(object):
         if self.state.showImg==True:
             self.showImg(self.state.detectionMode)
 
-        if(self.state.detectionMode=="snap"):
-            self.state.readyToCapture=False
+        if self.state.detectionMode=="snap":
+            self.state.snapcount=self.state.snapcount-1
+            
+            if self.state.snapcount<=0:
+                self.state.readyToCapture=False
 
 
     def showImg(self,mode):

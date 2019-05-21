@@ -226,7 +226,7 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
         #and another camera
         for j in range(i+1,len(obs)):
             
-            print("M1: " + str(obs[j]['obsId'])+ " M2: " + str(obs[i]['obsId']))
+            #print("M1: " + str(obs[j]['obsId'])+ " M2: " + str(obs[i]['obsId']))
 
 
             Raux = np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T])
@@ -239,10 +239,10 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
             #transform from marker2 coordinates to camera j coordinates                    
             taux = mmnip.Transform(new_t, obs[j]['R'], obs[j]['t'] )
 
-            print("rot")
+            #print("rot")
             print( np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T]))
             print(np.linalg.norm(np.eye(3) - Raux))
-            print("tij")
+            #print("tij")
             print(np.linalg.norm(taux))
 
             observed[obs[i]['obsId']]=1
@@ -254,7 +254,7 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
                 oopsies[obs[j]['obsId']] = oopsies[obs[j]['obsId']] + 1
 
 
-    print("oopsies")
+    #print("oopsies")
     print(oopsies)
 
 

@@ -28,11 +28,23 @@ def worker(statev,rospy):
             statev.CalcRT2()
             rospy.signal_shutdown('Quit')
             break
+        elif "setcam" in x:
+
+            ola = x.split(" ")
+            statev.curCam=int(ola[1])
+            print("Current cammera changed to:"+str(statev.curCam))
         elif "-" in x:
-            #for i in range(3):
-            #    print(i)
-            #    time.sleep(1)
-            print("*SNAP*")
+
+            ola = x.split(" ")
+            if len(ola)>1:
+                for i in range(3):
+                    print(i)
+                    time.sleep(1)
+                print("*SNAPPING*")
+                statev.snapcount=int(ola[1])
+            else:
+                statev.snapcount=1
+            
             statev.readyToCapture=True
 
 

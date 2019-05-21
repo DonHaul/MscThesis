@@ -39,7 +39,12 @@ class State(object):
 
         self.cams={}
 
+        self.snapcount=0
+
         self.camPoses=camPoses
+
+        #use in one for all mode, one camera from several perspectives
+        self.curCam=0
 
     def CalcRthenStartT(self):
         #if(camposegetter.N_cams==2):
