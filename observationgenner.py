@@ -240,10 +240,10 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
             taux = mmnip.Transform(new_t, obs[j]['R'], obs[j]['t'] )
 
             #print("rot")
-            print( np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T]))
-            print(np.linalg.norm(np.eye(3) - Raux))
+            #print( np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T]))
+            #print(np.linalg.norm(np.eye(3) - Raux))
             #print("tij")
-            print(np.linalg.norm(taux))
+            #print(np.linalg.norm(taux))
 
             observed[obs[i]['obsId']]=1
             observed[obs[j]['obsId']]=1
@@ -255,7 +255,7 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
 
 
     #print("oopsies")
-    print(oopsies)
+    #print(oopsies)
 
 
     goodObservations=[]
@@ -264,7 +264,7 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
 
     for o in obs:
         if oopsies [ o['obsId']]<activeMarkersCount-1:
-            print("good sample found")
+            #print("good sample found")
             goodObservations.append(o)
             
 

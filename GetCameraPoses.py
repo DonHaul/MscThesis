@@ -90,8 +90,9 @@ def main(argv):
 
 
     if(type(stateru.t)!=list):
-        stateru.t = [np.zeros(3,),stateru.t]
-        stateru.R = [np.eye(3),stateru.R]
+        print("the ol' reliable")
+        stateru.t = [stateru.t,np.zeros(3,)]
+        stateru.R = [stateru.R.T,np.eye(3)]
 
     visu.ViewRefs(stateru.R,stateru.t,refSize=1,showRef=True)
 

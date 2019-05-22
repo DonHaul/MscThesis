@@ -104,7 +104,7 @@ class CamPoseGetter(object):
 
             obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
 
-            print(obs)
+            #print(obs)
             #print("obslen "+str(len(obs)))
             #if camId==0 and len(obs)>0:
             #    print(obs[0]['t'])
@@ -137,10 +137,10 @@ class CamPoseGetter(object):
             print("This State does nothing")
 
 
-        if(self.N_cams)==2:
+        if(self.N_cams)==2 and len(obsR)>0:
             rrr,ttt = probdefs.ProbDefN2(obsR,obsT,self.N_cams)
             #print("moreless rotation:")
-            ##print(rrr/len(obsR))
+            #print(rrr/len(obsR))
             #print("moreless translation:")
             #print(ttt/len(obsT))
             self.state.R2 = self.state.R2 + rrr

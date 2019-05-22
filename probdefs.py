@@ -28,8 +28,9 @@ def ProbDefN2(observationsR,observationsT,N):
             t = t + obsT['t']
             
         else:
+            print("happenign 1")
             R = R + obs['R'].T
-            t = t + mmnip.InvertT(obs['R'],obsT['t']) 
+            t = t - mmnip.InvertT(obs['R'],obsT['t']) 
 
     return R,t
 
