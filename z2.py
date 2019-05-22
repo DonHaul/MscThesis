@@ -1,29 +1,46 @@
-import json
 import numpy as np
-import FileIO
-import visu
-import algos
-import matmanip as mmnip
-import open3d
+import libs.errorCalcs
+import libs.helperfuncs as thehelp
+import numpy.matlib
 
-a = np.array([[1],[2],[3]])
+lis=[]
 
-b = np.array([4])
-print(b.shape)
-c = np.array([[1]])
 
-print(np.squeeze(a))
+lis.append({'ola':1,'p':0})
+lis.append({'ola':2,'p':-1})
+lis.append({'ola':3,'p':-2})
 
-print(np.squeeze(b))
+print(lis)
 
-lol =(np.squeeze(c))
+lis_you_want = [ item['ola'] for item in lis ]
 
-print(lol)
-print(type(lol))
 
-lol = lol.tolist()
-if(type(lol)==int):
-    print("wow")
 
-print(len(lol))
+print(lis_you_want)
+print(type(lis_you_want))
 
+quit()
+n_observations=100
+
+indexes=np.squeeze(np.indices((n_observations,)))
+
+RR=[]
+Rnorm=[]
+R=np.zeros((3,3))
+
+for i in range(n_observations):
+    newR = np.random.rand(3,3)
+    RR.append(newR)
+    Rnorm.append(np.linalg.norm(newR,ord='fro'))
+    R=R+ newR
+
+
+realR = R / n_observations
+print(realR)
+realR_time = []
+for i in range(n_observations):
+    realR_time.append(realR)
+
+
+
+print(libs.errorCalcs.MatrixListError(realR_time,RR))

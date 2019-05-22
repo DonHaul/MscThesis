@@ -30,6 +30,11 @@ import StateManager
 
 import visu
 
+import libs.errorCalcs as errorCalcs
+import libs.helperfuncs as helperfuncs
+
+import matplotlib.pyplot as plt
+
 def main(argv):
     #modes 
     #realtime
@@ -51,7 +56,7 @@ def main(argv):
     intrinsics = FileIO.getKDs(camNames)
 
     #has all states that may change
-    stateru = StateManager.State(len(camNames),"oneforall")
+    stateru = StateManager.State(len(camNames),"oneforall",errorCalc=True)
 
     
 
@@ -106,6 +111,17 @@ def main(argv):
 
     print("t is:")
     print(stateru.t)
+
+    if stateru.data['errorCalc']==True:
+
+        LL =  helperfuncs.replicateThingInList(stateru.R,len(stateru.data['Rs']))
+        print(len(LL))
+        y,x = errorCalcs.MatrixListError(stateru.data['Rs']))
+
+        plt.plot(x,y)
+        plt.ylabel('some numbers')
+        plt.show()
+
 
     SaveCameraPoses(stateru.R,stateru.t,camNames,"cameras")
 

@@ -6,7 +6,9 @@ import matmanip as mmnip
 #all variables that can change during the run should be here that are not local
 class State(object):
 
-    def __init__(self,N_cams,detectionMode="realtime",camPoses=None):
+    def __init__(self,N_cams,detectionMode="realtime",camPoses=None,errorCalc=False):
+
+        self.data={}
 
         self.N_cams=N_cams
         self.state=0
@@ -45,6 +47,13 @@ class State(object):
 
         #use in one for all mode, one camera from several perspectives
         self.curCam=0
+
+        self.data['errorCalc']=False        
+
+        if errorCalc==True:
+            self.data['errorCalc']=True
+            self.data['Rs']=[]
+            self.data['Ts']=[]
 
     def CalcRthenStartT(self):
         #if(camposegetter.N_cams==2):

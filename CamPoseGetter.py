@@ -11,6 +11,8 @@ import probdefs
 import observationgenner as obsGen
 import rosinterface as IRos
 
+import libs.helperfuncs as helps
+
 
 class CamPoseGetter(object):
     def __init__(self,camNames,arucoData,arucoModel,intrinsics,stateru):
@@ -124,6 +126,11 @@ class CamPoseGetter(object):
 
             A = probdefs.rotationProbDef(obsR,self.N_cams)
             self.state.ATAR = self.state.ATAR + np.dot(A.T,A)
+
+            if self.state.data['errorCalc']==True:
+                self.state.data['Rs']=self.state.data['Rs'] + helps.extractKeyFromDictList(obsR,'R')
+                
+
         
         #translation problem
         elif self.state.state ==1:
