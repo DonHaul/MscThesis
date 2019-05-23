@@ -21,8 +21,14 @@ rosbag record --split --size=1024 -b 0 /ervilhamigalhas/depth_registered/points 
 ### 2 rgb + depth
 rosbag record --split --size=1024 -b 0 /ervilhamigalhas/depth_registered/image_raw /abretesesamo/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color
 
-### 3 rgb + depth
+### 3 rgb + depth ervilhas abretesesano fernanod
 rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /abretesesamo/depth_registered/image_raw /fernando/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color /fernando/rgb/image_color
+
+### 3 rgb + depth ervilhas abretesesano fernanod
+rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/depth_registered/image_raw abretesesamo/rgb/image_color /fernando/rgb/image_color /fernando/depth_registered/image_raw/
+
+### 3 rgb + depth ervilhas quim fernanod
+rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /quim/depth_registered/image_raw quim/rgb/image_color /fernando/rgb/image_color /fernando/depth_registered/image_raw/
 
 
 ### 2 rgb + depth + pc2

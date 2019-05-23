@@ -37,6 +37,8 @@ class State(object):
         #A.T b initialized
         self.ATb = np.zeros((self.N_cams*3,1))
 
+        self.pcs=[]
+
         self.pc=None
 
         self.cams={}

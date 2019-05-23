@@ -282,6 +282,34 @@ def InverseTransform(totransform,R,t):
     '''
     return np.dot(R.T,totransform)-np.dot(R.T,t)
 
+def singlePixe2xyz(depth,coords,K):
+
+    fx=K[0,0]
+    fy=K[1,1]
+    cx=K[0,2]
+    cy=K[1,2]
+
+    coords = np.round(coords)
+
+    coords = coords.astype('int') 
+
+    print(depth.shape)
+    print(depth[coords[0],coords[1]])
+
+    Z=depth[coords[1],coords[0]]/1000.0
+    
+    print(Z.shape)
+
+    X=Z*(coords[0]-cx)/fx
+    Y=Z*(coords[1]-cy)/fy
+    #print("gayy")
+    #print(np.array([X,Y,Z]))
+    xyz= np.array([X,Y,Z])
+
+    print(xyz)
+
+    return xyz
+
 def depthimg2xyz2(depthimg,K):
 
     fx=K[0,0]
@@ -298,8 +326,12 @@ def depthimg2xyz2(depthimg,K):
     depthcoords[:,:,2]= depthimg/1000.0
     depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
     depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
+    
+
 
     return depthcoords
+
+
 
 def depthimg2xyz(depthimg,rgb,K):
 

@@ -2,6 +2,32 @@ import json
 import numpy as np
 import random
 import datetime
+import os
+import open3d
+
+import pointclouder
+
+def savePCs(filename,pcs):
+
+
+    pc = pointclouder.MergeClouds(pcs)
+
+    print("./PC/"+filename+".ply")
+
+    open3d.write_point_cloud("./PC/"+filename+".ply", pc)
+
+    try:
+        os.mkdir("./PC/"+filename)
+    except:
+        print("PA")
+    
+    
+    for i in range(len(pcs)):
+        print(pcs[i])
+        open3d.write_point_cloud("./PC/"+filename+"/pointcloud"+str(i)+".ply", pcs[i])
+
+
+
 
 def getKDs(camNames):
     K={}

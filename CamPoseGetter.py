@@ -104,7 +104,7 @@ class CamPoseGetter(object):
             obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
 
-            obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
+            #obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
 
             #print(obs)
             #print("obslen "+str(len(obs)))
@@ -167,6 +167,7 @@ class CamPoseGetter(object):
             self.state.snapcount=self.state.snapcount-1
             
             if self.state.snapcount<=0:
+                print("NO MAS")
                 self.state.readyToCapture=False
 
 

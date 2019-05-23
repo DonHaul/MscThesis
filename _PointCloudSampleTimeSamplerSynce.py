@@ -32,6 +32,8 @@ import sys
 
 def main(argv):
     
+
+    
     freq=10
 
     filename=""
@@ -40,7 +42,11 @@ def main(argv):
     else:
         print("Scene File Needed")
         quit()
-        
+
+    myString=filename
+  
+    myString = myString[myString.find("/")+1:myString.find(".")]
+
     #R,t,camNames
     scene = LoadScene(filename)
     scene=list(scene)
@@ -89,10 +95,14 @@ def main(argv):
         print("shut")
 
 
+    print(filename)
 
-    pcl =[]#list in time
+    FileIO.savePCs(myString,stateru.pcs)
 
-    open3d.write_point_cloud("./tmp/wow.ply", stateru.pc)
+
+    #pcl =[]#list in time
+
+    #open3d.write_point_cloud("./tmp/wow.ply", stateru.pc)
 
     #vis.destroy_window()
 
@@ -184,6 +194,8 @@ class PCGetter(object):
 
 
             pcs.append(pc)
+
+        self.state.pcs = pcs
 
         self.state.pc = pointclouder.MergeClouds(pcs)
 

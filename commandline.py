@@ -7,6 +7,8 @@ import time
 import visu
 import open3d
 
+import FileIO
+
 def worker(statev,rospy):
     x=""
     count = 0

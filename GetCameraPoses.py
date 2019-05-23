@@ -56,14 +56,14 @@ def main(argv):
     intrinsics = FileIO.getKDs(camNames)
 
     #has all states that may change
-    stateru = StateManager.State(len(camNames),"oneforall",errorCalc=True)
+    stateru = StateManager.State(len(camNames),"realtime")
 
     
 
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
     #Load aruco Model
-    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 18-05-2019 01:27:54.json")
+    arucoModel = FileIO.getJsonFromFile("./scenes/falcon 23-05-2019 03:02:21.json")
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
@@ -116,7 +116,10 @@ def main(argv):
 
         LL =  helperfuncs.replicateThingInList(stateru.R,len(stateru.data['Rs']))
         print(len(LL))
-        y,x = errorCalcs.MatrixListError(stateru.data['Rs']))
+        print(LL[0].shape)
+        print(stateru.data['Rs'][0])
+
+        y,x = errorCalcs.MatrixListError(stateru.data['Rs'],LL)
 
         plt.plot(x,y)
         plt.ylabel('some numbers')
