@@ -293,8 +293,6 @@ def singlePixe2xyz(depth,coords,K):
 
     coords = coords.astype('int') 
 
-    print(depth.shape)
-    print(depth[coords[0],coords[1]])
 
     Z=depth[coords[1],coords[0]]/1000.0
     
@@ -331,6 +329,23 @@ def depthimg2xyz2(depthimg,K):
 
     return depthcoords
 
+def Transl_fromWtoRef(R,T,ref=0):
+    print("NEEDS UNIT TESTING FOR OTHER REFS")
+
+    #from_to
+    #tw_1 is  the invert of t1_w
+    newT=[]
+    # is is making ti_1 Rw_1*ti_w + tw_1
+    for t in T:
+        #print("TRANSOFRMAITONS")
+        #print(t)
+        #print(T[ref].T)
+
+        auxT = Transform(t,R[ref].T,InvertT(R[ref],T[ref]))
+        newT.append(auxT)
+
+    #print("doing shit")
+    return newT
 
 
 def depthimg2xyz(depthimg,rgb,K):

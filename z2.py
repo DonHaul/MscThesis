@@ -2,45 +2,47 @@ import numpy as np
 import libs.errorCalcs
 import libs.helperfuncs as thehelp
 import numpy.matlib
+import FileIO
+import libs.helperfuncs as helperfuncs
+import visu
+import matmanip as mmnip
 
-lis=[]
-
-
-lis.append({'ola':1,'p':0})
-lis.append({'ola':2,'p':-1})
-lis.append({'ola':3,'p':-2})
-
-print(lis)
-
-lis_you_want = [ item['ola'] for item in lis ]
+#Load aruco Model
+arucoModel = FileIO.getJsonFromFile("./static/arucoModel 18-05-2019 01:27:54.json")['markers']
 
 
+R=[]
+t=[]
 
-print(lis_you_want)
-print(type(lis_you_want))
+for marker in arucoModel:
+    #get aruco model
 
-quit()
-n_observations=100
+    RR = np.asarray(marker['R'])
+    tt = np.squeeze(np.asarray(marker['t']))
 
-indexes=np.squeeze(np.indices((n_observations,)))
+    R.append(RR)
+    t.append(tt)
 
-RR=[]
-Rnorm=[]
-R=np.zeros((3,3))
-
-for i in range(n_observations):
-    newR = np.random.rand(3,3)
-    RR.append(newR)
-    Rnorm.append(np.linalg.norm(newR,ord='fro'))
-    R=R+ newR
+#R = helperfuncs.extractKeyFromDictList(arucoModel,'R')
+#T = helperfuncs.extractKeyFromDictList(arucoModel,'t')
 
 
-realR = R / n_observations
-print(realR)
-realR_time = []
-for i in range(n_observations):
-    realR_time.append(realR)
+visu.ViewRefs(R,t,refSize=0.1)
+
+newT = mmnip.Transl_fromWtoRef(R,t)
+
+visu.ViewRefs(R,newT,refSize=0.1)
+
+visu.ViewRefs(R+R,t+newT,refSize=0.1)
+
+print(t)
+
+print("WOWO K")
+print(newT)
+
+filepath =  FileIO.saveAsPickle("wowww",{'R':R,'T':newT})
 
 
+#wowee = FileIO.getFromPickle(filepath)
 
-print(libs.errorCalcs.MatrixListError(realR_time,RR))
+print(wowee)

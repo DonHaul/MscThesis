@@ -6,6 +6,15 @@ This module contains aruco marker detection stuff
 import cv2
 import numpy as np
 
+def markerIdMapper(arr):
+
+    IdMap={}
+    
+    for i in range(0,len(arr)):
+        IdMap[str(arr[i])]=i
+    
+    return IdMap
+
 def ArucoObservationMaker(img,K,D,Nmarkers,arucoData,captureR=True,captureT=False):
     '''
     Finds Markers and makes observations
@@ -148,7 +157,7 @@ def FindPoses(K,D,det_corners,img,n,size):
 
         #converts to 3x3 rotation matrix
         elm,_ = cv2.Rodrigues(rvecs[i,0,:])
-        cv2.Rodrigues(src=rvecs[i,0,:])
+        #cv2.Rodrigues(src=rvecs[i,0,:])
         rots.append(elm)
 
         #draws axis

@@ -4,7 +4,7 @@ import random
 import datetime
 import os
 import open3d
-
+import pickle
 import pointclouder
 
 def savePCs(filename,pcs):
@@ -75,6 +75,61 @@ def putFileWithJson(data,filename=None,folder=None):
     f.close()
 
     print("Saved File: "+str(saveName)+".json")
+
+def GetAnimalName():
+    f=open("static/names.json","r")
+
+    arr = json.load(f)
+
+    animalName = random.choice(arr)
+    f.close()
+
+    return animalName
+
+def getFromPickle(filename):
+
+    p={}
+
+    try:
+        f= open(filename,"rb")
+        p  =  pickle.load(f)
+        f.close
+    except IOError:
+        print("ERROR: No Such File")
+
+        
+    return p
+
+
+def saveAsPickle(name,data,path="pickles/",putDate=True,animal=True):
+    '''
+        Args:
+        name (str):Filename
+        key (str):Name of the variable will be saved as
+        data (anything): Data to be saved in the dict
+        path (str): Where will it be saved
+        putData (bool,optional): whether or not the current data is concatenated to the file name
+    '''
+
+    saveName = path+name #path and filename
+
+    if(animal):
+        saveName = saveName+"_"+GetAnimalName()
+
+    #add date
+    if putDate:
+        saveName = saveName+"_" + datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+    
+    f= open(saveName+".pickle","wb")    #open file and write bytes
+    
+    pickle.dump(data,f)          #dump stuff into that file
+    
+    f.close
+
+    print("Data Saved on: " + saveName +".pickle")
+
+
+    return saveName + ".pickle"
 
 
 def getJsonFromFile(filename):
