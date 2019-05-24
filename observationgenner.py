@@ -7,7 +7,7 @@ import numpy as np
 import matmanip as mmnip
 import aruco
 import cv2
-
+import libs.helperfuncs as helperfuncs
 import visu
 
 
@@ -97,11 +97,12 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
     #finds markers
     det_corners, ids, rejected = aruco.FindMarkers(img, K)
 
+    if ids is not None:
 
-    ids = ids.squeeze()
+        ids = ids.squeeze()
 
-    if (helperfuncs.is_empty(ids.shape)):
-        ids=[int(ids)]
+        if (helperfuncs.is_empty(ids.shape)):
+            ids=[int(ids)]
 
     sphs = []
 

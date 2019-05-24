@@ -39,7 +39,7 @@ class CamPoseGetter(object):
         self.intrinsics = intrinsics
 
         self.arucoData=arucoData
-
+        self.arucoModel = arucoModel
         self.R = []
         self.t = []
 
@@ -106,7 +106,7 @@ class CamPoseGetter(object):
                 obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
             elif self.state.arucoDetection == "allforone":
                 
-                obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel):
+                obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
             else:
                 print("Big Oopsie 5809447652")
                 quit()

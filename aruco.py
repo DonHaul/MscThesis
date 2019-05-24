@@ -179,7 +179,7 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
     for i in range(len(ids)):
 
 
-        mappedID = arucoData['IdMap'][str(int(ids[i]))]
+        mappedID = arucoData['idmap'][str(int(ids[i]))]
 
         #FROM CORNERS TO RGB
         #FROM CORNERS TO RGB

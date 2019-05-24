@@ -29,7 +29,7 @@ class State(object):
             self.readyToCapture=False
 
         #it should be either singular, allforone
-        self.arucoDetection = "singular"
+        self.arucoDetection = "allforone"
 
         #A.T A initialized
         self.ATAR = np.zeros((self.N_cams*3,self.N_cams*3))
