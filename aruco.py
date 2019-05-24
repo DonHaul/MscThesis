@@ -5,6 +5,7 @@ This module contains aruco marker detection stuff
 """
 import cv2
 import numpy as np
+import matmanip as mmnip
 
 def markerIdMapper(arr):
 
@@ -166,3 +167,40 @@ def FindPoses(K,D,det_corners,img,n,size):
     ola = np.asarray(rots)
 
     return rots,tvecs,img
+
+
+def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
+
+    #because there are 4 corners per detected aruco
+    image_points=np.zeros((4*len(ids),2))
+
+    points3D=np.zeros((4*len(ids),3))
+
+    for i in range(len(ids)):
+
+
+        mappedID = arucoData['IdMap'][str(int(ids[i]))]
+
+        #FROM CORNERS TO RGB
+        #FROM CORNERS TO RGB
+        corn1 = mmnip.Transform([-arucoData['size']/2,arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+        corn2 = mmnip.Transform([arucoData['size']/2,arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+        corn3 = mmnip.Transform([arucoData['size']/2,-arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+        corn4 = mmnip.Transform([-arucoData['size']/2,-arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+
+        corn3D = np.vstack((corn1,corn2,corn3,corn4))
+
+        points3D[i*4:i*4+4,:] = corn3D
+        image_points[i*4:i*4+4,:]=np.squeeze(det_corners[i])
+        
+
+
+
+
+    retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,None, flags = cv2.SOLVEPNP_ITERATIVE)
+
+    rvec,_ = cv2.Rodrigues(orvec)
+
+    return rvec,otvec
+
+    

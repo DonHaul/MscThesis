@@ -90,6 +90,39 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
     return observations ,img
 
 
+def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
+
+    obs = []
+
+    #finds markers
+    det_corners, ids, rejected = aruco.FindMarkers(img, K)
+
+
+    ids = ids.squeeze()
+
+    if (helperfuncs.is_empty(ids.shape)):
+        ids=[int(ids)]
+
+    sphs = []
+
+    if  ids is not None and len(ids)>0:
+
+    
+        Rr,tt = aruco.GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel)
+
+        #initializes observation
+        o ={"obsId":arucoData['idmap'][str(ids[i])]}
+
+                #generate R observations
+        o['R']=Rr
+
+
+        #generate t observations
+        o['t']=np.squeeze(tt) #WRONG - Not sure if this is the correct t
+
+        obs.append(o)
+
+    return obs,img
 
 def Cam2ArucoObsMaker2(img,K,D,arucoData):
     '''

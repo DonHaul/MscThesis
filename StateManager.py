@@ -28,6 +28,9 @@ class State(object):
         if self.detectionMode == "snap":
             self.readyToCapture=False
 
+        #it should be either singular, allforone
+        self.arucoDetection = "singular"
+
         #A.T A initialized
         self.ATAR = np.zeros((self.N_cams*3,self.N_cams*3))
 
@@ -49,6 +52,8 @@ class State(object):
 
         #use in one for all mode, one camera from several perspectives
         self.curCam=0
+
+
 
         self.data['errorCalc']=False        
 

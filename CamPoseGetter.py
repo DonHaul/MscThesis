@@ -100,9 +100,16 @@ class CamPoseGetter(object):
         for camId in range(0,self.N_cams):
             img = IRos.rosImg2RGB(args[camId])
 
-            #get observations of this camera, and image with the detected markers and referentials shown
-            obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
+            if  self.state.arucoDetection == "singular":
+                #get observations of this camera, and image with the detected markers and referentials shown
+                obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
+            elif self.state.arucoDetection == "allforone":
+                
+                obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel):
+            else:
+                print("Big Oopsie 5809447652")
+                quit()
 
             #obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
 

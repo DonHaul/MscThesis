@@ -5,6 +5,8 @@ import algos
 import pickler as pickle
 import message_filters
 
+import libs.helperfuncs as helperfuncs
+
 from sensor_msgs.msg import Image
 import cv2
 import open3d
@@ -40,8 +42,6 @@ def main(argv):
 
     camNames = IRos.getAllPluggedCameras()
     camName = camNames[0]
-
-    camName="ervilhamigalhas"
 
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)
@@ -109,73 +109,27 @@ class PCGetter(object):
         #finds markers
         det_corners, ids, rejected = aruco.FindMarkers(rgb, K)
 
-        
+
+        ids = ids.squeeze()
+
+        if (helperfuncs.is_empty(ids.shape)):
+            ids=[int(ids)]
 
         sphs = []
 
-        
-        #GET CORNERS' XYZ
-        if ids is not None:
+        if  ids is not None and len(ids)>0:
 
-            #print("shape ids")
-            #print(ids.shape)
-            ids = np.squeeze(ids)
-            #print(ids.shape)
-            #print(len(ids))
-
-            #because there are 4 corners per detected aruco
-            image_points=np.zeros((4*len(ids),2))
-
-            points3D=np.zeros((4*len(ids),3))
-
-            print("ids are")
-            print(ids)
-
-            for i in range(len(ids)):
-                #print(det_corners[i])
-
-
-                #print(self.arucoData['IdMap'])
-
-                mappedID = self.arucoData['IdMap'][str(int(ids[i]))]
-
-                
-                #FROM CORNERS TO RGB
-                #FROM CORNERS TO RGB
-                corn1 = mmnip.Transform([self.arucoData['size']/2,-self.arucoData['size']/2,0],self.arucoModel['R'][mappedID],self.arucoModel['T'][mappedID])
-                corn2 = mmnip.Transform([self.arucoData['size']/2,self.arucoData['size']/2,0],self.arucoModel['R'][mappedID],self.arucoModel['T'][mappedID])
-                corn3 = mmnip.Transform([-self.arucoData['size']/2,self.arucoData['size']/2,0],self.arucoModel['R'][mappedID],self.arucoModel['T'][mappedID])
-                corn4 = mmnip.Transform([-self.arucoData['size']/2,-self.arucoData['size']/2,0],self.arucoModel['R'][mappedID],self.arucoModel['T'][mappedID])
-    
-                corn3D = np.vstack((corn1,corn2,corn3,corn4))
-
-                #image_points = np.flip(image_points,axis=1)
-
-                #print("3D corners")
-                #print(corn3D.shape)
-                #print(det_corners[i])
-                points3D[i*4:i*4+4,:] = corn3D
-                image_points[i*4:i*4+4,:]=np.squeeze(det_corners[i])
-                
-
-
-            #print("ONE IS HERE")
-            #print(image_points)
-            #print(points3D)
-
-
-            retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,None, flags = cv2.SOLVEPNP_ITERATIVE)
-
-            rvec,_ = cv2.Rodrigues(orvec)
+       
+            Rr,tt = aruco.GetCangalhoFromMarkersPnP(ids,det_corners,K,self.arucoData,self.arucoModel)
 
             sphere1 = open3d.create_mesh_sphere(0.01)
-            H = mmnip.Rt2Homo(rvec,otvec.T)
+            H = mmnip.Rt2Homo(Rr,tt.T)
           
 
             sphere1.transform(H)
             sphere1.paint_uniform_color([1,0,0])
             sphs.append(sphere1)
-            refe = open3d.create_mesh_coordinate_frame(0.1, origin = [0, 0, 0])
+            refe = open3d.create_mesh_coordinate_frame(0.5, origin = [0, 0, 0])
             refe.transform(H)   #Transform it according tom p
             sphs.append(refe)
 
@@ -190,7 +144,7 @@ class PCGetter(object):
         hello = rgb.astype(np.uint8).copy() 
 
         #draw maerkers
-        hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,ids)
+        hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,np.asarray(ids))
 
         cv2.imshow("wow",hello)
         cv2.waitKey(0)
@@ -198,6 +152,26 @@ class PCGetter(object):
 
         pointsu = np.empty((3,0))
         
+        print(hello.shape)
+        print("detected cornerds")
+        print(det_corners)
+        
+        corneee = np.squeeze(det_corners)
+        print(corneee)
+
+        corn2paint = corneee[2,:]
+        
+
+
+        #offset=5
+        #for ii in  range(int(corn2paint[0])-offset,int(corn2paint[0])+offset):
+        #    for jj in range(int(corn2paint[1])-offset,int(corn2paint[1])+offset):
+        #        hello[jj,ii,:]= [255,0,255]
+
+        cv2.imshow("wow",hello)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
 
         for cor in det_corners:
         
@@ -217,21 +191,35 @@ class PCGetter(object):
                 sphs.append(sphere)
                 pointsu=np.hstack((pointsu,point))
 
-        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,0.0875,K,np.array([0,0,0,0])) #739 works
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],K,np.array([0,0,0,0])) #739 works
     
-
+        print(tvecs.shape)
         tvecs=np.squeeze(tvecs)
 
+
+        print(tvecs.shape)
+
+        print(len(tvecs.shape))
+
+        if len(tvecs.shape)==1:
+            tvecs = np.expand_dims(tvecs,axis=0)
+        
         for i in range(0,tvecs.shape[0]):
 
-            sphere = open3d.create_mesh_sphere(0.006)
-            H = np.eye(4)
-            H[0:3,3]=tvecs[i,:]
+            sphere = open3d.create_mesh_sphere(0.016)
 
+
+            Rr,_ = cv2.Rodrigues(rvecs[i])
+
+            H = mmnip.Rt2Homo(Rr,tvecs[i,:])
+
+            refe = open3d.create_mesh_coordinate_frame(0.1, origin = [0, 0, 0])
+            refe.transform(H)
             sphere.transform(H)
             sphere.paint_uniform_color([0,0,1])
 
             sphs.append(sphere)
+            sphs.append(refe)
 
         
 

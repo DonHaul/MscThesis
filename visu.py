@@ -58,6 +58,13 @@ def draw_geometry(pcd):
 
     return vis
 
+def paintImage(img,point2paint,offset = 5):
+    for ii in  range(int(point2paint[1])-offset,int(point2paint[1])+offset):
+        for jj in range(int(point2paint[0])-offset,int(point2paint[0])+offset):
+            img[jj,ii,:]= [255,0,255]
+
+    return img
+
 def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False):
     '''ViewRefs - Displays a bunch of referentials on the screen
 
