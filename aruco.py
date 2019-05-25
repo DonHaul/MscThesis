@@ -110,6 +110,8 @@ def ObservationMaker(K,D,det_corners,img,ids,arucoData,captureR=True,captureT=Fa
                     obsT={"from":arucoData['idmap'][str(ids[i])],"to":arucoData['idmap'][str(ids[j])],"t":np.squeeze(np.dot(rots[j].T,(tvecs[i]-tvecs[j]).T))} 
                     observationsT.append(obsT)
 
+    print(observationsT)
+
     return observationsR , observationsT ,img
 
 

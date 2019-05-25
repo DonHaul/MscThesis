@@ -73,11 +73,11 @@ class ArucoInfoGetterv3(object):
 
         self.img = img
 
+        img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.intrinsics['K'][self.camName],self.intrinsics['D'][self.camName],self.Nmarkers,self.arucoData,captureR=True,captureT=True)
+            
+
         #calculates rotations
         if self.state.state == 0:
-
-            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.intrinsics['K'][self.camName],self.intrinsics['D'][self.camName],self.Nmarkers,self.arucoData,captureR=True,captureT=False)
-
             
             #only if there are observations it makes the A matrix
             if  ids is not None and len(ids)>1:
@@ -95,7 +95,6 @@ class ArucoInfoGetterv3(object):
         #calculates translations
         elif self.state.state == 1:
             
-            img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.intrinsics['K'][self.camName],self.intrinsics['D'][self.camName],self.Nmarkers,self.arucoData,captureR=True,captureT=True)
             
             if  ids is not None and len(ids)>1:
 
@@ -112,9 +111,9 @@ class ArucoInfoGetterv3(object):
         self.Allobs = []
 
         #shiow video, or frame of just don't
-        if(self.state.showImg == True):
-            cv2.imshow("Image window" , img)
-            cv2.waitKey(1)
+        #if(self.state.showImg == True):
+        cv2.imshow("Image window" , img)
+        cv2.waitKey(1)
 
 
 
@@ -126,57 +125,6 @@ class ArucoInfoGetterv3(object):
         cv2.waitKey(1)
         
 
-    def GatherImg(self,camId,img,obs):
-        '''Gathers Images and observations from a specific camera
-
-        Args:
-            camId:from which camera this is coming
-            img: the image that the camera is transmitting
-            obs: the observations extracted from the image
-        '''
-        
-        #set image
-        self.images[0:480,camId*640:camId*640+640,0:3]=img
-        
-        #increment statistic
-        self.gatherCounter[camId] = self.gatherCounter[camId] +1
-        
-        #set is as fetched
-        self.gatherReady[camId]=1
-
-        #get new observations of that camera
-        self.Allobs[camId]=self.Allobs[camId] +obs  # WRONG SHOULD IT BE concantenate lists OR =?
-
-        #if all camera have sent something
-        if(np.sum(self.gatherReady)== self.N_cams):
-            
-            #Generate Pairs from all of the camera observations
-            obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
-
-            #rotation problem
-            if self.calc == 0:
-
-                A = probdefs.rotationProbDef(obsR,self.N_cams)
-                self.ATA = self.ATA + np.dot(A.T,A)
-
-                if(self.N_cams)==2:
-                    self.lol = self.lol+probdefs.rotationProbDefN2(obsR,self.N_cams)
-                    self.count=self.count+1
-            
-            #translation problem
-            elif self.calc ==1:
-
-                
-                A,b =  probdefs.translationProbDef(obsT,self.Rcam,self.N_cams)
-
-                self.ATA = self.ATA + np.dot(A.T,A)
-                self.ATb = self.ATb + np.dot(A.T,b)
-
-            #set them all as unready
-            self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)
-
-            #clear observations
-            self.Allobs = [ [] for i in range(self.N_cams) ]
 
 
         

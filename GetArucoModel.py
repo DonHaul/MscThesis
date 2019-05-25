@@ -87,37 +87,10 @@ def main(argv):
     if stateru.R is None or stateru.t is None:
         quit()
 
-    SaveCameraPoses(stateru.R,stateru.t,camName,nameofthing = "markers")
 
-def SaveCameraPoses(R,t,camNames,nameofthing = "cameras"):
+    newT = mmnip.Transl_fromWtoRef(stateru.R,stateru.t)
 
-
-    f=open("static/names.json","r")
-
-    arr = json.load(f)
-
-    filename = random.choice(arr)
-    f.close()
-
-    fullfile={}
-    fullfile[nameofthing]=[]
-
-    for RR,tt,cc in zip(R,t,camNames):
-        fullfile[nameofthing].append({"R":RR.tolist(),"t":tt.tolist(),"name":cc})
-
-    saveName = filename+" " +  datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    f = open("./scenes/"+saveName+".json","w")
-
-
-
-    json.dump(fullfile,f)
-    
-    f.close()
-
-    print("Saved File: "+str(saveName))
-
-
-
+    filepath =  FileIO.saveAsPickle("ArucoModel",{'R':stateru.R,'T':newT},"arucoModels/")
 
 
 def ParsingInputs(argv):

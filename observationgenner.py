@@ -176,23 +176,28 @@ def Cam2ArucoObsMaker2(img,K,D,arucoData):
         #generates samples
         for i in range(0,len(ids)):                
                  
-                 #only valid markers
-                if ids[i] not in arucoData['ids']:
-                    print("Invalid marker id: "+str(ids[i]))
-                    continue 
+            #only valid markers
+            if ids[i] not in arucoData['ids']:
+                print("Invalid marker id: "+str(ids[i]))
+                continue 
 
-                #initializes observation
-                o ={"obsId":arucoData['idmap'][str(ids[i])]}
+            #initializes observation
+            o ={"obsId":arucoData['idmap'][str(ids[i])]}
 
-                #generate R observations
-                o['R']=rots[i]
+            #generate R observations
+            o['R']=rots[i]
 
 
-                #generate t observations
-                o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
-                
-                observations.append(o)
+            #generate t observations
+            o['t']=tvecs[i].T #WRONG - Not sure if this is the correct t
+            #print(o['t'])
+            observations.append(o)
+
+    #print("observations are")
+    #print(observations)
+    #print("finish")
  
+            
     return observations ,img
 
 
@@ -230,24 +235,28 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #print(np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']]))
                     #raw_input()
 
+                    
+
+
                     obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])})
 
                     #Get aruco transformation parameters
                     Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
 
+
+
                     #transform from marker1  coordinates to marker2 coordinates
                     new_t =  mmnip.Transform(mmnip.InvertT(obsiR['R'], obsiR['t']),Rbetweenaruco, tbetweenaruco)
 
-                    
                     #transform from marker2 coordinates to camera j coordinates                    
                     tij = mmnip.Transform(new_t, obsjR['R'], obsjR['t'] )
 
-                    #print(tij)
+                    #print(tij.shape)
 
                     #quit()
-
-                    obsT.append({"from":i,"to":j,"t": tij})
+               
+                    obsT.append({"from":i,"to":j,"t": np.squeeze(tij)})
 
     return obsR,obsT
 

@@ -40,20 +40,9 @@ class CamPoseGetter(object):
 
         self.arucoData=arucoData
         self.arucoModel = arucoModel
-        self.R = []
-        self.t = []
-
-        for marker in arucoModel['markers']:
-            #get aruco model
-
-            RR = np.asarray(marker['R'])
-            tt = np.squeeze(np.asarray(marker['t']))
-
-            self.R.append(RR)
-            self.t.append(tt)
-
-        #self.R= np.asarray(self.R)
-        #self.t= np.asarray(self.t)
+        print(arucoModel)
+        self.R = arucoModel['R']
+        self.t = arucoModel['T']
 
 
         self.count = 0
@@ -104,6 +93,7 @@ class CamPoseGetter(object):
             if  self.state.arucoDetection == "singular":
                 #get observations of this camera, and image with the detected markers and referentials shown
                 obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
+
             elif self.state.arucoDetection == "allforone":
                 
                 obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
@@ -126,6 +116,9 @@ class CamPoseGetter(object):
 
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
+
+        #print("WOW T")
+        #print(obsT)
 
         #print(len(obsR))
         #rotation problem

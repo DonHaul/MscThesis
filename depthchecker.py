@@ -50,7 +50,7 @@ def main(argv):
 
     arucoData = FileIO.getJsonFromFile("./static/ArucoWand.json")
 
-    arucoData['IdMap'] = aruco.markerIdMapper(arucoData['ids'])
+    arucoData['idmap'] = aruco.markerIdMapper(arucoData['ids'])
 
     arucoModel = FileIO.getFromPickle("pickles/wowww_raven_24-05-2019_02:12:35.pickle")
 

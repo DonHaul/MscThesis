@@ -63,7 +63,7 @@ def main(argv):
     rospy.init_node('do_u_kno_di_wae', anonymous=True)
 
     #Load aruco Model
-    arucoModel = FileIO.getJsonFromFile("./static/arucoModel 18-05-2019 01:27:54.json")
+    arucoModel = FileIO.getFromPickle("./arucoModels/ArucoModel_0875_yak_25-05-2019_16:23:12.pickle")
 
     #sets class where image thread will run
     camposegetter=CamPoseGetter.CamPoseGetter(camNames,arucoData,arucoModel,intrinsics,stateru)
