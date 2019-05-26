@@ -13,18 +13,6 @@ def load_point_clouds(folder,voxel_size = 0.0):
         pcds.append(pcd)
     return pcds
 
-if __name__ == "__main__":
-
-    print("Load a ply point cloud, print it, and render it")
-    #pcd = read_point_cloud(sys.argv[1])
-    #draw_geometries([pcd])
-
-    if ".ply" in sys.argv[1]:
-        pcd = read_point_cloud(sys.argv[1])
-        draw_geometries([pcd])
-    else:
-        pcds = load_point_clouds(sys.argv[1])
-        draw_geometries(pcds)
 
     
   
