@@ -108,17 +108,19 @@ class CamPoseGetter(object):
             #if camId==0 and len(obs)>0:
             #    print(obs[0]['t'])
 
+
+
             #set image
             self.images[0:480,camId*640:camId*640+640,0:3]=img
 
             #get new observations of that camera
             self.Allobs[camId]=obs  # WRONG SHOULD IT BE concantenate lists OR =?
 
+
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
-        #print("WOW T")
-        #print(obsT)
+
 
         #print(len(obsR))
         #rotation problem

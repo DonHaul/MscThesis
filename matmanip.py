@@ -268,6 +268,11 @@ def Transform(totransform,R,t):
     Returns:
         transformedt[3x1]: in j coordinates
     '''
+
+    if(len(totransform.shape)==1):
+        totransform=np.expand_dims(totransform,axis=1)
+
+
     return np.dot(R,totransform)+t
 
 def InverseTransform(totransform,R,t):

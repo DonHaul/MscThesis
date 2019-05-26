@@ -96,6 +96,8 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
 
     #finds markers
     det_corners, ids, rejected = aruco.FindMarkers(img, K)
+    
+    
 
     if ids is not None:
 
@@ -108,19 +110,34 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
 
     if  ids is not None and len(ids)>0:
 
+        #filter ids and cornerds
+        validids=[]
+        validcordners= []
+        #print("ids are")
+        #print(ids)
+        for i in range(0,len(ids)):
+            if ids[i] in arucoData['ids']:
+                #print("Valid marker id: "+str(ids[i]))
+                validids.append(ids[i])
+                validcordners.append(det_corners[i]) 
+
+        #print(ids)
+
     
-        Rr,tt = aruco.GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel)
+        Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,arucoData,arucoModel)
 
         #initializes observation
-        o ={"obsId":arucoData['idmap'][str(ids[i])]}
+        #o ={"obsId":arucoData['idmap'][str(ids[0])]}
+        o ={"obsId":0} #since it will always generate observation on id 0
 
                 #generate R observations
         o['R']=Rr
 
 
         #generate t observations
-        o['t']=np.squeeze(tt) #WRONG - Not sure if this is the correct t
+        o['t']=tt #WRONG - Not sure if this is the correct t
 
+        #print(o['t'])
         obs.append(o)
 
     return obs,img

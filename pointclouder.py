@@ -18,7 +18,7 @@ def Points2Cloud(points,rgb=None):
 
         rgb = np.dot(rgb,permuter)
         cloud.colors = open3d.Vector3dVector(rgb/255.0) #range is 0-1 hence the division
-
+        
     return cloud
 
 def MergeClouds(clouds):

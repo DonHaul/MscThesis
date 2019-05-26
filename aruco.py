@@ -185,12 +185,26 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
 
         #FROM CORNERS TO RGB
         #FROM CORNERS TO RGB
-        corn1 = mmnip.Transform([-arucoData['size']/2,arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
-        corn2 = mmnip.Transform([arucoData['size']/2,arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
-        corn3 = mmnip.Transform([arucoData['size']/2,-arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
-        corn4 = mmnip.Transform([-arucoData['size']/2,-arucoData['size']/2,0],arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+
+        c1 = np.array([-arucoData['size']/2,arucoData['size']/2,0])
+        c2 = np.array([arucoData['size']/2,arucoData['size']/2,0])
+        c3 = np.array([arucoData['size']/2,-arucoData['size']/2,0])
+        c4 = np.array([-arucoData['size']/2,-arucoData['size']/2,0])
+
+
+        corn1 = mmnip.Transform(c1,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+        corn2 = mmnip.Transform(c2,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+        corn3 = mmnip.Transform(c3,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+        corn4 = mmnip.Transform(c4,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+
+
+        corn1= np.squeeze(corn1)
+        corn2= np.squeeze(corn2)
+        corn3= np.squeeze(corn3)
+        corn4= np.squeeze(corn4)
 
         corn3D = np.vstack((corn1,corn2,corn3,corn4))
+
 
         points3D[i*4:i*4+4,:] = corn3D
         image_points[i*4:i*4+4,:]=np.squeeze(det_corners[i])
