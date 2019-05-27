@@ -133,9 +133,9 @@ class PCGetter(object):
             sphere1.transform(H)
             sphere1.paint_uniform_color([1,0,0])
             sphs.append(sphere1)
-            refe = open3d.create_mesh_coordinate_frame(0.5, origin = [0, 0, 0])
-            refe.transform(H)   #Transform it according tom p
-            sphs.append(refe)
+            #refe = open3d.create_mesh_coordinate_frame(0.2, origin = [0, 0, 0])
+            #refe.transform(H)   #Transform it according tom p
+            #sphs.append(refe)
 
             
             
@@ -144,6 +144,11 @@ class PCGetter(object):
 
             Rr,tt = aruco.GetCangalhoFromMarkersProcrustes(ids,det_corners,K,self.arucoData,self.arucoModel,depth_reg)
 
+            H = mmnip.Rt2Homo(Rr.T,tt)
+
+            refe = open3d.create_mesh_coordinate_frame(0.6, origin = [0, 0, 0])
+            refe.transform(H)
+            sphs.append(refe)
             print(Rr)
             print(tt)
             
