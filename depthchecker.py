@@ -52,7 +52,9 @@ def main(argv):
 
     arucoData['idmap'] = aruco.markerIdMapper(arucoData['ids'])
 
-    arucoModel = FileIO.getFromPickle("pickles/wowww_raven_24-05-2019_02:12:35.pickle")
+    arucoModel = FileIO.getFromPickle("arucoModels/ArucoModel_0875_yak_25-05-2019_16:23:12.pickle")
+
+
 
     pcer = PCGetter(camName,intrinsics,arucoModel,arucoData)
 
@@ -109,6 +111,8 @@ class PCGetter(object):
         #finds markers
         det_corners, ids, rejected = aruco.FindMarkers(rgb, K)
 
+        if ids is None:
+            return
 
         ids = ids.squeeze()
 
@@ -135,10 +139,14 @@ class PCGetter(object):
 
             
             
-            #print(retval)
-            #print(orvec)
-            #print(otvec)
+        #3D WAY
+        if  ids is not None and len(ids)>0:
 
+            Rr,tt = aruco.GetCangalhoFromMarkersProcrustes(ids,det_corners,K,self.arucoData,self.arucoModel,depth_reg)
+
+            print(Rr)
+            print(tt)
+            
 
         #copy image
         hello = rgb.astype(np.uint8).copy() 
@@ -152,12 +160,12 @@ class PCGetter(object):
 
         pointsu = np.empty((3,0))
         
-        print(hello.shape)
-        print("detected cornerds")
-        print(det_corners)
+        #print(hello.shape)
+        #print("detected cornerds")
+        #print(det_corners)
         
         corneee = np.squeeze(det_corners)
-        print(corneee)
+        #print(corneee)
 
         corn2paint = corneee[2,:]
         
@@ -178,7 +186,9 @@ class PCGetter(object):
             for i in range(0,4):
                     
                 point = mmnip.singlePixe2xyz(depth_reg,cor[0,i,:],K)
-                
+                #print("points SSS ARE")
+                #print(point)
+                #print(np.count_nonzero(point))
                 point = np.expand_dims(point,axis=1)
                 
                 sphere = open3d.create_mesh_sphere(0.006)
@@ -193,13 +203,13 @@ class PCGetter(object):
 
         rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],K,np.array([0,0,0,0])) #739 works
     
-        print(tvecs.shape)
+        #print(tvecs.shape)
         tvecs=np.squeeze(tvecs)
 
 
-        print(tvecs.shape)
+        #print(tvecs.shape)
 
-        print(len(tvecs.shape))
+        #print(len(tvecs.shape))
 
         if len(tvecs.shape)==1:
             tvecs = np.expand_dims(tvecs,axis=0)

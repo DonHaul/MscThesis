@@ -97,6 +97,10 @@ class CamPoseGetter(object):
             elif self.state.arucoDetection == "allforone":
                 
                 obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
+            elif self.state.arucoDetection == "depthforone":
+                img = IRos.rosImg2RGB(args[camId*2])
+                depth = IRos.rosImg2Depth(args[camId*2]+1)
+            
             else:
                 print("Big Oopsie 5809447652")
                 quit()

@@ -397,6 +397,24 @@ def TotalLeastSquares(C,Nleast=1):
 
     return solution
 
+def procrustesMatlabJanky2(arg1,arg2):
+
+
+    p2 = procrustesMatlab(arg1,arg2,reflection=True)
+    p3 = procrustesMatlab(arg1,arg2,reflection=False)
+
+    #print(p2)
+    #print(p3)
+
+    n2 = np.linalg.norm(arg1-np.dot(p2[2]['rotation'],arg2))
+    n3 = np.linalg.norm(arg1-np.dot(p3[2]['rotation'],arg2))
+
+    if n2< n3:
+        return p2[2]['rotation'],p2[2]['translation']
+    else:
+        return p3[2]['rotation'],p3[2]['translation']
+
+
 
 def procrustesMatlabJanky(arg1,arg2):
     

@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
 
     source = pcds[2]
-    target = pcds[0]
+    target = pcds[1]
     
     print("Downsample the point cloud with a voxel of 0.05")
     source = o3d.geometry.voxel_down_sample(source, voxel_size=0.01)
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     print("ICP COLORED TIME")
 
     source =pcds[2]
-    target = pcds[0]
+    target = pcds[1]
 
     voxel_radius = [0.04, 0.02, 0.01]
     max_iter = [50, 30, 14]
@@ -123,7 +123,8 @@ if __name__ == "__main__":
         current_transformation = result_icp.transformation
         print(result_icp)
     
-    source.normals=o3d.Vector3dVector([])
-    target.normals=o3d.Vector3dVector([])
+    #source.normals=o3d.Vector3dVector([])
+    #target.normals=o3d.Vector3dVector([])
+    print(result_icp.transformation)
     draw_registration_result_original_color(source, target,
                                             result_icp.transformation)

@@ -6,6 +6,7 @@ This module contains aruco marker detection stuff
 import cv2
 import numpy as np
 import matmanip as mmnip
+import algos
 
 def markerIdMapper(arr):
 
@@ -170,6 +171,68 @@ def FindPoses(K,D,det_corners,img,n,size):
 
     return rots,tvecs,img
 
+def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,depth_reg):
+
+    #because there are 4 corners per detected aruco
+    pointsModel=np.empty((0,3))
+
+    points3D=np.empty((0,3))
+
+    print("ids are")
+    print(ids)
+    print(det_corners)
+
+    for i in range(len(ids)):
+
+        cor = np.squeeze(det_corners[i])
+
+        corns3D = Get3DCorners(ids[i],arucoData,arucoModel)
+
+        print(np.squeeze(det_corners[i]))
+        for j in range(0,4):
+            
+            point = mmnip.singlePixe2xyz(depth_reg,cor[j],K)
+
+            if point[2]==0:
+                print("THIS POINT IS INVALID")
+                continue
+
+            points3D = np.vstack((points3D,point))
+            pointsModel = np.vstack((pointsModel,corns3D[j]))
+    
+    print("3D POINTS AND SHIET")
+
+    print(points3D.shape)
+
+
+    print(pointsModel.shape)
+    #Rr,tt
+    return algos.procrustesMatlabJanky2(points3D,pointsModel)
+
+
+
+def Get3DCorners(id,arucoData,arucoModel):
+
+    mappedID = arucoData['idmap'][str(int(id))]
+
+
+    c1 = np.array([-arucoData['size']/2,arucoData['size']/2,0])
+    c2 = np.array([arucoData['size']/2,arucoData['size']/2,0])
+    c3 = np.array([arucoData['size']/2,-arucoData['size']/2,0])
+    c4 = np.array([-arucoData['size']/2,-arucoData['size']/2,0])
+
+    corn1 = mmnip.Transform(c1,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+    corn2 = mmnip.Transform(c2,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+    corn3 = mmnip.Transform(c3,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+    corn4 = mmnip.Transform(c4,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+
+
+    corn1= np.squeeze(corn1)
+    corn2= np.squeeze(corn2)
+    corn3= np.squeeze(corn3)
+    corn4= np.squeeze(corn4)
+
+    return [corn1,corn2,corn3,corn4]
 
 def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
 
@@ -191,6 +254,7 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
         c3 = np.array([arucoData['size']/2,-arucoData['size']/2,0])
         c4 = np.array([-arucoData['size']/2,-arucoData['size']/2,0])
 
+        
 
         corn1 = mmnip.Transform(c1,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
         corn2 = mmnip.Transform(c2,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
@@ -207,6 +271,9 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
 
 
         points3D[i*4:i*4+4,:] = corn3D
+        
+        #print("corners swapped")
+        #print(np.flip(np.squeeze(det_corners[i]),axis=1))
         image_points[i*4:i*4+4,:]=np.squeeze(det_corners[i])
         
 
