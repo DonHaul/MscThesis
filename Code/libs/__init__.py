@@ -1,3 +1,5 @@
+print("WAZZAH")
+
 from . import algos
 from . import errorCalcs
 from . import FileIO
