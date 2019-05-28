@@ -315,12 +315,6 @@ def GenerateCameraPairObs(camsObs,R,t):
                     #confusing as fuck i, know
                     # pretty much we have Rcam_i -> obsId_i and Rcam_j -> obsId_j   - to what each camera is observating is alwaying
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
-                    
-                    #print("from camera:"+str(j)+" to camera:"+str(i))
-                    #print(np.linalg.multi_dot([obsiR['R'].T,R[obsiR['obsId']],R[obsjR['obsId']].T,obsjR['R']]))
-                    #raw_input()
-
-                    
 
 
                     obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])})
@@ -329,18 +323,15 @@ def GenerateCameraPairObs(camsObs,R,t):
                     Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])
                     tbetweenaruco = np.dot(R[obsjR['obsId']].T, t[obsiR['obsId']] - t[obsjR['obsId']])
 
-
-
                     #transform from marker1  coordinates to marker2 coordinates
                     new_t =  mmnip.Transform(mmnip.InvertT(obsiR['R'], obsiR['t']),Rbetweenaruco, tbetweenaruco)
+
+
 
                     #transform from marker2 coordinates to camera j coordinates                    
                     tij = mmnip.Transform(new_t, obsjR['R'], obsjR['t'] )
 
-                    #print(tij.shape)
 
-                    #quit()
-               
                     obsT.append({"from":i,"to":j,"t": np.squeeze(tij)})
 
     return obsR,obsT

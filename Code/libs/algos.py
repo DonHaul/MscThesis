@@ -5,8 +5,6 @@ This module contains some of the well known algorithms, that help in the thesis
 '''
 
 import numpy as np
-#import scipy.linalg
-import pickler2 as pickle
 import matmanip as mmnip
 import visu
 
@@ -24,6 +22,8 @@ def LeastSquares(A,b):
 
     Gets x that minimzes Ax=b
     '''
+    #THIS ALSO WORKS: #np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),b)
+
     return  np.dot( np.linalg.pinv(A),b) #(A'A)^(-1) * A'b 
 
 def LeastSquaresOldSchool(A,b):

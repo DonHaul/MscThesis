@@ -2,43 +2,31 @@ import sys,getopt
 import rospy
 from optparse import OptionParser
 import json
-import rosinterface
+
 import numpy as np
 
 import datetime
 
-import pickler2 as pickle
-
 import message_filters
-
 from sensor_msgs.msg import Image
+
 import random
 
 import CamPoseGetter
 
-
-import algos
 import cv2
 
-import FileIO
-
-import matmanip as mmnip
-
 import commandline
-
 import StateManager
 
-import visu
-
-import libs.errorCalcs as errorCalcs
-import libs.helperfuncs as helperfuncs
+from libs import *
 
 import matplotlib.pyplot as plt
 
 def main(argv):
-    #modes 
-    #realtime
-    #snap
+    #moderosinterface
+    #realrosinterface
+    #snaprosinterface
     #oneforall
 
     freq=20
@@ -46,7 +34,7 @@ def main(argv):
     arucoData, arucoModel,settings,camNames = ParsingInputs(argv)
 
     if camNames is None:
-        camNames = rosinterface.getAllPluggedCameras()
+        camNames = IRos.getAllPluggedCameras()
 
     
     print(camNames)
@@ -105,8 +93,6 @@ def main(argv):
 
     visu.ViewRefs(stateru.R,stateru.t,refSize=1,showRef=True)
 
-    
-    print(type(stateru.t))
     visu.ViewRefs(stateru.R,stateru.t,refSize=0.1,showRef=True)
 
 

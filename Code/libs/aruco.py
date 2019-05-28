@@ -111,7 +111,6 @@ def ObservationMaker(K,D,det_corners,img,ids,arucoData,captureR=True,captureT=Fa
                     obsT={"from":arucoData['idmap'][str(ids[i])],"to":arucoData['idmap'][str(ids[j])],"t":np.squeeze(np.dot(rots[j].T,(tvecs[i]-tvecs[j]).T))} 
                     observationsT.append(obsT)
 
-    print(observationsT)
 
     return observationsR , observationsT ,img
 
@@ -280,9 +279,6 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
         image_points[i*4:i*4+4,:]=np.squeeze(det_corners[i])
         
 
-    print("POINST ARE")
-    print(points3D)
-    print(image_points)
 
     if (points3D.shape[0]==0):
         return None,None

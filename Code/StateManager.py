@@ -1,7 +1,8 @@
-import algos
+
 import numpy as np
-import visu
-import matmanip as mmnip
+
+from libs import *
+
 
 #all variables that can change during the run should be here that are not local
 class State(object):

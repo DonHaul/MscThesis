@@ -6,12 +6,9 @@ This module contains the a class receives all the images and observations of the
 
 import numpy as np
 import cv2
-import aruco
-import probdefs
-import observationgenner as obsGen
-import rosinterface as IRos
+from libs import *
 
-import libs.helperfuncs as helps
+
 
 
 
@@ -41,7 +38,7 @@ class CamPoseGetter(object):
 
         self.arucoData=arucoData
         self.arucoModel = arucoModel
-        print(arucoModel)
+        
         self.R = arucoModel['R']
         self.t = arucoModel['T']
 
@@ -97,19 +94,19 @@ class CamPoseGetter(object):
                 img = IRos.rosImg2RGB(args[camId])
 
                 #get observations of this camera, and image with the detected markers and referentials shown
-                obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
+                obs, img = obsgen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
             elif self.state.arucoDetection == "allforone":
                 
                 img = IRos.rosImg2RGB(args[camId])
 
-                obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
+                obs, img = obsgen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
             elif self.state.arucoDetection == "depthforone":
 
-                print("WOWWOW222")
+                
                 img = IRos.rosImg2RGB(args[camId*2])
                 depth = IRos.rosImg2Depth(args[camId*2+1])
-                obs, img = obsGen.CamArucoProcrustesObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel,depth)
+                obs, img = obsgen.CamArucoProcrustesObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel,depth)
             
             else:
                 print("Big Oopsie 5809447652")
@@ -117,13 +114,6 @@ class CamPoseGetter(object):
 
 
             #obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
-
-            #print(obs)
-            #print("obslen "+str(len(obs)))
-            #if camId==0 and len(obs)>0:
-            #    print(obs[0]['t'])
-
-
 
             #set image
             self.images[0:480,camId*640:camId*640+640,0:3]=img
@@ -133,7 +123,7 @@ class CamPoseGetter(object):
 
 
         #Generate Pairs from all of the camera observations
-        obsR , obsT = obsGen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
+        obsR , obsT = obsgen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
 
 
@@ -145,7 +135,7 @@ class CamPoseGetter(object):
             self.state.ATAR = self.state.ATAR + np.dot(A.T,A)
 
             if self.state.data['errorCalc']==True:
-                self.state.data['Rs']=self.state.data['Rs'] + helps.extractKeyFromDictList(obsR,'R')
+                self.state.data['Rs']=self.state.data['Rs'] + helperfuncs.extractKeyFromDictList(obsR,'R')
                 
 
         

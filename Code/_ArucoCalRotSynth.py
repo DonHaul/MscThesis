@@ -38,7 +38,6 @@ def main():
     #this is done so that it can be converted into json
     qrr=[]
     for r in rr:
-        print(np.linalg.det(r))
         qrr.append(r.tolist())
 
 

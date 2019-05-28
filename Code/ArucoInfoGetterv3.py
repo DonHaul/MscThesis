@@ -6,10 +6,8 @@ This module contains the a class receives all the images and observations of the
 
 import numpy as np
 import cv2
-import aruco
-import probdefs
-import observationgenner as obsGen
-import rosinterface as IRos
+
+from libs import *
 
 
 class ArucoInfoGetterv3(object):
@@ -83,14 +81,10 @@ class ArucoInfoGetterv3(object):
             if  ids is not None and len(ids)>1:
                 
                 
-                if self.Nmarkers==2:
-                    A=probdefs.rotationProbDefN2(obsgen,self.Nmarkers)
-                    count=count+1
-                    self.state.ATAR = self.state.ATAR  + np.dot(A.T,A)
-                else:
-                    A =  probdefs.rotationProbDef(obsR,self.Nmarkers)
 
-                    self.state.ATAR = self.state.ATAR  + np.dot(A.T,A)
+                A =  probdefs.rotationProbDef(obsR,self.Nmarkers)
+
+                self.state.ATAR = self.state.ATAR  + np.dot(A.T,A)
 
         #calculates translations
         elif self.state.state == 1:

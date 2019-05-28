@@ -272,6 +272,8 @@ def Transform(totransform,R,t):
     if(len(totransform.shape)==1):
         totransform=np.expand_dims(totransform,axis=1)
 
+    if(len(t.shape)==1):
+        t=np.expand_dims(t,axis=1)
 
     return np.dot(R,totransform)+t
 

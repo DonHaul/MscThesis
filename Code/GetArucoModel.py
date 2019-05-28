@@ -2,37 +2,19 @@ import sys,getopt
 import rospy
 from optparse import OptionParser
 import json
-import rosinterface
 import numpy as np
-
+import cv2
 import datetime
-
-import pickler2 as pickle
-
 import message_filters
-
 from sensor_msgs.msg import Image
 import random
 
-import CamPoseGetter
-
 import ArucoInfoGetterv3 as arucoInfoGetter
 
-import algos
-import cv2
-
-import FileIO
-
-import matmanip as mmnip
-
 import commandline
-
 import StateManager
 
-import FileIO
-
-
-import visu
+from libs import *
 
 def main(argv):
 
@@ -44,7 +26,7 @@ def main(argv):
 
 
     if camNames is None:
-        camNames = rosinterface.getAllPluggedCameras()
+        camNames = IRos.getAllPluggedCameras()
 
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)

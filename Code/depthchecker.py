@@ -1,38 +1,20 @@
 #HERE WILL BE the v1, but organized in a good fashion
-import ArucoInfoGetter
 import rospy
-import algos
-import pickler as pickle
 import message_filters
-
-import libs.helperfuncs as helperfuncs
-
 from sensor_msgs.msg import Image
+
 import cv2
 import open3d
 import numpy as np
-import visu
-import matmanip as mmnip
 import time
-import rosinterface as IRos
-import pointclouder
-
-import aruco
 
 import commandline
-
 import StateManager
 
-import json
-
-import open3d
-
-import pickler2 as pickle
-
-import FileIO
 
 import sys
 
+from libs import *
 
 def main(argv):
     
