@@ -178,9 +178,11 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
 
     points3D=np.empty((0,3))
 
-    print("ids are")
-    print(ids)
-    print(det_corners)
+    #print("ids are")
+    #print(ids)
+    #print(det_corners)
+
+
 
     for i in range(len(ids)):
 
@@ -188,7 +190,7 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
 
         corns3D = Get3DCorners(ids[i],arucoData,arucoModel)
 
-        print(np.squeeze(det_corners[i]))
+        #print(np.squeeze(det_corners[i]))
         for j in range(0,4):
             
             point = mmnip.singlePixe2xyz(depth_reg,cor[j],K)
@@ -200,12 +202,13 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
             points3D = np.vstack((points3D,point))
             pointsModel = np.vstack((pointsModel,corns3D[j]))
     
-    print("3D POINTS AND SHIET")
+    #print("3D POINTS AND SHIET")
+    #print(points3D.shape)
 
-    print(points3D.shape)
+    if(points3D.shape[0]<4):
+        return None
 
-
-    print(pointsModel.shape)
+    #print(pointsModel.shape)
     #Rr,tt
     return algos.procrustesMatlabJanky2(points3D,pointsModel)
 
@@ -277,7 +280,12 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
         image_points[i*4:i*4+4,:]=np.squeeze(det_corners[i])
         
 
+    print("POINST ARE")
+    print(points3D)
+    print(image_points)
 
+    if (points3D.shape[0]==0):
+        return None,None
 
 
     retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,None, flags = cv2.SOLVEPNP_ITERATIVE)

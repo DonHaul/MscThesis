@@ -1,5 +1,7 @@
 import numpy as np
 
+def Hello():
+    print("Hello")
 
 def MatrixListError(A,B):
 

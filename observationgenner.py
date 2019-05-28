@@ -90,6 +90,71 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
     return observations ,img
 
 
+
+def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
+
+
+
+    obs = []
+
+    #finds markers
+    det_corners, ids, rejected = aruco.FindMarkers(img, K)
+    
+    
+
+    if ids is not None:
+
+        ids = ids.squeeze()
+
+        if (helperfuncs.is_empty(ids.shape)):
+            ids=[int(ids)]
+
+    sphs = []
+
+    print("PRINTUDES")
+
+    if  ids is not None and len(ids)>0:
+
+        #filter ids and cornerds
+        validids=[]
+        validcordners= []
+        #print("ids are")
+        #print(ids)
+        for i in range(0,len(ids)):
+            if ids[i] in arucoData['ids']:
+                #print("Valid marker id: "+str(ids[i]))
+                validids.append(ids[i])
+                validcordners.append(det_corners[i]) 
+
+        #print(ids)
+
+
+
+        result = aruco.GetCangalhoFromMarkersProcrustes(validids,validcordners,K,arucoData,arucoModel,depth)
+        if(result==None):
+            return obs,img
+
+        Rr = result[0]
+        tt = result[1]
+        Rr=Rr.T
+
+
+        #initializes observation
+        #o ={"obsId":arucoData['idmap'][str(ids[0])]}
+        o ={"obsId":0} #since it will always generate observation on id 0
+
+                #generate R observations
+        o['R']=Rr
+
+
+        #generate t observations
+        o['t']=np.expand_dims(tt,axis=1) #WRONG - Not sure if this is the correct t
+
+        #print(o['t'])
+        obs.append(o)
+
+    return obs,img
+
 def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
 
     obs = []
@@ -125,6 +190,9 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
 
     
         Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,arucoData,arucoModel)
+
+        if(Rr is None):
+            return obs,img
 
         #initializes observation
         #o ={"obsId":arucoData['idmap'][str(ids[0])]}

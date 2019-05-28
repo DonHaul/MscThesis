@@ -41,7 +41,7 @@ def main(argv):
     #snap
     #oneforall
 
-    freq=50
+    freq=20
 
     arucoData, arucoModel,settings,camNames = ParsingInputs(argv)
 
@@ -78,6 +78,10 @@ def main(argv):
     #getting subscirpters to use message fitlers on
     for name in camNames:
         camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
+
+        if stateru.arucoDetection=="depthforone":
+            camSub.append(message_filters.Subscriber(name+"/depth_registered/image_raw", Image))
+
 
     ts = message_filters.ApproximateTimeSynchronizer(camSub,20, 1.0/freq, allow_headerless=True)
     ts.registerCallback(camposegetter.callback)

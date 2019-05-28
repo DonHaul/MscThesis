@@ -28,7 +28,7 @@ class State(object):
         if self.detectionMode == "snap":
             self.readyToCapture=False
 
-        #it should be either singular, allforone
+        #it should be either singular, allforone or depthforone
         self.arucoDetection = "allforone"
 
         #A.T A initialized

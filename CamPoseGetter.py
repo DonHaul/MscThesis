@@ -14,6 +14,7 @@ import rosinterface as IRos
 import libs.helperfuncs as helps
 
 
+
 class CamPoseGetter(object):
     def __init__(self,camNames,arucoData,arucoModel,intrinsics,stateru):
         
@@ -75,6 +76,7 @@ class CamPoseGetter(object):
     
     def callback(self,*args):
 
+
         #print("callback: "+str(self.count))
         #print(self.state.readyToCapture)
         if(self.state.readyToCapture==False):
@@ -87,23 +89,32 @@ class CamPoseGetter(object):
 
         #iterate throguh cameras
         for camId in range(0,self.N_cams):
-            img = IRos.rosImg2RGB(args[camId])
-
+            
+            
 
             if  self.state.arucoDetection == "singular":
+
+                img = IRos.rosImg2RGB(args[camId])
+
                 #get observations of this camera, and image with the detected markers and referentials shown
                 obs, img = obsGen.Cam2ArucoObsMaker2(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData)
 
             elif self.state.arucoDetection == "allforone":
                 
+                img = IRos.rosImg2RGB(args[camId])
+
                 obs, img = obsGen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
             elif self.state.arucoDetection == "depthforone":
+
+                print("WOWWOW222")
                 img = IRos.rosImg2RGB(args[camId*2])
-                depth = IRos.rosImg2Depth(args[camId*2]+1)
+                depth = IRos.rosImg2Depth(args[camId*2+1])
+                obs, img = obsGen.CamArucoProcrustesObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel,depth)
             
             else:
                 print("Big Oopsie 5809447652")
                 quit()
+
 
             #obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
 
