@@ -2,18 +2,17 @@ import open3d
 import numpy as np
 
 def Points2Cloud(points,rgb=None):
+    '''
+    Converts 3D points and colors into a pointcoud
+    '''
+
     #make point cloud    
     cloud = open3d.PointCloud()
-    #print("points 2 add")
 
-    #points=points.T
-    #print(points.shape)
-    #print(type(points[0][0]))
     cloud.points = open3d.Vector3dVector(points)
-    #print(type(cloud.points))
 
     if(rgb is not None):
-        #print(rgb.shape)
+
         permuter=np.array([[0,0,1],[0,1,0],[1,0,0]])
 
         rgb = np.dot(rgb,permuter)
@@ -22,6 +21,9 @@ def Points2Cloud(points,rgb=None):
     return cloud
 
 def MergeClouds(clouds):
+    '''
+    Merge clouds into a single cloud
+    '''
 
     mergedCloud = open3d.PointCloud()
 

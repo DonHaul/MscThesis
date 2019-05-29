@@ -12,6 +12,17 @@ import visu
 
 
 def ObsViewer(obs,key="R",fro="from",to="to",pause=True,show=False):
+    '''
+    Used to view observations
+
+    Args:
+        obs: observations to view
+        key: what property of that observation do you want to see
+        fro: from - in case u want other indexing
+        to: to - in case u want other indexing
+        pause: if you wish to see one observation at a time
+        shpow: if you with to see an image of that obeservation
+    '''
     
     for o in obs:
         print("from:" + str(o[fro])+" to:"+str(o[to]))
@@ -92,7 +103,17 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
 
 
 def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
+    '''
+    Generates cangalho observations based on the aruco corners
 
+    Args:
+        img: image to extract markers from
+        K: intrinsic parameters
+        D: distortion
+        arucoData: ids and siz of arucos
+        arucoModel: poses of arucos in cangalho
+        depth: depth image
+    '''
 
 
     obs = []
@@ -101,7 +122,7 @@ def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
     det_corners, ids, rejected = aruco.FindMarkers(img, K)
     
     
-
+    #in case there is only 1 id, convert it into a list with 1 element
     if ids is not None:
 
         ids = ids.squeeze()
@@ -109,31 +130,30 @@ def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
         if (helperfuncs.is_empty(ids.shape)):
             ids=[int(ids)]
 
-    sphs = []
 
-    print("PRINTUDES")
 
     if  ids is not None and len(ids)>0:
 
         #filter ids and cornerds
         validids=[]
         validcordners= []
-        #print("ids are")
-        #print(ids)
+   
+        #fetches only ids that are on the cangalho
         for i in range(0,len(ids)):
             if ids[i] in arucoData['ids']:
                 #print("Valid marker id: "+str(ids[i]))
                 validids.append(ids[i])
                 validcordners.append(det_corners[i]) 
 
-        #print(ids)
-
-
-
+        #solves the procrustes problem for the markers given
         result = aruco.GetCangalhoFromMarkersProcrustes(validids,validcordners,K,arucoData,arucoModel,depth)
+        
+        #if no R and t are retrieved, dont create observation
         if(result==None):
             return obs,img
 
+
+        #fetch result
         Rr = result[0]
         tt = result[1]
         Rr=Rr.T
@@ -164,6 +184,7 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
     
     
 
+    #in case there is only 1 id, convert it into a list with 1 element
     if ids is not None:
 
         ids = ids.squeeze()
@@ -171,23 +192,18 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
         if (helperfuncs.is_empty(ids.shape)):
             ids=[int(ids)]
 
-    sphs = []
 
     if  ids is not None and len(ids)>0:
 
         #filter ids and cornerds
         validids=[]
         validcordners= []
-        #print("ids are")
-        #print(ids)
+
         for i in range(0,len(ids)):
             if ids[i] in arucoData['ids']:
-                #print("Valid marker id: "+str(ids[i]))
+  
                 validids.append(ids[i])
                 validcordners.append(det_corners[i]) 
-
-        #print(ids)
-
     
         Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,arucoData,arucoModel)
 
@@ -195,7 +211,6 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
             return obs,img
 
         #initializes observation
-        #o ={"obsId":arucoData['idmap'][str(ids[0])]}
         o ={"obsId":0} #since it will always generate observation on id 0
 
                 #generate R observations
@@ -337,6 +352,11 @@ def GenerateCameraPairObs(camsObs,R,t):
     return obsR,obsT
 
 def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
+    '''
+    DEPRECATED,
+    used to eliminate aruco observations that are bad
+    
+    '''
 
     oopsies = np.zeros((N,))
     observed = np.zeros((N,))
@@ -358,12 +378,6 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
             #transform from marker2 coordinates to camera j coordinates                    
             taux = mmnip.Transform(new_t, obs[j]['R'], obs[j]['t'] )
 
-            #print("rot")
-            #print( np.linalg.multi_dot([obs[i]['R'],R[obs[i]['obsId']].T,R[obs[j]['obsId']],obs[j]['R'].T]))
-            #print(np.linalg.norm(np.eye(3) - Raux))
-            #print("tij")
-            #print(np.linalg.norm(taux))
-
             observed[obs[i]['obsId']]=1
             observed[obs[j]['obsId']]=1
             
@@ -371,11 +385,6 @@ def FilterGoodObservationMarkerIds(obs,R,t,N,t_threshold=0.08,R_threshold=0.5):
             if np.linalg.norm(taux) > t_threshold or (np.linalg.norm(np.eye(3) - Raux))>R_threshold:
                 oopsies[obs[i]['obsId']] = oopsies[obs[i]['obsId']] + 1
                 oopsies[obs[j]['obsId']] = oopsies[obs[j]['obsId']] + 1
-
-
-    #print("oopsies")
-    #print(oopsies)
-
 
     goodObservations=[]
 
