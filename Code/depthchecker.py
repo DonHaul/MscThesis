@@ -89,9 +89,10 @@ class PCGetter(object):
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
         K = self.intrinsics['K'][self.camName]
+        D = self.intrinsics['D'][self.camName]
 
         #finds markers
-        det_corners, ids, rejected = aruco.FindMarkers(rgb, K)
+        det_corners, ids, rejected = aruco.FindMarkers(rgb, K,D)
 
         if ids is None:
             return
@@ -120,7 +121,7 @@ class PCGetter(object):
             #sphs.append(refe)
 
             
-            
+        '''    
         #3D WAY
         if  ids is not None and len(ids)>0:
 
@@ -133,7 +134,7 @@ class PCGetter(object):
             sphs.append(refe)
             print(Rr)
             print(tt)
-            
+        '''
 
         #copy image
         hello = rgb.astype(np.uint8).copy() 
@@ -145,6 +146,7 @@ class PCGetter(object):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
+        
         pointsu = np.empty((3,0))
         
         #print(hello.shape)
@@ -163,14 +165,39 @@ class PCGetter(object):
         #    for jj in range(int(corn2paint[1])-offset,int(corn2paint[1])+offset):
         #        hello[jj,ii,:]= [255,0,255]
 
+
         cv2.imshow("wow",hello)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
+        print("WOWA")
+        map1,map2 = cv2.initUndistortRectifyMap(K,D,np.eye(3),K,(640,480),cv2.CV_32FC1)
+        #print(wowl)
+
+        img2 = cv2.remap(hello, map1, map2,cv2.INTER_NEAREST)
+
+        cv2.imshow("woweeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",img2)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+        
+
 
         for cor in det_corners:
-        
+            
+            print("detshape")
+            print(cor)
+            pixeloffset=0
+
+            print(cor[0,0,:])
+            cor[0,0,:]=cor[0,0,:]+np.array([-pixeloffset,-pixeloffset])
+            cor[0,1,:]=cor[0,1,:]+np.array([pixeloffset,-pixeloffset])
+            cor[0,2,:]=cor[0,2,:]+np.array([pixeloffset,pixeloffset])
+            cor[0,3,:]=cor[0,3,:]+np.array([pixeloffset,pixeloffset])
+
             for i in range(0,4):
+
+
                     
                 point = mmnip.singlePixe2xyz(depth_reg,cor[0,i,:],K)
                 #print("points SSS ARE")
@@ -188,7 +215,7 @@ class PCGetter(object):
                 sphs.append(sphere)
                 pointsu=np.hstack((pointsu,point))
 
-        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],K,np.array([0,0,0,0])) #739 works
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],K,D) #739 works
     
         #print(tvecs.shape)
         tvecs=np.squeeze(tvecs)

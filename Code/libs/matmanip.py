@@ -12,24 +12,6 @@ This module is used to
 import math
 import numpy as np
 
-def AxisSwapper(matlist,permuter):
-    
-
-    finalR=  PermuteCols(matlist,permuter)  
-
-    #print("finalR")
-    #visu.ViewRefs(finalR)
-
-
-    
-    Rrelations = []
-    #generate R between each things
-    for j in range(0,len(finalR)):
-        Rrelations.append(np.dot(finalR[0].T,finalR[j])) #Rw2*R1w' = R12
-
-    return Rrelations
-
-
 def CompareMatLists(matListA,matListB):
     '''
     Compares 2 matrx lists
@@ -54,49 +36,16 @@ def PrintMatList(matlist):
         print("Mat "+str(i))
         print(matlist[i])
 
-def PermuteCols(matList,permuter):
-    '''Permutes columns of matrices of a list:
-    
-    Does:
-        matList[i]*permuter
 
-    Args:
-        matList [Nx3]: matrices to permute columns
-        permuter [3x3]: permuter matrix
-
-    Returns:
-        finalR [Nx3]: matrices with permutated columns   
-    '''
-
-    finalR=[]
-    for r in matList:
-        finalR.append(np.dot(r,permuter))
-    
-    return finalR
-
-def PermuteRows(matList,permuter):
-    '''Permutes columns of matrices of a list:
-    
-    Does:
-        matList[i]*permuter
-
-    Args:
-        matList [Nx3]: matrices to permute columns
-        permuter [3x3]: permuter matrix
-
-    Returns:
-        finalR [Nx3]: matrices with permutated columns   
-    '''
-
-    finalR=[]
-    for r in matList:
-        finalR.append(np.dot(permuter,r))
-    
-    return finalR
 
 def genRandRotMatrix(noise):
+    '''
+    Generates a random matrix having into account the noise
 
-    #print("noise is:"+str(noise))
+    Args:
+        noise: scale of the noise of the matrix to generate
+    '''
+    
 
     #generate noise
     a = np.random.rand(3,1)*noise
@@ -104,15 +53,7 @@ def genRandRotMatrix(noise):
     #make it have 0 mean
     b =np.ones((3,1))*(noise/2)
     c=a-b
-    #print("a")
-    #print(a)
-    #print(a.shape)
-    #print("b")
-    #print(b)
-    #print(b.shape)
-    #print("c")
-    #print(c)
-    #print(c.shape)
+
 
     return genRotMat(np.squeeze(c))
 
@@ -144,6 +85,9 @@ def genRotMat(angle):
     return np.dot(aux,Rz)
 
 def isRotation(rotsols):
+    '''
+    Prints the properties of the rotation matrix
+    '''
     #from world coordinates to ref coordinates
 
     #generate R between each things
@@ -152,6 +96,15 @@ def isRotation(rotsols):
         print(np.dot(rotsols[j].T,rotsols[j]))
         
 def genRotRelLeft(rotsols,ref=0):
+    '''
+    Multiplies matrix list by one of them on the left side
+
+    Args:
+        rotsols: list of matrices
+        ref: which of those matrices will be multiplied on the left
+    Returns:
+        Rrelations: the multiplied matrices
+    '''
     #from world coordinates to ref coordinates
     
     Rrelations = []
@@ -290,6 +243,16 @@ def InverseTransform(totransform,R,t):
     return np.dot(R.T,totransform)-np.dot(R.T,t)
 
 def singlePixe2xyz(depth,coords,K):
+    '''
+    Gets the 3D position of a pixel in the image
+    
+    Args:
+        depth: depth image
+        coords: 2D coordinates to fetch the 3D from [x,y]
+        K: intrinsics
+    Returns:
+        xyz: 3D position of that 2D point
+    '''
 
     fx=K[0,0]
     fy=K[1,1]
@@ -299,7 +262,6 @@ def singlePixe2xyz(depth,coords,K):
     coords = np.round(coords)
 
     coords = coords.astype('int') 
-
 
     Z=depth[coords[1],coords[0]]/1000.0
     
@@ -311,11 +273,12 @@ def singlePixe2xyz(depth,coords,K):
     #print(np.array([X,Y,Z]))
     xyz= np.array([X,Y,Z])
 
-    print(xyz)
-
     return xyz
 
 def depthimg2xyz2(depthimg,K):
+    '''
+    Convert full depth image
+    '''
 
     fx=K[0,0]
     fy=K[1,1]
@@ -337,6 +300,16 @@ def depthimg2xyz2(depthimg,K):
     return depthcoords
 
 def Transl_fromWtoRef(R,T,ref=0):
+    '''
+    Converts translation reference to one of a ref one
+
+    Args:
+        R: list of rotations
+        T: list of translations
+        ref: which referential shall be the new reference
+    Returns:
+        newT: translations in the new reference
+    '''
     print("NEEDS UNIT TESTING FOR OTHER REFS")
 
     #from_to
@@ -344,9 +317,6 @@ def Transl_fromWtoRef(R,T,ref=0):
     newT=[]
     # is is making ti_1 Rw_1*ti_w + tw_1
     for t in T:
-        #print("TRANSOFRMAITONS")
-        #print(t)
-        #print(T[ref].T)
 
         auxT = Transform(t,R[ref].T,InvertT(R[ref],T[ref]))
         newT.append(auxT)
@@ -367,12 +337,6 @@ def depthimg2xyz(depthimg,rgb,K):
     #u,v =np.indices((480,640))
     points=[]
     colors = []
-
-    #u=u-cx
-    #v=v-cy
-    #depthcoords[:,:,2]= depthimg/1000.0
-    #depthcoords[:,:,0]= depthcoords[:,:,2]*v/fx
-    #depthcoords[:,:,1]= depthcoords[:,:,2]*u/fy
 
     for v in range(depthimg.shape[1]):
         for u in range(depthimg.shape[0]):

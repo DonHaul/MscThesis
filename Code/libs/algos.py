@@ -234,11 +234,11 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     Get the X that minimizes AX=0 through svd, and splits it up
 
     Args:
-        C: matrix A in the equation
+        C: matrix A'A in the equation
         Nleast: how many of the eigenvectors with the smallest eigenvalues do we want?
         Nmarkers: total number of markers, it is used to split up the fetched lowest eigenvectors 
     Returns:
-        rotsols: Split up lower eigenvalued, eigenvectors (the least significat)
+        last 3 columns ordered of the smallest eigenvalues
     '''
     #print(C)
     u,s,vh = np.linalg.svd(C)
@@ -247,17 +247,27 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
 
 
 def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
+    '''
+    Get the Rotations that the solve issue AX=0 , C=A'A
 
+    Args:
+        C: matrix A in the equation
+        Nleast: how many of the eigenvectors with the smallest eigenvalues do we want?
+        Nmarkers: total number of markers, it is used to split up the fetched lowest eigenvectors 
+    Returns:
+        rotsols: Split up lower eigenvalued, eigenvectors (the least significat)
+    '''
     solution = TotalLeastSquares(C,Nleast)
 
     rotsols=[] 
 
+    #separate in 3x3 matrices
     solsplit = np.split(solution,Nmarkers)
  
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
 
-
+        #projects in the orthogonal space
         r = procrustesMatlabJanky(sol,np.eye(3))
 
 
@@ -335,7 +345,6 @@ def RProbSolv2(C,Nleast=1,Nmarkers=1):
 
 
 def TotalLeastSquares(C,Nleast=1):
-    
     '''
     Get the X that minimizes AX=0 through svd, and splits it up
 
@@ -353,34 +362,43 @@ def TotalLeastSquares(C,Nleast=1):
     return solution
 
 def procrustesMatlabJanky2(arg1,arg2):
+    '''
+    Used for returning R,t with better make the match between 2 set of points
 
+    Args:
+        arg1: set of points 1
+        arg2: set of points 2
+    Returns:
+        R[3x3] - rotation matrix
+        t[3x1] - translation matrix
+    '''   
 
     #p2 = procrustesMatlab(arg1,arg2,reflection=True)
     p3 = procrustesMatlab(arg1,arg2,reflection=False)
 
-
-    print("roatation")
-    print(p3[2]['rotation'].shape)
-
+    #print("roatation")
+    #print(p3[2]['rotation'].shape)
 
     return p3[2]['rotation'],p3[2]['translation']
 
 
 
 def procrustesMatlabJanky(arg1,arg2):
-    
-    #print("arg1 is this")
-    #print(arg1)
+    '''
+    Used for returning R with better make the match between 2 matrices, project them in orthogonal space
+
+    Args:
+        arg1: set of points 1
+        arg2: set of points 2
+    Returns:
+        R[3x3] - rotation matrix
+    '''   
 
     p2 = procrustesMatlab(arg1,arg2,reflection=True)[2]['rotation']
     p3 = procrustesMatlab(arg1,arg2,reflection=False)[2]['rotation']
     #print("normsare")
     n2 = np.linalg.norm(arg1-np.dot(p2,arg2))
     n3 = np.linalg.norm(arg1-np.dot(p3,arg2))
-    #print(n2)
-    #print(n3)
-
-    #print(p3)
 
     if n2< n3:
         return p2

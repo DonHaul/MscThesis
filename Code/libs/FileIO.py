@@ -8,20 +8,28 @@ import pickle
 import pointclouder
 
 def savePCs(filename,pcs):
+    '''
+    saves a merged point cloud and also the separated pointclouds
+
+    Args:
+        filename String: what should the name be
+        pcs [open3d.pointcloud]: list of all the retrieved pointclouds
+    '''
 
 
     pc = pointclouder.MergeClouds(pcs)
 
-    print("./PC/"+filename+".ply")
-
+    #creates a file for the merged pointcloud
     open3d.write_point_cloud("./PC/"+filename+".ply", pc)
 
+    #create a folder for the unmerged pointclouds
     try:
         os.mkdir("./PC/"+filename)
     except:
         print("PA")
     
     
+    #save the individual pointclouds
     for i in range(len(pcs)):
         print(pcs[i])
         open3d.write_point_cloud("./PC/"+filename+"/pointcloud"+str(i)+".ply", pcs[i])
@@ -30,10 +38,20 @@ def savePCs(filename,pcs):
 
 
 def getKDs(camNames):
+    '''
+    Gets Intrinsics and Distortion parameters.
+    It locates the calibration files relative to the camera names passed
+
+    Args:
+        camNames [String]: list of all existing camera names
+    '''
     K={}
     D={}
 
+
     for name in camNames:
+
+        #fetches files
         filedict = getJsonFromFile("./static/camcalib_" + name +".json")
 
         #if file does not exist
@@ -43,7 +61,7 @@ def getKDs(camNames):
 
         k = np.asarray(filedict['K'], dtype=np.float32)
 
-        
+        #assigns parameters
         K[name]=k
         D[name]=np.asarray(filedict['D'], dtype=np.float32)
 
@@ -53,6 +71,14 @@ def getKDs(camNames):
 
 
 def putFileWithJson(data,filename=None,folder=None):
+    '''
+    puts dictionary into a json
+
+    Args:
+        data: data to put in the file
+        filename: name of the file
+        folder: place to save the file to
+    '''
 
     if folder is None:
         folder = "./tmp"
@@ -60,16 +86,15 @@ def putFileWithJson(data,filename=None,folder=None):
     if filename is None:
         filename = ""
 
-    f=open("static/names.json","r")
 
-    arr = json.load(f)
+    #assign an animal name to the file
+    animalName = GetAnimalName()
 
-    animalName = random.choice(arr)
-    f.close()
 
     saveName = folder + "/" + filename+"_"+animalName + "_" +  datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     f = open(saveName+".json","w")
 
+    #save files
     json.dump(data,f)
     
     f.close()
@@ -77,6 +102,9 @@ def putFileWithJson(data,filename=None,folder=None):
     print("Saved File: "+str(saveName)+".json")
 
 def GetAnimalName():
+    '''
+    Fetch animal name, from the names.json file
+    '''
     f=open("static/names.json","r")
 
     arr = json.load(f)
@@ -87,6 +115,12 @@ def GetAnimalName():
     return animalName
 
 def getFromPickle(filename):
+    '''
+    Gets data from pickle file
+
+    Args:
+        filename: name of the file to fetch the data from
+    '''
 
     p={}
 
@@ -133,6 +167,12 @@ def saveAsPickle(name,data,path="pickles/",putDate=True,animal=True):
 
 
 def getJsonFromFile(filename):
+    '''
+    Get data from the json file
+
+    Args:
+        filename: path to the file to retrieve data from
+    '''
 
     try:
         f=open(filename,"r")
@@ -147,6 +187,9 @@ def getJsonFromFile(filename):
       return None
 
 def LoadScene(filename):
+    '''
+    Gets R and T of a specific scene
+    '''
 
     scene = getJsonFromFile(filename)
 

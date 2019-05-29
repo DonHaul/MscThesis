@@ -4,7 +4,9 @@ def Hello():
     print("Hello")
 
 def MatrixListError(A,B):
-
+    '''
+    Calculates errors
+    '''
     C=[]
 
     for a, b in zip(A,B):

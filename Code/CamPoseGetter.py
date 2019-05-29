@@ -9,9 +9,6 @@ import cv2
 from libs import *
 
 
-
-
-
 class CamPoseGetter(object):
     def __init__(self,camNames,arucoData,arucoModel,intrinsics,stateru):
         

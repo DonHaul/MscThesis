@@ -13,8 +13,6 @@ from libs import *
 class ArucoInfoGetterv3(object):
     def __init__(self,camName,arucoData,intrinsics,stateru):
         
-        self.showVid=0
-
         self.state = stateru
 
         self.camName = camName
@@ -27,6 +25,7 @@ class ArucoInfoGetterv3(object):
 
         #intrinsic Params
         self.intrinsics = intrinsics
+
 
         self.arucoData=arucoData
 

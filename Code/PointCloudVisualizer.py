@@ -22,8 +22,6 @@ import sys
 
 def main(argv):
     
-
-    
     freq=10
 
     filename=""
@@ -40,18 +38,9 @@ def main(argv):
     #R,t,camNames
     scene = LoadScene(filename)
     scene=list(scene)
-    #mmnip.isRotation(scene[0])
- 
-    #scene[0]=mmnip.genRotRelLeft(scene[0])
-    #scene[1][1]=mmnip.InvertT(scene[0][1].T,scene[1][1])
 
     print(scene)
-    #camNames=IRos.getAllPluggedCameras()
 
-    #camNames=["abretesesamo","fernando"]
-    #visu.ViewRefs(scene[0],scene[1],refSize=0.1)
-
-    #print(scene[0])
     camNames=scene[2]
 
     stateru = StateManager.State(len(camNames),camPoses=scene)
@@ -88,13 +77,6 @@ def main(argv):
     print(filename)
 
     FileIO.savePCs(myString,stateru.pcs)
-
-
-    #pcl =[]#list in time
-
-    #open3d.write_point_cloud("./tmp/wow.ply", stateru.pc)
-
-    #vis.destroy_window()
 
 def LoadJson(filename,mode="r"):
     f=open(filename,mode)
@@ -171,17 +153,6 @@ class PCGetter(object):
             rgb1 = rgb.reshape((480*640, 3))#colors
             
             pc = pointclouder.Points2Cloud(points,rgb1)
-
-            #points =  np.asarray(pc.points)
-
-            #print(points,shape)
-
-            
-            #rotation and translation is done here
-            #print(pc)
-            #print("hello4")
-            #pc.points = open3d.Vector3dVector(pointsvs)
-
 
             pcs.append(pc)
 
