@@ -24,6 +24,7 @@ def main(argv):
 
     camNames = IRos.getAllPluggedCameras()
     camName = camNames[0]
+    print(camName)
 
     #fetch K of existing cameras on the files
     intrinsics = FileIO.getKDs(camNames)
@@ -124,25 +125,37 @@ class PCGetter(object):
             sphere1.transform(H)
             sphere1.paint_uniform_color([1,0,0])
             sphs.append(sphere1)
-            #refe = open3d.create_mesh_coordinate_frame(0.2, origin = [0, 0, 0])
-            #refe.transform(H)   #Transform it according tom p
-            #sphs.append(refe)
+            refe = open3d.create_mesh_coordinate_frame(0.2, origin = [0, 0, 0])
+            refe.transform(H)   #Transform it according tom p
+            sphs.append(refe)
 
             
-        '''    
+            
         #3D WAY
         if  ids is not None and len(ids)>0:
 
-            Rr,tt = aruco.GetCangalhoFromMarkersProcrustes(ids,det_corners,K,self.arucoData,self.arucoModel,depth_reg)
+            #filter ids and cornerds
+            validids=[]
+            validcordners= []
 
-            H = mmnip.Rt2Homo(Rr.T,tt)
+            #fetches only ids that are on the cangalho
+            for i in range(0,len(ids)):
+                if ids[i] in self.arucoData['ids']:
+                    #print("Valid marker id: "+str(ids[i]))
+                    validids.append(ids[i])
+                    validcordners.append(det_corners[i]) 
 
-            refe = open3d.create_mesh_coordinate_frame(0.6, origin = [0, 0, 0])
-            refe.transform(H)
-            sphs.append(refe)
-            print(Rr)
-            print(tt)
-        '''
+
+            Rr,tt = aruco.GetCangalhoFromMarkersProcrustes(validids,validcordners,K,self.arucoData,self.arucoModel,depth_reg)
+            
+            if(Rr is not None):
+                H = mmnip.Rt2Homo(Rr.T,tt)
+
+                refe = open3d.create_mesh_coordinate_frame(0.6, origin = [0, 0, 0])
+                refe.transform(H)
+                sphs.append(refe)
+
+        
 
         #copy image
         hello = rgb.astype(np.uint8).copy() 

@@ -230,17 +230,17 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
 
             #skip if it is invalid (if there is no depth on this point)
             if point[2]==0:
-                print("THIS POINT IS INVALID")
                 continue    
 
             #add the the stack the valid corners
             points3D = np.vstack((points3D,point))
             pointsModel = np.vstack((pointsModel,corns3D[j]))
-    
+
     #the procrustes only works with 4 or more points
     if(points3D.shape[0]<4):
-        return None
-
+        print("Procrustes could not be done")
+        return None,None
+    
     #makes procrutes with the valid points
     return algos.procrustesMatlabJanky2(points3D,pointsModel)
 
