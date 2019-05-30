@@ -106,8 +106,16 @@ class PCGetter(object):
 
         if  ids is not None and len(ids)>0:
 
+            validids=[]
+            validcordners=[]
+            for i in range(0,len(ids)):
+                if ids[i] in self.arucoData['ids']:
+  
+                    validids.append(ids[i])
+                    validcordners.append(det_corners[i]) 
        
-            Rr,tt = aruco.GetCangalhoFromMarkersPnP(ids,det_corners,K,self.arucoData,self.arucoModel)
+            print(validids)
+            Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,self.arucoData,self.arucoModel)
 
             sphere1 = open3d.create_mesh_sphere(0.01)
             H = mmnip.Rt2Homo(Rr,tt.T)
@@ -138,6 +146,10 @@ class PCGetter(object):
 
         #copy image
         hello = rgb.astype(np.uint8).copy() 
+
+        cv2.imshow("wow",hello)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         #draw maerkers
         hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,np.asarray(ids))

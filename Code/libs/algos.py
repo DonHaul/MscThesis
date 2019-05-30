@@ -246,7 +246,7 @@ def TotalLeastSquares(C,Nleast=1,Nmarkers=1):
     return u[:,-Nleast:]
 
 
-def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
+def RProbSolv1(C,Nleast=1,Nmarkers=1):
     '''
     Get the Rotations that the solve issue AX=0 , C=A'A
 
@@ -276,7 +276,7 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1,canFlip=True):
     return rotsols
 
 def RProbSolv2(C,Nleast=1,Nmarkers=1):
-
+    print("THIS IS WRONG")
     solution = TotalLeastSquares(C,Nleast)   
 
 

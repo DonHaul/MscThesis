@@ -167,6 +167,20 @@ def CheckSymmetric(a, tol=1e-8):
     '''
     return np.allclose(a, a.T, atol=tol)
 
+def Homo2Rt(H):
+    '''Creates Homography matrix from R and t
+
+    Args:
+        H [4x4] - homography matrix
+    Returns:
+        R [3x3]- rotation
+        t [3x1]- tranlations
+
+    '''
+    R = H[0:3,0:3]   #sets R
+    t = H[0:3,3]      #sets t
+
+    return R,t
 
 def Rt2Homo(R=None,t=None):
     '''Creates Homography matrix from R and t

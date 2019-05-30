@@ -138,8 +138,17 @@ def FindMarkers(img,K,D=np.asarray([0,0,0,0])):
     #make the image grey
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
+    detectparams = cv2.aruco.DetectorParameters_create()
+
+    
+    detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_SUBPIX
+    detectparams.cornerRefinementWinSize=3
+    detectparams.cornerRefinementMaxIterations=30
+    detectparams.cornerRefinementMinAccuracy=0.03
+    #print(detectparams.cornerRefinementMaxIterations)
     #get markers
-    det_corners, ids, rejected  = cv2.aruco.detectMarkers(gray,dictionary=adict,cameraMatrix=K,distCoeff=D)
+    det_corners, ids, rejected  = cv2.aruco.detectMarkers(gray,dictionary=adict,cameraMatrix=K,distCoeff=D,parameters=detectparams)
+  
 
     return det_corners, ids, rejected
 
@@ -249,6 +258,7 @@ def Get3DCorners(id,arucoData,arucoModel):
         corners: 3D positions of the corners of the selected marker
     '''
 
+    
     mappedID = arucoData['idmap'][str(int(id))]
 
 
@@ -295,7 +305,7 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
     for i in range(len(ids)):
 
 
-        corns = Get3DCorners(i,arucoData,arucoModel)
+        corns = Get3DCorners(ids[i],arucoData,arucoModel)
         
 
 

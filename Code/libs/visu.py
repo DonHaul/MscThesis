@@ -10,6 +10,7 @@ import numpy as np
 import matmanip as mmnip
 
 
+
 def plotImg(img):
     '''
     receives an image and plots it.
@@ -26,7 +27,7 @@ def draw_non_blocking():
     pass
 
 
-def draw_geometry(pcd):
+def draw_geometry(pcd,R=None,t=None):
     '''
     Draws an open3d geometry with a black bacground so that my eyes dont bleed out.
     Upon pressing Escape, the plot closes.
@@ -46,6 +47,10 @@ def draw_geometry(pcd):
 
     #fetches its options
     opt = vis.get_render_option()
+
+    viser = vis.get_view_control()
+
+    viser.rotate(149.0,-70.0)
 
     #makes it black
     opt.background_color = np.asarray([0, 0, 0])

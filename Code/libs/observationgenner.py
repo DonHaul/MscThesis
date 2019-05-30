@@ -94,13 +94,23 @@ def Cam2ArucoObsMaker(img,K,D,markerIDoffset,Nmarkers):
                 o['R']=rots[i]
 
                 #generate t observations
-                o['t']=np.squeeze(tvecs[i]) #WRONG - Not sure if this is the correct t
+                o['t']=np.squeeze(tvecs[i]) 
                 
                 observations.append(o)
  
     return observations ,img
 
 
+def CreateObservation(fromm,to,key,value):
+    
+    #initializes observation
+    o ={"from":fromm,"to":to}
+
+    #generate R observations
+    o[key]=value
+ 
+
+    return o
 
 def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
     '''
