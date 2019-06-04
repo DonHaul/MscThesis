@@ -1,107 +1,74 @@
 from libs import *
 import numpy as np
 import pprint
+from scipy.linalg import orthogonal_procrustes
+from scipy.spatial import procrustes
 
 
-def procrustesV7(X, Y):
-
-
-    n,m = X.shape
-    ny,my = Y.shape
-
-    muX = X.mean(0)
-    muY = Y.mean(0)
-
-    X0 = X - muX
-    Y0 = Y - muY
-
-    # optimum rotation matrix of Y
-    A = np.dot(X0.T, Y0)
-    
-    U,s,Vt = np.linalg.svd(A,full_matrices=False)
-    V = Vt.T
-    T = np.dot(V, U.T)
-
-    c = muX - np.dot(muY, T)
-
-
-    return T,c
 
 def showShapes(wa,mat1,mat2):
     for w in wa:
         print("MM")
-        print(w.linalg.det(w))
+        print(np.linalg.det(w))
         print(w.shape)
         
-        minn = np.dot(w,mat1)-mat2        
+        minn = np.dot(mat2.T,w.T)-mat1.T        
         print(minn.shape)
         mm = np.linalg.norm(minn)
         print(mm)
 
-        minn = np.dot(w.T,mat1)-mat2
-        mm = np.linalg.norm(minn)
         print(mm)
 
-        minn = np.dot(w,mat2)-mat1
-        mm = np.linalg.norm(minn)
-        print(mm)
 
-        minn = np.dot(w.T,mat2)-mat1
-        mm = np.linalg.norm(minn)
-        print(mm)
-        
+def procsNEW(mtx1,mtx2):
 
-def procsNEW(X,Y):
+    # translate all the data to the origin
+    mtx1t =mtx1 - np.mean(mtx1, 0)
+    mtx2t =mtx2 - np.mean(mtx2, 0)
 
-    n,m = X.shape
-    ny,my = Y.shape
+    norm1 = np.linalg.norm(mtx1t)
+    norm2 = np.linalg.norm(mtx2t)
 
-    print(X.shape)
+    if norm1 == 0 or norm2 == 0:
+        raise ValueError("Input matrices must contain >1 unique points")
 
-    #MAKE SURE THIS VALUE IS 3
-    muX = np.expand_dims(X.mean(1), axis=1) 
-    muY = np.expand_dims(Y.mean(1), axis=1) 
-    print(X)
-    print("WOO")
-    print(muX)
+    # change scaling of data (in rows) such that trace(mtx*mtx') = 1
+    mtx1t /= norm1
+    mtx2t /= norm2
 
-    X0 = X - muX
-    Y0 = Y - muY  
+    # transform mtx2 to minimize disparity
+    R, s = orthogonal_procrustes(mtx1t, mtx2t)
+    mtx2t = np.dot(mtx2t, R.T) * s
 
-    print(X0)
+    t = np.mean(mtx2, 0)-np.dot(R,np.mean(mtx1, 0))
 
-        # optimum rotation matrix of Y
-    A = np.dot(Y0, X0.T)
-    
-    print(A)
-
-    U,s,Vt = np.linalg.svd(A,full_matrices=False) 
-
-    print("R is")
-    R = np.dot(Vt.T,U.T)
-    print(R)
-
-    t = muX - np.dot(R,muY)
 
     return R,t
 
 mat1=np.random.random((3,10))
-mat2=np.random.random((3,10))
 
-mat1 = mmnip.genRandRotMatrix(40)
-mat2 = np.eye(3)
+RR = mmnip.genRotMat([32,13120,2190])
+TT = np.array([69,-10,-2910])
+
+mat2=mmnip.Transform(mat1,RR.T,TT)
+#mat1 = mmnip.genRandRotMatrix(40)
+#mat2 = np.eye(3)
+
+#print("Mats are")
+#print(mat1,mat2)
+#print(mat1.shape,mat2.shape)
 
 
 results=[]
 
-results.append(algos.procrustesMatlabJanky(mat1.T,mat2.T))
-results.append(procsNEW(mat1,mat2)[0])
-results.append(procsNEW(mat2,mat1)[0])
+R,T  = procsNEW(mat1.T,mat2.T)
 
-
-print("RESULTS")
-pprint.pprint(results)
 
 showShapes(results,mat1,mat2)
+
+print(T)
+#mmnip.isRotation([RR])
+
+visu.ViewRefs([RR,R])
 
 

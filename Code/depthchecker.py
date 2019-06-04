@@ -23,7 +23,7 @@ def main(argv):
     freq=10
 
     camNames = IRos.getAllPluggedCameras()
-    camName = camNames[0]
+    camName = camNames[1]
     print(camName)
 
     #fetch K of existing cameras on the files
@@ -105,32 +105,6 @@ class PCGetter(object):
 
         sphs = []
 
-        if  ids is not None and len(ids)>0:
-
-            validids=[]
-            validcordners=[]
-            for i in range(0,len(ids)):
-                if ids[i] in self.arucoData['ids']:
-  
-                    validids.append(ids[i])
-                    validcordners.append(det_corners[i]) 
-       
-            print(validids)
-            Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,self.arucoData,self.arucoModel)
-
-            sphere1 = open3d.create_mesh_sphere(0.01)
-            H = mmnip.Rt2Homo(Rr,tt.T)
-          
-
-            sphere1.transform(H)
-            sphere1.paint_uniform_color([1,0,0])
-            sphs.append(sphere1)
-            refe = open3d.create_mesh_coordinate_frame(0.2, origin = [0, 0, 0])
-            refe.transform(H)   #Transform it according tom p
-            sphs.append(refe)
-
-            
-            
         #3D WAY
         if  ids is not None and len(ids)>0:
 
@@ -147,6 +121,7 @@ class PCGetter(object):
 
 
             Rr,tt = aruco.GetCangalhoFromMarkersProcrustes(validids,validcordners,K,self.arucoData,self.arucoModel,depth_reg)
+
             
             if(Rr is not None):
                 H = mmnip.Rt2Homo(Rr.T,tt)
@@ -155,7 +130,40 @@ class PCGetter(object):
                 refe.transform(H)
                 sphs.append(refe)
 
-        
+        #PnP way
+
+        if  ids is not None and len(ids)>0:
+
+            validids=[]
+            validcordners=[]
+            for i in range(0,len(ids)):
+                if ids[i] in self.arucoData['ids']:
+  
+                    validids.append(ids[i])
+                    validcordners.append(det_corners[i]) 
+       
+            print(validids)
+
+            print("Procs")
+            print(Rr)
+            print(tt)
+
+            Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,D,self.arucoData,self.arucoModel,(Rr.T,tt))
+
+            sphere1 = open3d.create_mesh_sphere(0.01)
+            H = mmnip.Rt2Homo(Rr,tt.T)
+          
+
+            sphere1.transform(H)
+            sphere1.paint_uniform_color([1,0,0])
+            sphs.append(sphere1)
+            refe = open3d.create_mesh_coordinate_frame(0.2, origin = [0, 0, 0])
+            refe.transform(H)   #Transform it according tom p
+            sphs.append(refe)
+
+            
+            
+
 
         #copy image
         hello = rgb.astype(np.uint8).copy() 

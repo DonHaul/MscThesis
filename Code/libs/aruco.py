@@ -140,9 +140,9 @@ def FindMarkers(img,K,D=np.asarray([0,0,0,0])):
     
     detectparams = cv2.aruco.DetectorParameters_create()
 
-    detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_NONE
+    #detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_NONE
     detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_SUBPIX
-    #detectparams.cornerRefinementWinSize=3
+    detectparams.cornerRefinementWinSize=2
     #detectparams.cornerRefinementMaxIterations=30
     #detectparams.cornerRefinementMinAccuracy=0.03
     
@@ -292,7 +292,7 @@ def Get3DCorners(id,arucoData,arucoModel):
 
     return [corn1,corn2,corn3,corn4]
 
-def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
+def GetCangalhoFromMarkersPnP(ids,det_corners,K,D,arucoData,arucoModel,guess=None):
     '''
     Estimates rotation and translation of the full cangalho aruco
 
@@ -306,6 +306,9 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
         R: rotations of the aruco markers
         t: translations of the aruco markers
     '''
+
+    print("GUEESSS")
+    print(guess)
 
     #because there are 4 corners per detected aruco
     image_points=np.zeros((4*len(ids),2))
@@ -338,8 +341,23 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,arucoData,arucoModel):
     if (points3D.shape[0]==0):
         return None,None
 
+    tvec=None
+    rvec=None
+    if(guess is not None):
+        tvec= guess[1]
+        rvec,_ = cv2.Rodrigues(guess[0])
+        print("things")
+        print(tvec)
+        print(rvec)
+
+
     #solve the point n perspective issue
-    retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,None, flags = cv2.SOLVEPNP_ITERATIVE)
+    if guess is None:
+        print("DONT USE Extrinsic parameter")
+        retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,D,rvec,tvec,useExtrinsicGuess=False, flags = cv2.SOLVEPNP_ITERATIVE)
+    else:
+        print("Use Extrinsic parameter")
+        retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,D,rvec,tvec,useExtrinsicGuess=True, flags = cv2.SOLVEPNP_ITERATIVE)
 
     #get the 3D matrix
     rvec,_ = cv2.Rodrigues(orvec)
