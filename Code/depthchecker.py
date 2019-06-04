@@ -20,7 +20,7 @@ def main(argv):
     
 
     
-    freq=70
+    freq=10
 
     camNames = IRos.getAllPluggedCameras()
     camName = camNames[0]

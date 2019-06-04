@@ -159,7 +159,7 @@ def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
         result = aruco.GetCangalhoFromMarkersProcrustes(validids,validcordners,K,arucoData,arucoModel,depth)
         
         #if no R and t are retrieved, dont create observation
-        if(result==None):
+        if(result[0] is None):
             return obs,img
 
 

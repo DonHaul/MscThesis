@@ -140,11 +140,12 @@ def FindMarkers(img,K,D=np.asarray([0,0,0,0])):
     
     detectparams = cv2.aruco.DetectorParameters_create()
 
-    
+    detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_NONE
     detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_SUBPIX
-    detectparams.cornerRefinementWinSize=3
-    detectparams.cornerRefinementMaxIterations=30
-    detectparams.cornerRefinementMinAccuracy=0.03
+    #detectparams.cornerRefinementWinSize=3
+    #detectparams.cornerRefinementMaxIterations=30
+    #detectparams.cornerRefinementMinAccuracy=0.03
+    
     #print(detectparams.cornerRefinementMaxIterations)
     #get markers
     det_corners, ids, rejected  = cv2.aruco.detectMarkers(gray,dictionary=adict,cameraMatrix=K,distCoeff=D,parameters=detectparams)
@@ -242,7 +243,17 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
         return None,None
     
     #makes procrutes with the valid points
-    return algos.procrustesMatlabJanky2(points3D,pointsModel)
+    R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
+
+    print("procrustesss")
+    print(np.dot(R.T,pointsModel.T))
+    print("procrustesss")
+    print(points3D.T)
+    print("ddd")
+    print(np.dot(R.T,pointsModel.T)-points3D.T)
+
+
+    return R,t
 
 
 

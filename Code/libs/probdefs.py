@@ -65,8 +65,6 @@ def rotationProbDef(observations,N):
         #   continue
         
 
-        print("OIO OI DORA")
-        print(obs)
 
         #fills the matrices according to the observed pairs
         Ident[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]= np.eye(3)
