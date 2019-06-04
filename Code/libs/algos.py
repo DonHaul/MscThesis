@@ -361,6 +361,40 @@ def TotalLeastSquares(C,Nleast=1):
 
     return solution
 
+
+def RotCrustes(Mat1,Mat2):
+        '''
+        Problem that it solves is
+        ||R Mat1 - Mat2||^2
+        '''
+        return orthogonal_procrustes(Mat1.T,Mat2.T)[0]
+
+def PointCrustes(mtx1,mtx2):
+
+    # translate all the data to the origin
+    mtx1t =mtx1 - np.mean(mtx1, 0)
+    mtx2t =mtx2 - np.mean(mtx2, 0)
+
+    norm1 = np.linalg.norm(mtx1t)
+    norm2 = np.linalg.norm(mtx2t)
+
+    if norm1 == 0 or norm2 == 0:
+        raise ValueError("Input matrices must contain >1 unique points")
+
+    # change scaling of data (in rows) such that trace(mtx*mtx') = 1
+    mtx1t /= norm1
+    mtx2t /= norm2
+
+    # transform mtx2 to minimize disparity
+    R, s = orthogonal_procrustes(mtx1t, mtx2t)
+    mtx2t = np.dot(mtx2t, R.T) * s
+
+    t = np.mean(mtx2, 0)-np.dot(R,np.mean(mtx1, 0))
+
+
+    return R,t
+
+
 def procrustesMatlabJanky2(arg1,arg2):
     '''
     Used for returning R,t with better make the match between 2 set of points
