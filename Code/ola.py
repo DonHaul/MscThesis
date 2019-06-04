@@ -12,15 +12,20 @@ def showShapes(wa,mat1,mat2):
         print(np.linalg.det(w))
         print(w.shape)
         
-        minn = np.dot(mat2.T,w.T)-mat1.T        
+        minn = np.dot(w,mat2)-mat1        
         print(minn.shape)
         mm = np.linalg.norm(minn)
         print(mm)
 
-        print(mm)
 
+def RotCrustes(Mat1,Mat2):
+        '''
+        Problem that it solves is
+        ||R Mat1 - Mat2||^2
+        '''
+        return orthogonal_procrustes(Mat1.T,Mat2.T)[0]
 
-def procsNEW(mtx1,mtx2):
+def PointCrustes(mtx1,mtx2):
 
     # translate all the data to the origin
     mtx1t =mtx1 - np.mean(mtx1, 0)
@@ -52,23 +57,23 @@ TT = np.array([69,-10,-2910])
 
 mat2=mmnip.Transform(mat1,RR.T,TT)
 #mat1 = mmnip.genRandRotMatrix(40)
-#mat2 = np.eye(3)
-
-#print("Mats are")
-#print(mat1,mat2)
-#print(mat1.shape,mat2.shape)
-
+mat2 = np.eye(3)
 
 results=[]
 
-R,T  = procsNEW(mat1.T,mat2.T)
-
-
+R,T  = PointCrustes(mat1.T,mat2.T)
+results.append(R)
+results.append(orthogonal_procrustes(mat1.T,mat2.T)[0])
 showShapes(results,mat1,mat2)
 
+results.append(RotCrustes(mat1,mat2))
+print("MATTS")
+print(RotCrustes(mat1,mat2))
+print(mat1)
+print(mat2)
 print(T)
 #mmnip.isRotation([RR])
 
-visu.ViewRefs([RR,R])
+visu.ViewRefs([RR]+results)
 
 
