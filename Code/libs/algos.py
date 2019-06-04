@@ -397,12 +397,20 @@ def procrustesMatlabJanky(arg1,arg2):
     p2 = procrustesMatlab(arg1,arg2,reflection=True)[2]['rotation']
     p3 = procrustesMatlab(arg1,arg2,reflection=False)[2]['rotation']
     #print("normsare")
-    n2 = np.linalg.norm(arg1-np.dot(p2,arg2))
-    n3 = np.linalg.norm(arg1-np.dot(p3,arg2))
+
+    print("Shapes")
+    print(arg1.shape)
+    print(p2.shape)
+    print(arg2.shape)
+
+    n2 = np.linalg.norm(arg1-np.dot(arg2,p2))
+    n3 = np.linalg.norm(arg1-np.dot(arg2,p3))
 
     if n2< n3:
+        print("refletion matrix")
         return p2
     else:
+        print("rotation matrix")
         return p3
 
 

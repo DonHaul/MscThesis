@@ -30,8 +30,10 @@ def procrustesV7(X, Y):
 def showShapes(wa,mat1,mat2):
     for w in wa:
         print("MM")
-        minn = np.dot(w,mat1)-mat2
+        print(w.linalg.det(w))
+        print(w.shape)
         
+        minn = np.dot(w,mat1)-mat2        
         print(minn.shape)
         mm = np.linalg.norm(minn)
         print(mm)
@@ -86,25 +88,18 @@ def procsNEW(X,Y):
 mat1=np.random.random((3,10))
 mat2=np.random.random((3,10))
 
-#mat1 = mmnip.genRandRotMatrix(40)
-#mat2 = np.eye(3)
+mat1 = mmnip.genRandRotMatrix(40)
+mat2 = np.eye(3)
 
-procsNEW(mat1,mat2)
-quit()
+
 results=[]
 
-results.append(algos.procrustesMatlab(mat1,mat2,reflection='best')[2]['rotation'])
-results.append(algos.procrustesMatlab(mat1,mat2,reflection='best')[2]['rotation'])
-results.append(algos.procrustesMatlab(mat1,mat2,reflection=True)[2]['rotation'])
-results.append(algos.procrustesMatlab(mat1,mat2,reflection=False)[2]['rotation'])
-results.append(procrustesV7(mat1,mat2)[0])
+results.append(algos.procrustesMatlabJanky(mat1.T,mat2.T))
+results.append(procsNEW(mat1,mat2)[0])
+results.append(procsNEW(mat2,mat1)[0])
 
 
-results.append(res1)
-results.append(res2)
-results.append(res3)
-
-
+print("RESULTS")
 pprint.pprint(results)
 
 showShapes(results,mat1,mat2)

@@ -12,8 +12,13 @@ max_correspondence_distance_fine = voxel_size * 1.5
 
 def main(argv):
     pcs = plyreader.load_point_clouds(argv[1])
+    pcc = pointclouder.MergeClouds(pcs)
+    o3d.draw_geometries(pcs)
+    o3d.visualization.draw_geometries_with_editing([pcc])
 
-
+    #pcd = o3d.read_point_cloud(argv[1])
+    #o3d.draw_geometries([pcd])
+    quit()
 
     R,T,camNames = FileIO.LoadScene(argv[2])
 
