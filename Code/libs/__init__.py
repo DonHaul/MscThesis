@@ -1,5 +1,3 @@
-print("WAZZAH")
-
 from . import algos
 from . import errorCalcs
 from . import FileIO
@@ -12,3 +10,4 @@ from . import rosinterface as IRos
 from . import synth
 from . import visu
 from . import aruco
+print("Libs Loaded")

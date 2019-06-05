@@ -242,15 +242,9 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
         print("Procrustes could not be done")
         return None,None
     
+    print("YEET")
     #makes procrutes with the valid points
-    R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
-
-    print("procrustesss")
-    print(np.dot(R.T,pointsModel.T))
-    print("procrustesss")
-    print(points3D.T)
-    print("ddd")
-    print(np.dot(R.T,pointsModel.T)-points3D.T)
+    R,t = algos.PointCrustes(pointsModel,points3D)
 
 
     return R,t

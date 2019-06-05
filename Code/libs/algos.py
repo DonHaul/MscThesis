@@ -7,6 +7,7 @@ This module contains some of the well known algorithms, that help in the thesis
 import numpy as np
 import matmanip as mmnip
 import visu
+from scipy.linalg import orthogonal_procrustes
 
 def LeastSquaresNumpy(A,b):
     '''
@@ -132,14 +133,13 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1):
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
 
-        #projects in the orthogonal space
-        r = procrustesMatlabJanky(sol,np.eye(3))
+
+        r = RotCrustes(sol,np.eye(3))
 
 
         rotsols.append(r)
 
     return rotsols
-
 
 def TotalLeastSquares(C,Nleast=1):
     '''
@@ -159,21 +159,26 @@ def TotalLeastSquares(C,Nleast=1):
     return solution
 
 
+
 def RotCrustes(Mat1,Mat2):
         '''
         Problem that it solves is
-        ||R Mat1 - Mat2||^2
+        || Mat1 - R Mat2||^2 ?
         '''
         return orthogonal_procrustes(Mat1.T,Mat2.T)[0]
 
 def PointCrustes(mtx1,mtx2):
 
     # translate all the data to the origin
-    mtx1t =mtx1 - np.mean(mtx1, 0)
-    mtx2t =mtx2 - np.mean(mtx2, 0)
+    mu1=np.mean(mtx1, 0)
+    mu2=np.mean(mtx2, 0)
+    mtx1t =mtx1 - mu1
+    mtx2t =mtx2 - mu2
 
     norm1 = np.linalg.norm(mtx1t)
     norm2 = np.linalg.norm(mtx2t)
+
+
 
     if norm1 == 0 or norm2 == 0:
         raise ValueError("Input matrices must contain >1 unique points")
@@ -184,11 +189,9 @@ def PointCrustes(mtx1,mtx2):
 
     # transform mtx2 to minimize disparity
     R, s = orthogonal_procrustes(mtx1t, mtx2t)
-    mtx2t = np.dot(mtx2t, R.T) * s
 
-    t = np.mean(mtx2, 0)-np.dot(R,np.mean(mtx1, 0))
 
+    t = mu2-np.dot(R.T,mu1) #or mu2-np.dot(mu1, R)
 
     return R,t
-
 

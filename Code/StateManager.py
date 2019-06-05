@@ -96,7 +96,7 @@ class State(object):
             print(self.t2.shape)
             self.t = self.t2/self.count
 
-            self.R = algos.procrustesMatlabJanky(self.R,np.eye(3))
+            self.R = algos.RotCrustes(self.R,np.eye(3))
 
     def CalcT(self):
 
