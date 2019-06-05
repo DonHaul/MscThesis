@@ -142,11 +142,11 @@ def FindMarkers(img,K,D=np.asarray([0,0,0,0])):
 
     #detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_NONE
     detectparams.cornerRefinementMethod=cv2.aruco.CORNER_REFINE_SUBPIX
-    detectparams.cornerRefinementWinSize=2
-    #detectparams.cornerRefinementMaxIterations=30
+    detectparams.cornerRefinementWinSize=1
+    detectparams.cornerRefinementMaxIterations=20
     #detectparams.cornerRefinementMinAccuracy=0.03
     
-    #print(detectparams.cornerRefinementMaxIterations)
+
     #get markers
     det_corners, ids, rejected  = cv2.aruco.detectMarkers(gray,dictionary=adict,cameraMatrix=K,distCoeff=D,parameters=detectparams)
   
@@ -242,13 +242,12 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
         print("Procrustes could not be done")
         return None,None
     
-    print("PROC")
-    print(points3D.shape)
+
     #makes procrutes with the valid points
     
 
-    R,t= algos.procrustesMatlabJanky2(pointsModel,points3D)
-    #ALMOST REPLACEABLE WITH R,t = algos.PointCrustes(points3D,pointsModel), problem is my implementation doesnt fix scaling issues
+    R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
+    #ALMOST REPLACEABLE WITH R,t = algos.PointCrustes(pointsModel,points3D), problem is my implementation doesnt fix scaling issues
     
 
 

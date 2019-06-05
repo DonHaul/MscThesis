@@ -19,7 +19,7 @@ from libs import *
 
 import sys
 
-
+import copy
 
 def main(argv):
     
@@ -78,10 +78,6 @@ def main(argv):
         print("shut")
 
 
-    print(filename)
-
-    FileIO.savePCs(myString,stateru.pcs)
-
 def LoadJson(filename,mode="r"):
     f=open(filename,mode)
     scene = json.load(f)
@@ -132,9 +128,10 @@ class PCGetter(object):
         #print("Callbacktime")
 
         pcs=[]
+        pcs2=[]
         
 
-                #iterate throguh cameras
+        #iterate throguh cameras
         for camId in range(0,self.N_cams):
             
 
@@ -149,20 +146,23 @@ class PCGetter(object):
             points = mmnip.depthimg2xyz2(depth_reg,K)
             points = points.reshape((480*640, 3))
 
-            print(points.shape)
-            points= mmnip.Transform(points.T, self.scene[0][camId], self.scene[1][camId]).T
+            #print(points.shape)
+            
 
 
             #print(colors.shape)
             rgb1 = rgb.reshape((480*640, 3))#colors
             
-            pc = pointclouder.Points2Cloud(points,rgb1)
+            pc = pointclouder.Points2Cloud(points,rgb1,clean=True)
 
             pcs.append(pc)
+            pctemp =copy.deepcopy(pc)
+            pctemp.transform(mmnip.Rt2Homo(self.scene[0][camId],self.scene[1][camId].T))
+            pcs2.append(pctemp)
 
         self.state.pcs = pcs
 
-        self.state.pc = pointclouder.MergeClouds(pcs)
+        self.state.pc = pointclouder.MergeClouds(pcs2)
 
             
 

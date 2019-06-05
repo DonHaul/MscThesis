@@ -31,6 +31,7 @@ if __name__ == "__main__":
     if ".ply" in sys.argv[1]:
         pcd = read_point_cloud(sys.argv[1])
         o3d.draw_geometries([pcd])
+        return
     else:
         pcds = plyreader.load_point_clouds(sys.argv[1])
         o3d.draw_geometries(pcds)

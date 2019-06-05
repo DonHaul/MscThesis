@@ -23,7 +23,7 @@ def main(argv):
     freq=10
 
     camNames = IRos.getAllPluggedCameras()
-    camName = camNames[1]
+    camName = camNames[0]
     print(camName)
 
     #fetch K of existing cameras on the files
@@ -37,6 +37,11 @@ def main(argv):
 
     arucoModel = FileIO.getFromPickle("arucoModels/ArucoModel_0875_yak_25-05-2019_16:23:12.pickle")
 
+    print(arucoModel['T'])
+
+    visu.ViewRefs(arucoModel['R'][0:3],arucoModel['T'][0:3],showRef=True,refSize=0.1)
+
+
 
 
     pcer = PCGetter(camName,intrinsics,arucoModel,arucoData)
@@ -48,7 +53,7 @@ def main(argv):
     camSub.append(message_filters.Subscriber(camName+"/depth_registered/image_raw", Image))
 
 
-    ts = message_filters.ApproximateTimeSynchronizer(camSub,10, 1.0/freq, allow_headerless=True)
+    ts = message_filters.ApproximateTimeSynchronizer(camSub,1, 1.0/freq, allow_headerless=True)
     ts.registerCallback(pcer.callback)
     print("callbacks registered")
 
@@ -84,28 +89,41 @@ class PCGetter(object):
         rgb = IRos.rosImg2RGB(args[0])
         depth_reg = IRos.rosImg2Depth(args[1])
 
-        
+        #copy image
+        hello = rgb.astype(np.uint8).copy() 
 
-        #cv2.imshow("wowee",rgb)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
+        cv2.imshow("wow",hello)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+        #get matrix intrinsics
         K = self.intrinsics['K'][self.camName]
         D = self.intrinsics['D'][self.camName]
 
         #finds markers
         det_corners, ids, rejected = aruco.FindMarkers(rgb, K,D)
 
+
+        #draw maerkers
+        hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,np.asarray(ids))
+
+        cv2.imshow("wow",hello)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+
         if ids is None:
             return
 
         ids = ids.squeeze()
 
+        #makes a single id into a list with only it self
         if (helperfuncs.is_empty(ids.shape)):
             ids=[int(ids)]
 
         sphs = []
 
-        #3D WAY
+        #3D WAY (Scaled Procrustes)
         if  ids is not None and len(ids)>0:
 
             #filter ids and cornerds
@@ -165,19 +183,7 @@ class PCGetter(object):
             
 
 
-        #copy image
-        hello = rgb.astype(np.uint8).copy() 
-
-        cv2.imshow("wow",hello)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-        #draw maerkers
-        hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,np.asarray(ids))
-
-        cv2.imshow("wow",hello)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        
 
         
         pointsu = np.empty((3,0))
@@ -189,10 +195,7 @@ class PCGetter(object):
         corneee = np.squeeze(det_corners)
         #print(corneee)
 
-        corn2paint = corneee[2,:]
-        
-
-
+        #corn2paint = corneee[2,:]
         #offset=5
         #for ii in  range(int(corn2paint[0])-offset,int(corn2paint[0])+offset):
         #    for jj in range(int(corn2paint[1])-offset,int(corn2paint[1])+offset):

@@ -4,7 +4,7 @@ from libs import *
 def main():
     
 
-    R,t = synth.TestScene51() #in world coordinates
+    R,t = synth.FakeArucoReal() #in world coordinates
 
     #compare coordinates relative to ref 1 with output
     Raux = mmnip.genRotRelLeft(R)

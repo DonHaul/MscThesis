@@ -9,7 +9,7 @@ import pointclouder
 
 saveInc=0
 
-def savePCs(filename,pcs):
+def savePCs(filename,pcs,pc):
     '''
     saves a merged point cloud and also the separated pointclouds
 
@@ -23,7 +23,6 @@ def savePCs(filename,pcs):
     print(filename)
     filename = filename+"_"+str(saveInc)
 
-    pc = pointclouder.MergeClouds(pcs)
 
     #creates a file for the merged pointcloud
     open3d.write_point_cloud("./PC/"+filename+".ply", pc)

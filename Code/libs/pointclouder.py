@@ -1,13 +1,21 @@
 import open3d
 import numpy as np
+import visu
 
-def Points2Cloud(points,rgb=None):
+def Points2Cloud(points,rgb=None,clean=False):
     '''
     Converts 3D points and colors into a pointcoud
     '''
 
+    if clean:
+        invalids = np.asarray(points[:,2]==0).nonzero()
+        points = np.delete(points,invalids,axis=0)
+        rgb = np.delete(rgb,invalids,axis=0)
+    
+
     #make point cloud    
     cloud = open3d.PointCloud()
+
 
     cloud.points = open3d.Vector3dVector(points)
 
@@ -17,7 +25,7 @@ def Points2Cloud(points,rgb=None):
 
         rgb = np.dot(rgb,permuter)
         cloud.colors = open3d.Vector3dVector(rgb/255.0) #range is 0-1 hence the division
-        
+
     return cloud
 
 def MergeClouds(clouds):

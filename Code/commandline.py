@@ -10,6 +10,8 @@ from libs import *
 
 
 def worker(statev,rospy):
+
+
     x=""
     count = 0
     while x!="q":
@@ -21,6 +23,8 @@ def worker(statev,rospy):
             if(len(ola)==1):
                 scene = visu.ViewRefs(statev.camPoses[0],statev.camPoses[1],view=False,refSize=1)
                 scene.append(statev.pc)
+                
+                open3d.draw_geometries(scene)
                 visu.draw_geometry(scene)   
             else:
                 time.sleep(int(ola[1]))
@@ -28,7 +32,7 @@ def worker(statev,rospy):
 
             print("PATH TO SAVE IS")
             print(statev.PCPath)
-            FileIO.savePCs(statev.PCPath,statev.pcs)
+            FileIO.savePCs(statev.PCPath,statev.pcs,statev.pc)
             
         elif "lol" in x:
             print("2 cams calc")

@@ -125,7 +125,10 @@ def translationProbDef(observations,rotRel,N):
         Ident[cnt*3:cnt*3+3,obs['from']*3:obs['from']*3+3]= np.eye(3)
         #print(obs['to'])
         A[cnt*3:cnt*3+3,obs['to']*3:obs['to']*3+3]=  np.eye(3)
-        
+        print(obs['to'])
+        print(len(rotRel))
+        print(rotRel[obs['to']])
+        print(obs['t'])
         b[cnt*3:cnt*3+3,0]=np.dot( rotRel[obs['to']],obs['t'])
 
         cnt=cnt+1

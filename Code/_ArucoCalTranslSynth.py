@@ -3,15 +3,15 @@ from libs import *
 
 def main():
 
-    R,t = synth.TestScene51() #in world coordinates
+    R,t = synth.FakeArucoReal() #in world coordinates
 
 
     visu.ViewRefs(R,t,showRef=True)
 
     #importing R from the json file
-    R1 = FileIO.getJsonFromFile("./tmp/R_koala_28-05-2019_19:04:16.json")['R']
+    R1 = FileIO.getJsonFromFile("./tmp/R_badger_06-06-2019_00:17:54.json")['R']
     R1 = np.asarray(R1)
-    R1 = np.split(R1,4,axis=0)
+    R1 = np.split(R1,12,axis=0)
 
     RR = []
 
@@ -30,9 +30,14 @@ def main():
     #Solves Least Squres
     x= algos.LeastSquares(A,b)
     
+    
+
     sol = np.split(x,len(t))
 
-    visu.ViewRefs(R1,sol,showRef=True)
+    newT = mmnip.Transl_fromWtoRef(R,sol)
+
+    print(newT)
+    visu.ViewRefs(R1,newT,showRef=True)
    
 
 if __name__ == '__main__':

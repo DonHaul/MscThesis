@@ -72,6 +72,8 @@ def main(argv):
 
     newT = mmnip.Transl_fromWtoRef(stateru.R,stateru.t)
 
+    visu.ViewRefs(stateru.R,newT,refSize=0.1,showRef=True)
+
     filepath =  FileIO.saveAsPickle("ArucoModel",{'R':stateru.R,'T':newT},"arucoModels/")
 
 
