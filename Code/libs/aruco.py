@@ -242,10 +242,11 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
         print("Procrustes could not be done")
         return None,None
     
-    print("YEET")
+    
     #makes procrutes with the valid points
-    R,t = algos.PointCrustes(pointsModel,points3D)
-
+    R,t = algos.PointCrustes(points3D,pointsModel)
+    R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
+    
 
     return R,t
 
@@ -301,8 +302,6 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,D,arucoData,arucoModel,guess=Non
         t: translations of the aruco markers
     '''
 
-    print("GUEESSS")
-    print(guess)
 
     #because there are 4 corners per detected aruco
     image_points=np.zeros((4*len(ids),2))
@@ -340,17 +339,15 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,D,arucoData,arucoModel,guess=Non
     if(guess is not None):
         tvec= guess[1]
         rvec,_ = cv2.Rodrigues(guess[0])
-        print("things")
-        print(tvec)
-        print(rvec)
+
 
 
     #solve the point n perspective issue
     if guess is None:
-        print("DONT USE Extrinsic parameter")
+
         retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,D,rvec,tvec,useExtrinsicGuess=False, flags = cv2.SOLVEPNP_ITERATIVE)
     else:
-        print("Use Extrinsic parameter")
+        
         retval, orvec, otvec = cv2.solvePnP(points3D,image_points,K,D,rvec,tvec,useExtrinsicGuess=True, flags = cv2.SOLVEPNP_ITERATIVE)
 
     #get the 3D matrix

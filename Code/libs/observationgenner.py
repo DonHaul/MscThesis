@@ -166,7 +166,9 @@ def CamArucoProcrustesObsMaker(img,K,D,arucoData,arucoModel,depth):
         #fetch result
         Rr = result[0]
         tt = result[1]
+
         Rr=Rr.T
+
 
 
         #initializes observation
@@ -215,7 +217,7 @@ def CamArucoPnPObsMaker(img,K,D,arucoData,arucoModel):
                 validids.append(ids[i])
                 validcordners.append(det_corners[i]) 
     
-        Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,arucoData,arucoModel)
+        Rr,tt = aruco.GetCangalhoFromMarkersPnP(validids,validcordners,K,D,arucoData,arucoModel)
 
         if(Rr is None):
             return obs,img
