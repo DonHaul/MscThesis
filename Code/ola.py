@@ -48,18 +48,4 @@ print(R,T)
 quit()
 
 
-results.append(R)
-results.append(orthogonal_procrustes(mat1.T,mat2.T)[0])
-showShapes(results,mat1,mat2)
-
-results.append(RotCrustes(mat1,mat2))
-print("MATTS")
-print(RotCrustes(mat1,mat2))
-print(mat1)
-print(mat2)
-print(T)
-#mmnip.isRotation([RR])
-
-visu.ViewRefs([RR]+results)
-
 

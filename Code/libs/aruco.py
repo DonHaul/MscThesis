@@ -242,10 +242,16 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
         print("Procrustes could not be done")
         return None,None
     
-    
+    print("PROC")
+    print(points3D.shape)
     #makes procrutes with the valid points
-    R,t = algos.PointCrustes(points3D,pointsModel)
-    R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
+    
+
+    R,t= algos.procrustesMatlabJanky2(pointsModel,points3D)
+    #ALMOST REPLACEABLE WITH R,t = algos.PointCrustes(points3D,pointsModel), problem is my implementation doesnt fix scaling issues
+    
+
+
     
 
     return R,t
