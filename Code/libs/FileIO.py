@@ -7,6 +7,8 @@ import open3d
 import pickle
 import pointclouder
 
+saveInc=0
+
 def savePCs(filename,pcs):
     '''
     saves a merged point cloud and also the separated pointclouds
@@ -15,7 +17,11 @@ def savePCs(filename,pcs):
         filename String: what should the name be
         pcs [open3d.pointcloud]: list of all the retrieved pointclouds
     '''
-
+    global saveInc
+    saveInc=saveInc+1
+    print(saveInc)
+    print(filename)
+    filename = filename+"_"+str(saveInc)
 
     pc = pointclouder.MergeClouds(pcs)
 

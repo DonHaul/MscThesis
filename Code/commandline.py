@@ -25,6 +25,11 @@ def worker(statev,rospy):
             else:
                 time.sleep(int(ola[1]))
                 visu.draw_geometry([statev.pc])
+
+            print("PATH TO SAVE IS")
+            print(statev.PCPath)
+            FileIO.savePCs(statev.PCPath,statev.pcs)
+            
         elif "lol" in x:
             print("2 cams calc")
             statev.CalcRT2()

@@ -7,7 +7,7 @@ from libs import *
 #all variables that can change during the run should be here that are not local
 class State(object):
 
-    def __init__(self,N_cams,detectionMode="realtime",camPoses=None,errorCalc=False):
+    def __init__(self,N_cams,detectionMode="realtime",camPoses=None,errorCalc=False,PCPath=None):
 
         self.data={}
 
@@ -16,6 +16,8 @@ class State(object):
 
         self.R=None
         self.t=None
+
+        self.PCPath=PCPath
 
         self.count=0
 

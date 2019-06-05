@@ -20,6 +20,7 @@ from libs import *
 import sys
 
 
+
 def main(argv):
     
     freq=10
@@ -31,19 +32,22 @@ def main(argv):
         print("Scene File Needed")
         quit()
 
+    #create save folder path
     myString=filename
-  
-    myString = myString[myString.find("/")+1:myString.find(".")]
+    names = myString.split("/")
+    myString = names[len(names)-1]
+    myString = myString[0:myString.find(".")]
 
-    #R,t,camNames
     scene = LoadScene(filename)
     scene=list(scene)
 
-    print(scene)
-
     camNames=scene[2]
 
-    stateru = StateManager.State(len(camNames),camPoses=scene)
+    #confirm cameras are plugged in
+    IRos.CheckCamArePluggedIn(camNames)
+
+
+    stateru = StateManager.State(len(camNames),camPoses=scene,PCPath=myString)
 
     commandline.Start(stateru,rospy)
 

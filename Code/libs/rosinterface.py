@@ -13,6 +13,13 @@ import struct
 import matmanip as mnip
 import pointclouder
 
+def CheckCamArePluggedIn(camnames):
+    for cam in camnames:
+        if cam not in getAllPluggedCameras():
+            raise Exception('Not all the specified cameras are plugged in')
+    
+    return
+
 def getAllPluggedCameras():
     '''
     Find all the kinect cameras that are plugged into the computer 
