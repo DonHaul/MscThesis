@@ -63,14 +63,16 @@ def main(argv):
     print("R is:")
     print(stateru.R)
 
-    print("t is:")
-    print(stateru.t)
+
 
     if stateru.R is None or stateru.t is None:
         quit()
 
 
     newT = mmnip.Transl_fromWtoRef(stateru.R,stateru.t)
+
+    print("t is:")
+    print(newT)
 
     visu.ViewRefs(stateru.R,newT,refSize=0.1,showRef=True)
 

@@ -5,7 +5,7 @@ def main():
 
     R,t = synth.FakeArucoReal() #in world coordinates
 
-
+    
     visu.ViewRefs(R,t,showRef=True)
 
     #importing R from the json file

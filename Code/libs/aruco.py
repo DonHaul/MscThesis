@@ -109,7 +109,7 @@ def ObservationMaker(K,D,det_corners,img,ids,arucoData,captureR=True,captureT=Fa
 
                 #generate R observations
                 if(captureR):
-                    #obsR={"to":(ids[i]+markerIDoffset),"from":(ids[j]+markerIDoffset),"R":np.dot(rots[i].T,rots[j])} #THE CORRECT WAY
+
                     obsR={"to":arucoData['idmap'][str(ids[i])],"from":arucoData['idmap'][str(ids[j])],"R":np.dot(rots[i].T,rots[j])}
                     observationsR.append(obsR)
                 
@@ -222,7 +222,9 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
 
         #fetches the corners 3D in the aruco model
         corns3D = Get3DCorners(ids[i],arucoData,arucoModel)
-
+        print("IDDDDSS")
+        print(ids[i])
+        print(corns3D)
         
         for j in range(0,4):
             

@@ -81,10 +81,11 @@ class State(object):
 
         #converts to world coordinates or into them
         rotSolsNotUsed = mmnip.Transposer(rotSols)
-        visu.ViewRefs(rotSolsNotUsed)
 
         #converts in first ref coordinates , 
         rr = mmnip.genRotRelLeft(rotSolsNotUsed)
+
+        visu.ViewRefs(rr)
 
         self.R=rr
 
@@ -105,7 +106,8 @@ class State(object):
         x = np.dot(np.linalg.pinv(self.ATAt),self.ATb)
     
         solsplit2 = np.split(x,self.N_cams)
-        visu.ViewRefs(self.R,solsplit2,refSize=0.1)
+        
+        visu.ViewRefs(self.R,solsplit2,refSize=0.1,showRef=True)
 
         self.t=solsplit2
 

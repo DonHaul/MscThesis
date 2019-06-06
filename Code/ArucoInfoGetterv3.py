@@ -71,7 +71,8 @@ class ArucoInfoGetterv3(object):
         self.img = img
 
         img,ids,obsR,obsT = aruco.ArucoObservationMaker(img,self.intrinsics['K'][self.camName],self.intrinsics['D'][self.camName],self.Nmarkers,self.arucoData,captureR=True,captureT=True)
-            
+        
+  
 
         #calculates rotations
         if self.state.state == 0:
