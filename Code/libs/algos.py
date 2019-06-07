@@ -305,7 +305,7 @@ def procrustesMatlab(X, Y, scaling=True, reflection='best'):
     traceTA = s.sum()
 
     if scaling:
-        print("WENT SCALING")
+
         # optimum scaling of Y
         b = traceTA * normX / normY
 
@@ -316,7 +316,7 @@ def procrustesMatlab(X, Y, scaling=True, reflection='best'):
         Z = normX*traceTA*np.dot(Y0, T) + muX
 
     else:
-        print("WENT HERE")
+
         b = 1
         d = 1 + ssY/ssX - 2 * traceTA * normY / normX
         Z = normY*np.dot(Y0, T) + muX
@@ -325,11 +325,7 @@ def procrustesMatlab(X, Y, scaling=True, reflection='best'):
     if my < m:
         T = T[:my,:]
 
-    print("Procs Mlab")
-    print(muX)
-    print(b)
-    print(muY)
-    print(T)
+
 
     c = muX - b*np.dot(muY, T)
 

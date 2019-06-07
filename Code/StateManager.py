@@ -7,7 +7,7 @@ from libs import *
 #all variables that can change during the run should be here that are not local
 class State(object):
 
-    def __init__(self,N_cams,detectionMode="realtime",camPoses=None,errorCalc=False,PCPath=None):
+    def __init__(self,N_cams,detectionMode="realtime",camPoses=None,errorCalc=False,PCPath=None,arucoDetection="allforone",recordRT=False):
 
         self.data={}
 
@@ -28,11 +28,16 @@ class State(object):
 
         self.detectionMode=detectionMode
         self.readyToCapture=True
+
+        #records R and T between the 2 first cameras
+        self.recordedRs=[]
+        self.recordedTs=[]
+
         if self.detectionMode == "snap":
             self.readyToCapture=False
 
         #it should be either singular, allforone or depthforone
-        self.arucoDetection = "depthforone"
+        self.arucoDetection = arucoDetection
 
         #A.T A initialized
         self.ATAR = np.zeros((self.N_cams*3,self.N_cams*3))

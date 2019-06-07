@@ -13,7 +13,7 @@ max_correspondence_distance_fine = voxel_size * 1.5
 def main(argv):
     pcs = plyreader.load_point_clouds(argv[1])
     pcc = pointclouder.MergeClouds(pcs)
-    o3d.draw_geometries(pcs)
+    #o3d.draw_geometries(pcs)
     
 
 
@@ -92,7 +92,7 @@ def MultiICPv2(pcs,voxel_radius=[0.04, 0.02, 0.01],max_iter=[50, 30, 14],lambda_
     return pcs
 
 
-def simpleMultiICP(pcs,voxel_radius=[0.04, 0.02, 0.01],max_iter=[50, 30, 14],lambda_geometric=1):
+def simpleMultiICP(pcs,voxel_radius=[0.04],max_iter=[100],lambda_geometric=1):
 
     pccum = pcs[0]
 
@@ -104,6 +104,8 @@ def simpleMultiICP(pcs,voxel_radius=[0.04, 0.02, 0.01],max_iter=[50, 30, 14],lam
         pccum.transform(resICP.transformation)
 
         pccum= pointclouder.MergeClouds([pccum,pcs[i]])
+
+        visu.draw_geometry([pccum])
 
     return pccum
 

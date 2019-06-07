@@ -23,7 +23,9 @@ import copy
 
 def main(argv):
     
-    freq=10
+    
+    freq=50
+    print("FRAME RATE IS: " +str(freq))
 
     filename=""
     if(len(argv)>1):

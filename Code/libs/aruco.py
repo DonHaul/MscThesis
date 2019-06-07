@@ -26,6 +26,15 @@ def markerIdMapper(arr):
     
     return IdMap
 
+def markerIdMapper(arr):
+
+        IdMap={}
+       
+        for i in range(0,len(arr)):
+            IdMap[str(arr[i])]=i
+       
+        return IdMap
+
 def ArucoObservationMaker(img,K,D,Nmarkers,arucoData,captureR=True,captureT=False):
     '''
     Finds Markers and makes observations
@@ -47,7 +56,7 @@ def ArucoObservationMaker(img,K,D,Nmarkers,arucoData,captureR=True,captureT=Fals
     '''
 
     #finds markers
-    det_corners, ids, rejected = FindMarkers(img, K)
+    det_corners, ids, rejected = FindMarkers(img, K,D)
 
     #copy image
     hello = img.astype(np.uint8).copy() 
@@ -209,6 +218,7 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
         t: translations of the aruco markers
     '''
 
+
     #because there are 4 corners per detected aruco
     pointsModel=np.empty((0,3))
 
@@ -222,9 +232,9 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
 
         #fetches the corners 3D in the aruco model
         corns3D = Get3DCorners(ids[i],arucoData,arucoModel)
-        print("IDDDDSS")
-        print(ids[i])
-        print(corns3D)
+        #print("IDDDDSS")
+        #print(ids[i])
+        #print(corns3D)
         
         for j in range(0,4):
             
@@ -251,7 +261,12 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
     R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
     #ALMOST REPLACEABLE WITH R,t = algos.PointCrustes(pointsModel,points3D), problem is my implementation doesnt fix scaling issues
     
-
+    print("norr")
+    transformed = mmnip.Transform(pointsModel.T,R.T,t)
+    print(transformed.shape)
+    wow = transformed.T-points3D
+    print(wow)
+    print(np.linalg.norm(wow))
 
     
 
@@ -271,8 +286,9 @@ def Get3DCorners(id,arucoData,arucoModel):
         corners: 3D positions of the corners of the selected marker
     '''
 
-    
+    #converte id to range -> 2-13 para 0-11
     mappedID = arucoData['idmap'][str(int(id))]
+
 
 
     c1 = np.array([-arucoData['size']/2,arucoData['size']/2,0])     #canto superior esquerdo relativo ao centro do marker
@@ -281,10 +297,10 @@ def Get3DCorners(id,arucoData,arucoModel):
     c4 = np.array([-arucoData['size']/2,-arucoData['size']/2,0])    #canto inferior esquerdo relativo ao centro do marker
 
     #get the actual 3D position on the model
-    corn1 = mmnip.Transform(c1,arucoModel['R'][mappedID],arucoModel['T'][mappedID]) 
-    corn2 = mmnip.Transform(c2,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
-    corn3 = mmnip.Transform(c3,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
-    corn4 = mmnip.Transform(c4,arucoModel['R'][mappedID],arucoModel['T'][mappedID])
+    corn1 = mmnip.Transform(c1,arucoModel['R'][mappedID],arucoModel['T'][mappedID])  #canto superior esquerdo relativo marker1 do cangalho
+    corn2 = mmnip.Transform(c2,arucoModel['R'][mappedID],arucoModel['T'][mappedID])  #canto superior direito relativo marker1 do cangalho
+    corn3 = mmnip.Transform(c3,arucoModel['R'][mappedID],arucoModel['T'][mappedID])  #canto inferior direito relativo marker1 do cangalho
+    corn4 = mmnip.Transform(c4,arucoModel['R'][mappedID],arucoModel['T'][mappedID])  #canto inferior esquerdo relativo marker1 do cangalho
 
 
     corn1= np.squeeze(corn1)
@@ -293,6 +309,7 @@ def Get3DCorners(id,arucoData,arucoModel):
     corn4= np.squeeze(corn4)
 
     return [corn1,corn2,corn3,corn4]
+
 
 def GetCangalhoFromMarkersPnP(ids,det_corners,K,D,arucoData,arucoModel,guess=None):
     '''
@@ -313,7 +330,7 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,D,arucoData,arucoModel,guess=Non
     #because there are 4 corners per detected aruco
     image_points=np.zeros((4*len(ids),2))
 
-    #the corners in the actual moel
+    #the corners in the actual model
     points3D=np.zeros((4*len(ids),3))
 
     for i in range(len(ids)):
@@ -321,14 +338,7 @@ def GetCangalhoFromMarkersPnP(ids,det_corners,K,D,arucoData,arucoModel,guess=Non
 
         corns = Get3DCorners(ids[i],arucoData,arucoModel)
         
-
-
-        corn1= corns[0]
-        corn2= corns[1]
-        corn3= corns[2]
-        corn4= corns[3]
-
-        corn3D = np.vstack((corn1,corn2,corn3,corn4))
+        corn3D = np.vstack((corns[0],corns[1],corns[2],corns[3]))
 
 
         points3D[i*4:i*4+4,:] = corn3D

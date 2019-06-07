@@ -277,9 +277,10 @@ def singlePixe2xyz(depth,coords,K):
 
     coords = coords.astype('int') 
 
+    #notice that X and Y must be switched around
     Z=depth[coords[1],coords[0]]/1000.0
     
-    print(Z.shape)
+
 
     X=Z*(coords[0]-cx)/fx
     Y=Z*(coords[1]-cy)/fy

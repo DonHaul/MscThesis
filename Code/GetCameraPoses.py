@@ -44,7 +44,7 @@ def main(argv):
     intrinsics = FileIO.getKDs(camNames)
 
     #has all states that may change
-    stateru = StateManager.State(len(camNames),"realtime")
+    stateru = StateManager.State(len(camNames),"realtime",arucoDetection="depthforone",recordRT=True)
 
     
 

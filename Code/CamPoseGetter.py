@@ -109,6 +109,10 @@ class CamPoseGetter(object):
                 print("Big Oopsie 5809447652")
                 quit()
 
+            for o in obs:
+                self.state.recordedRs.append(o['R'])
+                self.state.recordedTs.append(o['t'])
+
 
             #obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
 
