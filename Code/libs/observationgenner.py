@@ -344,7 +344,7 @@ def GenerateCameraPairObs(camsObs,R,t):
                     # 'ObsId' = 'to' , and the cameraId on the array is the 'from'
 
 
-                    obsR.append({"from":j,"to":i,"R": np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])})
+                    obsR.append({"from":i,"to":j,"R": (np.linalg.multi_dot([obsiR['R'],R[obsiR['obsId']].T,R[obsjR['obsId']],obsjR['R'].T])).T})
 
                     #Get aruco transformation parameters
                     Rbetweenaruco = np.dot(R[obsjR['obsId']].T,R[obsiR['obsId']])

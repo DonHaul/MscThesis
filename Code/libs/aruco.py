@@ -261,12 +261,12 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
     R,t= algos.procrustesMatlabJanky2(points3D,pointsModel)
     #ALMOST REPLACEABLE WITH R,t = algos.PointCrustes(pointsModel,points3D), problem is my implementation doesnt fix scaling issues
     
-    print("norr")
+
     transformed = mmnip.Transform(pointsModel.T,R.T,t)
-    print(transformed.shape)
-    wow = transformed.T-points3D
-    print(wow)
-    print(np.linalg.norm(wow))
+    #print(transformed.shape)
+    #wow = transformed.T-points3D
+    #print(wow)
+    #print(np.linalg.norm(wow))
 
     
 

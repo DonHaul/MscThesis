@@ -109,9 +109,7 @@ class CamPoseGetter(object):
                 print("Big Oopsie 5809447652")
                 quit()
 
-            for o in obs:
-                self.state.recordedRs.append(o['R'])
-                self.state.recordedTs.append(o['t'])
+
 
 
             #obs = obsGen.FilterGoodObservationMarkerIds(obs,self.R,self.t,len(self.arucoData['idmap']),t_threshold=0.05,R_threshold=0.5)
@@ -126,7 +124,10 @@ class CamPoseGetter(object):
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsgen.GenerateCameraPairObs(self.Allobs,self.R,self.t)
 
+        for oR,oT in zip(obsR,obsT):
 
+            self.state.recordedRs.append(oR['R'])
+            self.state.recordedTs.append(oT['t'])
 
         #print(len(obsR))
         #rotation problem

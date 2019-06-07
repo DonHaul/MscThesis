@@ -84,6 +84,7 @@ def main(argv):
     cv2.destroyAllWindows()
 
     print("Finished Elegantly")
+    FileIO.saveAsPickle("recordedRTs",{'R': stateru.recordedRs,'T':stateru.recordedTs})
 
 
     if(type(stateru.t)!=list):
@@ -100,20 +101,10 @@ def main(argv):
     print(stateru.R)
 
     print("t is:")
-    print(stateru.t)
+    print(mmnip.Transl_fromWtoRef(stateru.R,stateru.t))
 
-    if stateru.data['errorCalc']==True:
+    
 
-        LL =  helperfuncs.replicateThingInList(stateru.R,len(stateru.data['Rs']))
-        print(len(LL))
-        print(LL[0].shape)
-        print(stateru.data['Rs'][0])
-
-        y,x = errorCalcs.MatrixListError(stateru.data['Rs'],LL)
-
-        plt.plot(x,y)
-        plt.ylabel('some numbers')
-        plt.show()
 
 
     SaveCameraPoses(stateru.R,stateru.t,camNames,"cameras")
