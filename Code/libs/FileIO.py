@@ -6,8 +6,29 @@ import os
 import open3d
 import pickle
 import pointclouder
+import matplotlib.pyplot as plt
 
 saveInc=0
+
+def CreateFolder(directory,putDate=True):
+
+    path=directory
+    if(putDate==True):
+        path=path+"_" +  datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
+    
+
+def GetFileName(directory):
+
+    names = directory.split("/")
+    myString = names[len(names)-1]
+    myString = myString[0:myString.find(".")]
+
+    return myString
 
 def savePCs(filename,pcs,pc):
     '''
@@ -138,6 +159,13 @@ def getFromPickle(filename):
 
         
     return p
+
+
+def SaveImageAllFormats(figure,name,directory):
+    saveAsPickle(name+".fig",figure,path=directory,animal=False,putDate=False)
+    figure.savefig(directory+name+".png", facecolor='w', edgecolor='w',orientation='portrait',transparent=True, bbox_inches=None)
+    figure.savefig(directory+name+".svg", facecolor='w', edgecolor='w',orientation='portrait',transparent=True, bbox_inches=None)
+
 
 
 def saveAsPickle(name,data,path="pickles/",putDate=True,animal=True):

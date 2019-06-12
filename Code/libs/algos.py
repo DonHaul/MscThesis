@@ -130,9 +130,13 @@ def RProbSolv1(C,Nleast=1,Nmarkers=1):
     #separate in 3x3 matrices
     solsplit = np.split(solution,Nmarkers)
  
+    print("Multicam SVD")
+
+
     #get actual rotation matrices by doing the procrustes
     for sol in solsplit:
 
+        print(sol)
 
         r = RotCrustes(sol,np.eye(3))
 

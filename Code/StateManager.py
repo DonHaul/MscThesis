@@ -100,11 +100,14 @@ class State(object):
 
     def CalcRT2(self):
         if(self.N_cams==2):
-            self.R = self.R2/self.count
+            self.R2 = self.R2/self.count
             print(self.t2.shape)
-            self.t = self.t2/self.count
+            self.t2 = self.t2/self.count
 
-            self.R = algos.RotCrustes(self.R,np.eye(3))
+
+
+            self.R2 = algos.RotCrustes(self.R2,np.eye(3))
+        
 
     def CalcT(self):
 

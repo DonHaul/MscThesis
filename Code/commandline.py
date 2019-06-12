@@ -65,6 +65,14 @@ def worker(statev,rospy):
         elif "T" in x:
             print("calculating t")
             statev.CalcT()
+
+            if statev.N_cams==2:
+                statev.CalcRT2()
+                print("2 Cam things are , R, T")
+                print(statev.R2.T)
+                print(mmnip.InvertT(statev.t2,statev.R2))
+                
+
             rospy.signal_shutdown('Quit')
             break
         else:
