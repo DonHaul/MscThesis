@@ -38,12 +38,12 @@ def main(argv):
 
 
     features = np.concatenate((T,R),axis=1)
+    print(features.shape)
 
     names = ["X","Y","Z","R00","R01","R02","R10","R11","R12","R20","R21","R22"]
 
 
-    #1 id per sample
-    print(R.shape)
+
     x= range(len(T[:,1]))
     
     featuresMean = np.mean(features,axis=0)
@@ -57,6 +57,13 @@ def main(argv):
         for i in range(len(names)): 
             stats.writerow([names[i],featuresMean[i],featuresStd[i],featuresMedian[i]])
             
+
+    #absolute error
+    #featuresMean = np.expand_dims(featuresMean,axis=0)
+    
+
+    #relative error
+    features = np.abs(features-featuresMean)/featuresMean
     
     
     #Saves Translations

@@ -24,7 +24,7 @@ rosbag record --split --size=1024 -b 0 /ervilhamigalhas/depth_registered/image_r
 ### 3 rgb + depth ervilhas abretesesano fernanod
 rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /abretesesamo/depth_registered/image_raw /fernando/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/rgb/image_color /fernando/rgb/image_color
 
-### 3 rgb + depth ervilhas abretesesano fernanod
+### 3 rgb + depth ervilhas abretesesamo fernanod
 rosbag record --split --size=2048 -b 0 /ervilhamigalhas/depth_registered/image_raw /ervilhamigalhas/rgb/image_color /abretesesamo/depth_registered/image_raw abretesesamo/rgb/image_color /fernando/rgb/image_color /fernando/depth_registered/image_raw/
 
 ### 3 rgb + depth ervilhas abretesesano quim
@@ -52,4 +52,17 @@ rosbag record --split --size=1024 -b 0 /quim/depth_registered/image_raw  /quim/r
 
 ##
 rosrun rqt_tf_tree rqt_tf_tree 
+
+aruco normals diagonal:(real)
+first face (2,3,4) : 0.300 m
+second face (5,6,7) : 0.296 m
+second face (8,9,10) : 0.29 m
+second face (11,12,13) : 0.294 m
+
+do modelo captado
+0.30318389030032905
+0.2979090065279915
+0.2921658037606405
+0.2959685667815067
+
 

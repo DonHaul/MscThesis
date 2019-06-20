@@ -95,6 +95,7 @@ class CamPoseGetter(object):
 
             elif self.state.arucoDetection == "allforone":
                 
+                #print("ALL FO ONE")
                 img = IRos.rosImg2RGB(args[camId])
 
                 obs, img = obsgen.CamArucoPnPObsMaker(img,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]],self.arucoData,self.arucoModel)
@@ -126,6 +127,9 @@ class CamPoseGetter(object):
 
         for oR,oT in zip(obsR,obsT):
 
+            print("it")
+            print(oR['from'])
+            print(oT['to'])
             self.state.recordedRs.append(oR['R'])
             self.state.recordedTs.append(oT['t'])
 

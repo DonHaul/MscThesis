@@ -30,6 +30,9 @@ def GetFileName(directory):
 
     return myString
 
+ 
+
+
 def savePCs(filename,pcs,pc):
     '''
     saves a merged point cloud and also the separated pointclouds
