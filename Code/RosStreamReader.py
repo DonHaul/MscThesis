@@ -13,9 +13,18 @@ import threading
 
 import rospy
 
+import StreamReader
 
-class RosStreamReader():
+class RosStreamReader(StreamReader.StreamReader):
+
+    
     def __init__(self,state,camNames=None,freq=20):
+
+        StreamReader.StreamReader.__init__(self)
+
+
+
+        print(self.nextIsAvailable)
 
 
         self.state=state
@@ -77,6 +86,7 @@ class RosStreamReader():
         self.data=data
         self.state.data=data
         self.state.nextIsAvailable=True
+        self.nextIsAvailable=True
 
 
     def next(self):

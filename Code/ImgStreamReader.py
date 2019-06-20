@@ -10,6 +10,8 @@ from libs import *
 
 import os
 
+import StreamReader
+
 
 class ImgStreamReader():
     def __init__(self,path):

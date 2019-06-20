@@ -33,13 +33,13 @@ import zThread as commandline1
 
 import threading
 
-def worker(statev,stop):
+def worker(streamreader,stop):
 
 
     while(1==1):
-        if(statev.nextIsAvailable):
+        if(streamreader.nextIsAvailable):
             print("JERK5")
-            statev.nextIsAvailable=False
+            streamreader.nextIsAvailable=False
             print(stop())
         if stop(): 
             break           
@@ -55,15 +55,20 @@ def main(argv):
     stop_threads = False
 
     
+
+
+
     state= StateManager.State()
 
+    print("YEEEEEEEEEEEEEEEEEET")
     #sets thread where state changer will be
     t1 = threading.Thread(target=worker,args=( state,lambda : stop_threads))
     t1.start()
 
-
+    #HAS TO BE AFTER
     #imgStream = ImgStreamReader.ImgStreamReader(data['input']['path'])
     imgStream = RosStreamReader.RosStreamReader(state)
+
     
 
 
