@@ -18,16 +18,9 @@ import StreamReader
 class RosStreamReader(StreamReader.StreamReader):
 
     
-    def __init__(self,state,camNames=None,freq=20):
+    def __init__(self,camNames=None,freq=20):
 
         StreamReader.StreamReader.__init__(self)
-
-
-
-        print(self.nextIsAvailable)
-
-
-        self.state=state
 
         self.freq = freq
 
@@ -40,13 +33,13 @@ class RosStreamReader(StreamReader.StreamReader):
 
         self.data={'names':self.camNames,'rgb':[],'depth':[]}
 
-        camSub = []
-
-
-
+        
 
 
         rospy.init_node('do_u_kno_di_wae', anonymous=True)
+        
+        camSub = []
+        freq=20
 
         #getting subscirpters to use message fitlers on
         for name in self.camNames:
@@ -59,15 +52,6 @@ class RosStreamReader(StreamReader.StreamReader):
         ts = message_filters.ApproximateTimeSynchronizer(camSub,20, 1.0/freq, allow_headerless=True)
         ts.registerCallback(self.callback)
 
-        print("Callback Registered")
-
-        print("ENTERED THE THRAED")
-        try:
-            rospy.spin()
-        except KeyboardInterrupt:
-            print("shut")
-
-        print("STOP SIGNALL")
         
 
 
@@ -84,14 +68,10 @@ class RosStreamReader(StreamReader.StreamReader):
             data['depth'].append(depth)
     
         self.data=data
-        self.state.data=data
-        self.state.nextIsAvailable=True
         self.nextIsAvailable=True
 
 
     def next(self):
-
-        print("HEYYDOING THE NEXT")
 
         return self.data      
 

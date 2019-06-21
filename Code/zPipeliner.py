@@ -28,19 +28,35 @@ import matplotlib.pyplot as plt
 
 import ImgStreamReader
 import RosStreamReader
+import GetCangalhoPoses
 
-import zThread as commandline1
+import CangalhoObservationsMaker
+
+import zCommands as CommandLine
+
+import zPosesCalculator as PosesCalculator
 
 import threading
 
-def worker(streamreader,stop):
+def worker(stream,obsmake,posecalc,stop):
 
 
     while(1==1):
-        if(streamreader.nextIsAvailable):
-            print("JERK5")
-            streamreader.nextIsAvailable=False
-            print(stop())
+       
+        if stream.nextIsAvailable:
+
+        
+            stream.nextIsAvailable=False
+
+            streamData= stream.next()
+
+            if streamData is None:
+                break
+
+            img,ids,obsR,obsT = obsmake.GetObservations(streamData)
+
+            posecalc.AddObservations(obsR,obsT)
+
         if stop(): 
             break           
             
@@ -49,34 +65,63 @@ def worker(streamreader,stop):
 
 def main(argv):
 
+    #Reads the configuration file
     data =  FileIO.getJsonFromFile(argv[0])
-    print(data)
-
+    
+    #variable that will stop all threads
     stop_threads = False
 
-    
-
-
-
+    #holds
     state= StateManager.State()
 
-    print("YEEEEEEEEEEEEEEEEEET")
-    #sets thread where state changer will be
-    t1 = threading.Thread(target=worker,args=( state,lambda : stop_threads))
+    imgStream={}
+    ObservationMaker={}
+    PosesCalculator={}
+
+    #Assigns the InputStream
+    if data['input']['type']=='IMG':
+        imgStream = ImgStreamReader.ImgStreamReader(data['input']['path'])
+
+        
+    elif data['input']['type']=='ROS':
+        imgStream = RosStreamReader.RosStreamReader()
+
+    #setting stuff on state
+    state.intrinsics = FileIO.getKDs(imgStream.camNames)
+    state.arucodata = FileIO.getJsonFromFile(data['model']['arucodata'])
+
+    singlecamData={"K":state.intrinsics['K'][imgStream.camNames[0]],"D":state.intrinsics['D'][imgStream.camNames[0]],"arucodata":state.arucodata}
+    
+    ObservationMaker =  CangalhoObservationsMaker.CangalhoObservationMaker(singlecamData)
+
+    posedata={"N_objects":len(state.arucoData['ids'])}
+    PosesCalculator = PosesCalculator.PosesCalculator(posedata)
+    
+    
+    #GetPoses=GetCangalhoPoses.GetCangalhoPoses(singlecamData)
+   
+    t1 = threading.Thread(target=worker,args=( imgStream,ObservationMaker,PosesCalculator,lambda : stop_threads))
     t1.start()
 
-    #HAS TO BE AFTER
-    #imgStream = ImgStreamReader.ImgStreamReader(data['input']['path'])
-    imgStream = RosStreamReader.RosStreamReader(state)
+    #sets thread where state changer will be
+    CommandLine.Start(state,lambda : stop_threads)
+
+
+
 
     
 
+    #if data['input']['type']=='ROS':
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("shut")
 
-
-
-    print("BIIIIG BOYYYYY")
+    print("Exited Stuff")
     stop_threads = True
     t1.join() 
+
+    print("YO MAMMA HAS THE BIG GAY")
     
 
 
@@ -95,7 +140,7 @@ def imgShower(data):
 
     for i in range(colunms):
         imgs[0:shape[0],shape[1]*i:shape[1]*(i+1),0:3]=data['rgb'][i]
-        #imgs[shape[0]*1:shape[0]*(1+1),shape[1]*i:shape[1]*(i+1),0:3]=data['depth'][i]
+        #imgs[shape[0]*1:shape[0]*(1+1),shape[1]*i:shape[1]*(i+1),0]=data['depth'][i]
 
 
 

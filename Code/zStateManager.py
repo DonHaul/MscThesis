@@ -8,12 +8,5 @@ from libs import *
 class State(object):
 
     def __init__(self):
+        pass
 
-        self.data={}
-        self.nextIsAvailable=False
-
-    def next(self):
-
-        print("HEYY")
-
-        return self.data      

@@ -13,8 +13,10 @@ import os
 import StreamReader
 
 
-class ImgStreamReader():
+class ImgStreamReader(StreamReader.StreamReader):
     def __init__(self,path):
+
+        StreamReader.StreamReader.__init__(self)
         
         self.path=path
         self.count=0
@@ -23,8 +25,11 @@ class ImgStreamReader():
         
         print(self.camNames)
 
+        self.nextIsAvailable=True
+
     
     def next(self):
+        print("NEXT WAS CALLED")
 
         data={'names':self.camNames,'rgb':[],'depth':[]}
 
@@ -40,6 +45,9 @@ class ImgStreamReader():
                     data['depth'].append(cv2.imread(depthpath))
 
         self.count = self.count + 1
+
+        self.nextIsAvailable=True
+        print("SET BACK TO TREU")
         
         if(len(data['rgb'])==0):
             return None

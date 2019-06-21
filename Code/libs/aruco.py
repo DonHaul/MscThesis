@@ -8,6 +8,8 @@ import numpy as np
 import matmanip as mmnip
 import algos
 
+
+
 def markerIdMapper(arr):
     '''
     Maps markers from the ones in the aruco to the ones starting in 0
