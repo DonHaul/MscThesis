@@ -11,13 +11,13 @@ from libs import *
 
 
 class PosesCalculator(object):
-    def __init__(self,N_objects):
+    def __init__(self,data):
 
         self.estimating='R'
         
-        self.N_objects = N_objects
+        self.N_objects = data['N_objects']
 
- 
+
 
 
         #A.T A initialized
@@ -35,18 +35,18 @@ class PosesCalculator(object):
         if self.estimating =='R':
             
             #only if there are observations it makes the A matrix
-            if  ids is not None and len(ids)>1:
+            if len(obsR)>0:
 
-                A =  probdefs.rotationProbDef(obsR,self.Nmarkers)
+                A =  probdefs.rotationProbDef(obsR,self.N_objects)
 
                 self.ATAR = self.ATAR  + np.dot(A.T,A)
 
         #calculates translations
         elif self.estimating == 't':
             
-            if  ids is not None and len(ids)>1:
+            if len(obsT)>0:
 
-                A,b =  probdefs.translationProbDef(obsT,self.state.R,self.Nmarkers)
+                A,b =  probdefs.translationProbDef(obsT,self.R,self.N_objects)
 
                 self.ATAt = self.ATAt + np.dot(A.T,A) #way to save the matrix in a compact manner
 
@@ -77,11 +77,14 @@ class PosesCalculator(object):
 
         x = np.dot(np.linalg.pinv(self.ATAt),self.ATb)
     
-        solsplit2 = np.split(x,self.N_cams)
+        solsplit2 = np.split(x,self.N_objects)
         
         visu.ViewRefs(self.R,solsplit2,refSize=0.1,showRef=True)
+  
 
-        self.t=solsplit2        
+        self.t = mmnip.Transl_fromWtoRef(self.R,solsplit2)
+
+
 
 
 

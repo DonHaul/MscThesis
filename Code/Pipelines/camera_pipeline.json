@@ -1,0 +1,10 @@
+{
+    "input":{"type":"ROS",
+        "path":"../ImageSets/Cams_19-06-2019_19:56:19"
+    },
+    "model":{"type":"CAMERA",
+        "arucodata": "./static/ArucoWand.json",
+        "arucomodel":"./arucoModels/ArucoModel_0875_yak_25-05-2019_16:23:12.pickle",
+        "arucodetection":"singular"
+    }
+}

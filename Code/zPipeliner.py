@@ -19,7 +19,6 @@ import CamPoseGetter
 
 import cv2
 
-import commandline
 import zStateManager as StateManager
 
 from libs import *
@@ -31,6 +30,7 @@ import RosStreamReader
 import GetCangalhoPoses
 
 import CangalhoObservationsMaker
+import CamerasObservationMaker
 
 import zCommands as CommandLine
 
@@ -41,7 +41,7 @@ import threading
 def worker(stream,obsmake,posecalc,stop):
 
 
-    while(1==1):
+    while True:
        
         if stream.nextIsAvailable:
 
@@ -57,6 +57,7 @@ def worker(stream,obsmake,posecalc,stop):
 
             posecalc.AddObservations(obsR,obsT)
 
+
         if stop(): 
             break           
             
@@ -65,46 +66,61 @@ def worker(stream,obsmake,posecalc,stop):
 
 def main(argv):
 
+    
+
     #Reads the configuration file
     data =  FileIO.getJsonFromFile(argv[0])
     
-    #variable that will stop all threads
-    stop_threads = False
+
 
     #holds
     state= StateManager.State()
 
+    #variable that will stop all threads
+    state.stop_threads=False
+
     imgStream={}
     ObservationMaker={}
-    PosesCalculator={}
+    posescalculator={}
 
     #Assigns the InputStream
     if data['input']['type']=='IMG':
         imgStream = ImgStreamReader.ImgStreamReader(data['input']['path'])
-
-        
     elif data['input']['type']=='ROS':
         imgStream = RosStreamReader.RosStreamReader()
+    else:
+        print("This Pipeline input is invalid")
 
     #setting stuff on state
     state.intrinsics = FileIO.getKDs(imgStream.camNames)
     state.arucodata = FileIO.getJsonFromFile(data['model']['arucodata'])
 
-    singlecamData={"K":state.intrinsics['K'][imgStream.camNames[0]],"D":state.intrinsics['D'][imgStream.camNames[0]],"arucodata":state.arucodata}
-    
-    ObservationMaker =  CangalhoObservationsMaker.CangalhoObservationMaker(singlecamData)
+    if data['model']['type']=='CANGALHO':
+        singlecamData={"K":state.intrinsics['K'][imgStream.camNames[0]],"D":state.intrinsics['D'][imgStream.camNames[0]],"arucodata":state.arucodata}
+        ObservationMaker =  CangalhoObservationsMaker.CangalhoObservationMaker(singlecamData)
+    elif data['model']['type']=='CAMERA':
+        multicamData={"intrinsics":state.intrinsics,"arucodata":state.arucodata,"arucodetection":data['model']['arucodetection']}
+        ObservationMaker = CamerasObservationMaker.CamerasObservationMaker(multicamData)
+    else:
+        print("This Pipeline Model is invalid")
 
-    posedata={"N_objects":len(state.arucoData['ids'])}
-    PosesCalculator = PosesCalculator.PosesCalculator(posedata)
+    posedata={"N_objects":len(state.arucodata['ids'])}
+    posescalculator = PosesCalculator.PosesCalculator(posedata)
     
     
-    #GetPoses=GetCangalhoPoses.GetCangalhoPoses(singlecamData)
-   
-    t1 = threading.Thread(target=worker,args=( imgStream,ObservationMaker,PosesCalculator,lambda : stop_threads))
-    t1.start()
+
+    state.imgStream=imgStream
+    state.ObservationMaker=ObservationMaker
+    state.posescalculator=posescalculator
 
     #sets thread where state changer will be
-    CommandLine.Start(state,lambda : stop_threads)
+    CommandLine.Start(state,lambda : state.stop_threads)
+
+   
+    t1 = threading.Thread(target=worker,args=( imgStream,ObservationMaker,posescalculator,lambda : state.stop_threads))
+    t1.start()
+
+
 
 
 
@@ -118,10 +134,10 @@ def main(argv):
         print("shut")
 
     print("Exited Stuff")
-    stop_threads = True
+    state.stop_threads = True
     t1.join() 
 
-    print("YO MAMMA HAS THE BIG GAY")
+    print("FINISHED ELEGANTLY")
     
 
 

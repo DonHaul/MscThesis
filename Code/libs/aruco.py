@@ -109,11 +109,13 @@ def ObservationMaker(K,D,det_corners,img,ids,arucoData,captureR=True,captureT=Fa
                 #only valid markers
                 if ids[i] not in arucoData['ids']:
                     print("Invalid marker id: "+str(ids[i]))
+
                     continue 
 
                                  #only valid markers
                 if ids[j] not in arucoData['ids']:
-                    print("Invalid marker id: "+str(ids[i]))
+                    print("Invalid marker id: "+str(ids[j]))
+
                     continue 
 
                 #print("observing "+str(i)+" and "+str(j))

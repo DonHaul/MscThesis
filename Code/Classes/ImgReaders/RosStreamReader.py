@@ -56,8 +56,7 @@ class RosStreamReader(StreamReader.StreamReader):
 
 
     def callback(self,*args):
-        print("Entered Callback")
-        print(len(args))
+
         data={'names':self.camNames,'rgb':[],'depth':[]}
 
         for camId in range(0,self.N_cams):
