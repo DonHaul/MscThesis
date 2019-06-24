@@ -26,9 +26,10 @@ class RosStreamReader(StreamReader.StreamReader):
 
         self.camNames=camNames
 
-        if self.camNames is None:
+        if len(self.camNames)==0:
             self.camNames = IRos.getAllPluggedCameras()
 
+        
         self.N_cams = len(self.camNames)
 
         self.data={'names':self.camNames,'rgb':[],'depth':[]}

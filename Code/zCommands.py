@@ -18,8 +18,12 @@ def worker(invoker,stop):
 
         x= raw_input("Enter command")
 
+        
+
         commands = x.split()
-        invoker.execute(commands[0],commands[1:])
+
+        if len(commands)>0:
+            invoker.execute(commands[0],commands[1:])
 
 
         if stop():
@@ -62,7 +66,7 @@ class Invoker:
             print("Command  not recognised")
 
 
-class Command(object):
+class Command():
     """
     Declare an interface for executing an operation.
     """
@@ -99,7 +103,8 @@ class CalculateRotations(Command):
         self._posescalc = posescalculator
 
     def execute(self,*args):
-        self._posescalc.CalcRthenStartT()
+        rr = self._posescalc.CalcRthenStartT()
+        visu.ViewRefs(rr)
 
 class CalculateTranslations(Command):
     
@@ -107,9 +112,9 @@ class CalculateTranslations(Command):
         self._state = state
 
     def execute(self,*args):
-        statev.posescalculator.CalcT()
+        self._state.posescalculator.CalcT()
         rospy.signal_shutdown("Successful T")
-        statev.stop_threads=True
+        self._state.stop_threads=True
 
 class HelpCommand(Command):
     """A Command object, which implemets the ICommand interface"""
@@ -134,17 +139,17 @@ class Help1Command():
 
 
 
-def Start(statev,stop):
+def Start(posepipeline):
     print("Starting Commandline")
 
     receiver = Receiver()
 
 
     invoker = Invoker()
-    invoker.register("R",CalculateRotations(statev.posescalculator))
-    invoker.register("T",CalculateTranslations(statev))
-    invoker.register("help",HelpCommand(receiver))
+    invoker.register("R",CalculateRotations(posepipeline.posescalculator))
+    invoker.register("T",CalculateTranslations(posepipeline))
+    invoker.register("help",HelpCommand(posepipeline))
 
 
-    t1 = threading.Thread(target=worker,args=(invoker,stop,))
+    t1 = threading.Thread(target=worker,args=(invoker,posepipeline.GetStop,))
     t1.start()

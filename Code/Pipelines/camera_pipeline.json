@@ -5,6 +5,12 @@
     "model":{"type":"CAMERA",
         "arucodata": "./static/ArucoWand.json",
         "arucomodel":"./arucoModels/ArucoModel_0875_yak_25-05-2019_16:23:12.pickle",
-        "arucodetection":"depthforone"
+        "arucodetection":"depthforone",
+        "cameras":["abretesesamo","fernando"],
+        "mode":{
+            "type":"OUTLIERREMOVE",
+            "observations":300
+        },
+        "record":true
     }
 }

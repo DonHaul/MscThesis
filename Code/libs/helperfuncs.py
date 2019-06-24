@@ -42,3 +42,5 @@ def is_empty(any_structure):
     else:
         #print('Structure is empty.')
         return True
+
+
