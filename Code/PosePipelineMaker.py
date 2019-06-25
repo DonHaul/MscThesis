@@ -26,10 +26,14 @@ from libs import *
 import matplotlib.pyplot as plt
 
 
+import pyscreenshot
+
 from Classes.ImgReaders import RosStreamReader,ImgStreamReader
 from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker
 from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
 from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator
+
+from shutil import copyfile
 
 
 
@@ -82,6 +86,8 @@ def main(argv):
     state= StateManager.State()
 
     posepipeline.folder = FileIO.CreateFolder("./PipelineLogs/"+FileIO.GetAnimalName())
+
+    FileIO.putFileWithJson(data,"pipeline",posepipeline.folder+"/")
 
 
     arucodetectors={
@@ -144,6 +150,8 @@ def main(argv):
         
         elif data['model']['mode']['type']=='OUTLIERREMOVE':
             posedata['observations']=data['model']['mode']['observations']
+            posedata['Rcutoff']=data['model']['mode']['Rcutoff']
+            posedata['Tcutoff']=data['model']['mode']['Tcutoff']
             posepipeline.posescalculator = OutlierRemPoseCalculator.OulierRemovalPoseCalculator(posedata)
 
         else:
@@ -182,11 +190,24 @@ def main(argv):
     
     print("FINISHED ELEGANTLY")
 
+    visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
+    
+    
+
+
+    #image = pyautogui.screenshot()
+    #image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    #cv2.imwrite(posepipeline.folder+ "/screenshot.png", image)
+
     if data["model"]["record"]==True:
         recordeddata={
             "R":posepipeline.posescalculator.recordedRs,
             "T":posepipeline.posescalculator.recordedTs
         }
+
+        print(len(recordeddata['R']))
+
+        print(len(recordeddata['T']))
 
         FileIO.saveAsPickle("/recorded",recordeddata,posepipeline.folder,False,False)
     

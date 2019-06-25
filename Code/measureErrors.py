@@ -36,16 +36,26 @@ def main(argv):
     R = np.asarray(transformationz['R'])
     R = R.reshape((R.shape[0],9))
 
+    Ravg = np.mean(R,axis=0)
+    Tavg = np.mean(T,axis=0)
 
-    features = np.concatenate((T,R),axis=1)
-    print(features.shape)
+    print(R.shape)
+    features=[]
+    features.append(np.linalg.norm(Ravg-R,axis=1))
+    features.append(np.linalg.norm(Tavg-T,axis=1))
 
-    names = ["X","Y","Z","R00","R01","R02","R10","R11","R12","R20","R21","R22"]
+    #features=features.T
+
+    #features = np.concatenate((T,R),axis=1)
+    #print(features.shape)
+
+    names = ["R","T"]
 
 
-
-    x= range(len(T[:,1]))
     
+    
+    
+    '''
     featuresMean = np.mean(features,axis=0)
     featuresMedian = np.median(features,axis=0)
     featuresStd = np.std(features,axis=0)
@@ -56,25 +66,27 @@ def main(argv):
 
         for i in range(len(names)): 
             stats.writerow([names[i],featuresMean[i],featuresStd[i],featuresMedian[i]])
-            
+    '''     
 
     #absolute error
     #featuresMean = np.expand_dims(featuresMean,axis=0)
     
 
     #relative error
-    features = np.abs(features-featuresMean)/featuresMean
+    
+    #features = np.abs(features-featuresMean)/featuresMean
     
     
     #Saves Translations
     for i in range(len(names)):    
 
+        x= range(len(features[i]))
 
         color = (0.2, 0.4, 0.6, 1)
-
+        print(features[i].shape)
         #Draws BarPlot
         fig_object = plt.figure(figsize=(1920/80.0, 1080/80.0), dpi=80)
-        plt.bar(x,features[:,i],width=1.0,edgecolor=color, color=color)
+        plt.bar(x,features[i],width=1.0,edgecolor=color, color=color)
         plt.title(names[i]+" over Time")
 
         FileIO.SaveImageAllFormats(fig_object,names[i]+"_in_time",folderpath)
@@ -85,7 +97,7 @@ def main(argv):
         
         #Draws Histogram
         fig_object = plt.figure(figsize=(1920/80.0, 1080/80.0), dpi=80)
-        plt.hist(features[:,i], bins=100,color=color)  # arguments are passed to np.histogram
+        plt.hist(features[i], bins=100,color=color)  # arguments are passed to np.histogram
         plt.title("Histogram of "+names[i])
         FileIO.SaveImageAllFormats(fig_object,names[i]+"_hist",folderpath)
 

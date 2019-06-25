@@ -5,3 +5,7 @@ class StreamReader():
             self.nextIsAvailable=False
 
         
+
+        def next(self):
+
+            return None 

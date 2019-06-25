@@ -27,7 +27,7 @@ def draw_non_blocking():
     pass
 
 
-def draw_geometry(pcd,R=None,t=None):
+def draw_geometry(pcd,R=None,t=None,saveImg = False,saveName=None):
     '''
     Draws an open3d geometry with a black bacground so that my eyes dont bleed out.
     Upon pressing Escape, the plot closes.
@@ -59,6 +59,10 @@ def draw_geometry(pcd,R=None,t=None):
 
     #applies all geometries
     vis.run()
+
+    if saveImg:
+        vis.capture_screen_image(saveName)
+
     vis.destroy_window()
 
     return vis
@@ -79,7 +83,7 @@ def paintImage(img,point2paint,offset = 5,color = [255,0,255]):
 
     return img
 
-def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False):
+def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False,saveImg=False,saveName=None):
     '''ViewRefs - Displays a bunch of referentials on the screen
 
     Args:
@@ -87,7 +91,6 @@ def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False):
         t: Translations Array from the each referential in world coordinated
         refSize: Size of the referentials
     '''
-    
 
     #in case one of them is none, get the one that is not zero
     N = len(R) if R is not None else len(t)
@@ -142,6 +145,6 @@ def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False):
         refs.append(refe)
 
     if view==True:
-        draw_geometry(refs) #Draw them all
+        vis = draw_geometry(refs,saveImg=saveImg,saveName=saveName) #Draw them all
 
     return refs

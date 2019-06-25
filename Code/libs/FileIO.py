@@ -99,7 +99,7 @@ def getKDs(camNames):
     return intrinsic
 
 
-def putFileWithJson(data,filename=None,folder=None):
+def putFileWithJson(data,filename=None,folder=None,animal=False,putDate=False):
     '''
     puts dictionary into a json
 
@@ -115,12 +115,15 @@ def putFileWithJson(data,filename=None,folder=None):
     if filename is None:
         filename = ""
 
+    saveName =folder + "/" + filename
 
-    #assign an animal name to the file
-    animalName = GetAnimalName()
+    if animal:
+        saveName = saveName + "_" + GetAnimalName()
+
+    if putDate:
+        saveName = saveName + "_" +  datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
 
 
-    saveName = folder + "/" + filename+"_"+animalName + "_" +  datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     f = open(saveName+".json","w")
 
     #save files

@@ -9,7 +9,9 @@
         "cameras":["abretesesamo","fernando"],
         "mode":{
             "type":"OUTLIERREMOVE",
-            "observations":300
+            "observations":300,
+            "Rcutoff":0.4,
+            "Tcutoff":0.3
         },
         "record":true
     }

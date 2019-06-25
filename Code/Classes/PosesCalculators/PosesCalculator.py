@@ -37,10 +37,14 @@ class PosesCalculator(object):
 
 
         if self.recordRT:
-            for oR,oT in zip(obsR,obsT):
 
-                self.recordedRs.append(oR['R'])
+            for oT in obsT:
                 self.recordedTs.append(oT['t'])
+
+            for oR in obsR:
+                
+                self.recordedRs.append(oR['R'])
+
 
         #calculates rotations
         if self.estimating =='R':
@@ -90,8 +94,6 @@ class PosesCalculator(object):
         x = np.dot(np.linalg.pinv(self.ATAt),self.ATb)
     
         solsplit2 = np.split(x,self.N_objects)
-        
-        visu.ViewRefs(self.R,solsplit2,refSize=0.1,showRef=True)
   
         t=mmnip.Transl_fromWtoRef(self.R,solsplit2)
 

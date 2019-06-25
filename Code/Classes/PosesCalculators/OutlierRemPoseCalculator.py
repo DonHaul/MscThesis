@@ -11,10 +11,14 @@ class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
         self.n_obs = np.zeros((self.N_objects,),dtype=np.int32)
 
         self.obsthreshold=data['observations']
-
+        self.Rcutoff = data['Rcutoff']
+        self.Tcutoff = data['Tcutoff']
 
         self.Rguess=[]
         self.Tguess=[]
+
+        self.records = self.recordRT
+        self.recordRT=False
 
         self.initialguess=True
 
@@ -42,6 +46,9 @@ class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
                     
                     self.initialguess=False
                     self.estimating='R'
+
+                    if self.records:
+                        self.recordRT=True
         else:
 
             obsRR=[]
@@ -49,22 +56,22 @@ class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
 
             for oR,oT in zip(obsR,obsT):
                     
-                print("YAA DATS HOT")
-                if self.estimating=='R':
+
 
                     RR =  oR['R']-np.dot(self.Rguess[oR['to']].T,self.Rguess[oR['from']])
                     Rnorm = np.linalg.norm(RR)
-                    print("RNORM")
-                    print(Rnorm)
-                elif self.estimating=='t':
-                    ttt = np.dot(self.Rguess[oT['from']],(self.Tguess[oT['to']]-self.Tguess[oT['from']]))
-                    ttnorm = np.linalg.norm(oT['t']-ttt)
-                    print("TNORM")
-                    print(ttnorm)
-                print("OUTLIER REMOVAL")
+
+                    if Rnorm<self.Rcutoff:
+                        obsRR.append(oR)
+
+                    ttt = np.dot(self.Rguess[oT['to']].T,(self.Tguess[oT['from']]-self.Tguess[oT['to']]))
+                    ttnorm = np.linalg.norm(np.squeeze(oT['t'])-np.squeeze(ttt))
+
+                    if ttnorm<self.Tcutoff:
+                        obsTT.append(oT)
+        
             
-            
-            super(OulierRemovalPoseCalculator,self).AddObservations(obsR,obsT)
+            super(OulierRemovalPoseCalculator,self).AddObservations(obsRR,obsTT)
             
                 
 
