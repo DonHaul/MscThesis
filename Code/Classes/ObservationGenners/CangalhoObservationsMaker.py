@@ -1,6 +1,7 @@
 from libs import *
+import ObservationsMaker
 
-class CangalhoObservationMaker:
+class CangalhoObservationMaker(ObservationsMaker.ObservationsMaker):
     def __init__(self,data):
 
         print("Getting Cangalho")

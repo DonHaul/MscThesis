@@ -40,7 +40,6 @@ class RosStreamReader(StreamReader.StreamReader):
         rospy.init_node('do_u_kno_di_wae', anonymous=True)
         
         camSub = []
-        freq=20
 
         #getting subscirpters to use message fitlers on
         for name in self.camNames:

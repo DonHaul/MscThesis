@@ -1,70 +1,56 @@
-#start scirpt after starting ros
+"""
+PosePipelineMaker.py
 
-import time
-import sys,getopt
-import rospy
-from optparse import OptionParser
-import json
+Generates and executes a pipeline to estimate poses
+"""
 
 import numpy as np
-
-import datetime
-
-import message_filters
-
-
-import random
-
-import CamPoseGetter
-
-import cv2
-
-import zStateManager as StateManager
-
-from libs import *
-
-import matplotlib.pyplot as plt
-
-
-import pyscreenshot
-
-from Classes.ImgReaders import RosStreamReader,ImgStreamReader
-from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker
-from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
-from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator
-
+import time
+import rospy
+import numpy as np
 from shutil import copyfile
-
-
-
-import zCommands as CommandLine
-
-import PosePipeline
-
-
-
+from libs import *
+import sys
 import threading
+
+#pipeline classes
+from Classes.ImgReaders import RosStreamReader,ImgStreamReader,StreamReader
+from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker, CangalhoSynthObsMaker
+from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
+from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator , PosesCalculatorSynth
+from Classes import PosePipeline
+
+import CommandLine
+
 
 def worker(posepipe):
 
-
+    #executes pipeline untill it is stopped
     while True:
        
+       #while there are new images
         if posepipe.imgStream.nextIsAvailable:
 
-        
+            #set input as consumed
             posepipe.imgStream.nextIsAvailable=False
 
+            #gets next image
             streamData= posepipe.imgStream.next()
 
-            if streamData is None:
-                break
+            #stop if there are no more images
+            #if streamData is None:
+            #    posepipe.Stop()
+            #    break
 
+            #generates observations
             img,ids,obsR,obsT = posepipe.ObservationMaker.GetObservations(streamData)
 
+            #adds observations to matrices
             posepipe.posescalculator.AddObservations(obsR,obsT)
+        else
+            posepipe.Stop()
+            break
 
-            #print(posepipe.posescalculator.n_obs)
 
 
         if posepipe.GetStop(): 
@@ -74,22 +60,25 @@ def worker(posepipe):
 
 
 def main(argv):
-
-    
+   
 
     #Reads the configuration file
     data =  FileIO.getJsonFromFile(argv[0])
     
+
     posepipeline = PosePipeline.PosePipeline()
 
     #holds
-    state= StateManager.State()
+    state={}
 
     posepipeline.folder = FileIO.CreateFolder("./PipelineLogs/"+FileIO.GetAnimalName())
 
+    #saves pipeline configuration on the outputfolder
     FileIO.putFileWithJson(data,"pipeline",posepipeline.folder+"/")
 
 
+
+    #hash of aruco detector classes
     arucodetectors={
         'singular':SingleArucosDetector.SingleArucosDetector,
         'allforone':CangalhoPnPDetector.CangalhoPnPDetector,
@@ -98,90 +87,113 @@ def main(argv):
 
     #Assigns the InputStream
     if data['input']['type']=='IMG':
+
+        #must set path where images are
         posepipeline.imgStream = ImgStreamReader.ImgStreamReader(data['input']['path'])
     elif data['input']['type']=='ROS':
 
         camNames = []
 
+        #sets cameras if there are any
         if "cameras" in data['model']:
             camNames = data['model']['cameras'] 
+
+        
         posepipeline.imgStream = RosStreamReader.RosStreamReader(camNames=camNames)
+    elif data['input']['type']=='SYNTH':
+        posepipeline.imgStream = StreamReader.StreamReader()
+        posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth()
     else:
         print("This Pipeline input is invalid")
 
-    #setting stuff on state
-    state.intrinsics = FileIO.getKDs(posepipeline.imgStream.camNames)
-    state.arucodata = FileIO.getJsonFromFile(data['model']['arucodata'])
-    state.arucomodel = FileIO.getFromPickle(data['model']['arucomodel'])
 
+
+    #setting stuff on state
+    state['intrinsics'] = FileIO.getKDs(posepipeline.imgStream.camNames)
+    state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
+    state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
+
+
+    #Assigns observation maker and posecalculator
     if data['model']['type']=='CANGALHO':
         
+
+        #static parameters
         singlecamData={
-            "K":state.intrinsics['K'][imgStream.camNames[0]],
-            "D":state.intrinsics['D'][imgStream.camNames[0]],
-            "arucodata":state.arucodata}
+            "K":state['intrinsics']['K'][imgStream.camNames[0]],
+            "D":state['intrinsics']['D'][imgStream.camNames[0]],
+            "arucodata":state['arucodata']}
+
+        #sets observation maker
         posepipeline.ObservationMaker =  CangalhoObservationsMaker.CangalhoObservationMaker(singlecamData)
 
-        posedata={"N_objects":len(state.arucodata['ids'])}
+        #sets pose calculator
+        posedata={
+            "N_objects":len(state['arucodata']['ids']),
+            "record":data["model"]["record"]
+            }
         posepipeline.posescalculator = PosesCalculator.PosesCalculator(posedata)
 
 
     elif data['model']['type']=='CAMERA':
+
+        #static parameters
         multicamData={
-            "intrinsics":state.intrinsics,
-            "arucodata":state.arucodata,
+            "intrinsics":state['intrinsics'],
+            "arucodata":state['arucodata'],
             "camnames":posepipeline.imgStream.camNames,
-            "arucomodel":state.arucomodel,
+            "arucomodel":state['arucomodel'],
             "innerpipeline":{
-                "arucodetector":arucodetectors[data['model']['arucodetection']]({'arucodata':state.arucodata,'arucomodel':state.arucomodel})
+                "arucodetector":arucodetectors[data['model']['arucodetection']]({'arucodata':state['arucodata'],'arucomodel':state['arucomodel']})
             }
             }
         
+        #sets observation maker
         posepipeline.ObservationMaker = CamerasObservationMaker.CamerasObservationMaker(multicamData)
 
-
+        #sets pose calculator
         posedata={
             "N_objects":len(posepipeline.imgStream.camNames),
             "record":data["model"]["record"]}
         
 
+        #sets observation treatment
         if data['model']['mode']['type']=='REGULAR':
             posepipeline.posescalculator = PosesCalculator.PosesCalculator(posedata)
         
         elif data['model']['mode']['type']=='OUTLIERREMOVE':
+
+            #static parameters
             posedata['observations']=data['model']['mode']['observations']
             posedata['Rcutoff']=data['model']['mode']['Rcutoff']
             posedata['Tcutoff']=data['model']['mode']['Tcutoff']
+
             posepipeline.posescalculator = OutlierRemPoseCalculator.OulierRemovalPoseCalculator(posedata)
 
         else:
             print("This pose calculator is invalid")
 
+    elif data['model']['type']=='SYNTH_CANGALHO':
+        posepipeline.ObservationMaker=
+        
     else:
         print("This Pipeline Model is invalid")
 
 
-    #sets thread where state changer will be
+    #sets thread for terminal window
     CommandLine.Start(posepipeline)
 
-
-    
-   
+    #sets thread for pipeline
     t1 = threading.Thread(target=worker,args=( posepipeline,))
     t1.start()
 
 
-
-
-
-
-    
-
-    #if data['input']['type']=='ROS':
-    try:
-        rospy.spin()
-    except KeyboardInterrupt:
-        print("shut")
+    #spins ros if necessary
+    if data['input']['type']=='ROS':
+        try:
+            rospy.spin()
+        except KeyboardInterrupt:
+            print("shut")
 
     print("Exited Stuff")
     posepipeline.Stop()
@@ -190,15 +202,10 @@ def main(argv):
     
     print("FINISHED ELEGANTLY")
 
+    #see and save resulting scene
     visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
     
-    
-
-
-    #image = pyautogui.screenshot()
-    #image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    #cv2.imwrite(posepipeline.folder+ "/screenshot.png", image)
-
+    #record r and t
     if data["model"]["record"]==True:
         recordeddata={
             "R":posepipeline.posescalculator.recordedRs,
@@ -214,36 +221,6 @@ def main(argv):
     FileIO.saveAsPickle("/poses",{"R":posepipeline.posescalculator.R,"t":posepipeline.posescalculator.t},posepipeline.folder,False,False)
     
  
-
-def imgShower(data):
-
-    rows=1
-    colunms=len(data['rgb'])
-    
-    if len(data['depth'])>0:
-        rows=rows+1
-    
-    shape = data['rgb'][0].shape
-    imgs =  np.zeros((shape[0]*rows,shape[1]*colunms,3),dtype=np.uint8)
-
-
-
-    for i in range(colunms):
-        imgs[0:shape[0],shape[1]*i:shape[1]*(i+1),0:3]=data['rgb'][i]
-        #imgs[shape[0]*1:shape[0]*(1+1),shape[1]*i:shape[1]*(i+1),0]=data['depth'][i]
-
-
-
-    cv2.imshow('image',imgs)
-    cv2.waitKey(10)
-    
-
-
-
-
-    
-
-
 
 if __name__ == '__main__':
     main(sys.argv[1:])

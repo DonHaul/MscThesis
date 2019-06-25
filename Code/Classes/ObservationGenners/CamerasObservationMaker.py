@@ -1,6 +1,8 @@
 from libs import *
+import ObservationsMaker
 
-class CamerasObservationMaker:
+class CamerasObservationMaker(ObservationsMaker.ObservationsMaker):
+
     def __init__(self,data):
 
         print("Getting Camera")

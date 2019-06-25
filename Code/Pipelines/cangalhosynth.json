@@ -1,8 +1,8 @@
 {
-    "input":{"type":"ROS",
+    "input":{"type":"SYNTH",
         "path":"../ImageSets/Cams_19-06-2019_19:56:19"
     },
-    "model":{"type":"CANGALHO",
-        "arucodata": "./static/ArucoWand.json"
+    "model":{"type":"CANGALHO"}
+        
     }
 }
