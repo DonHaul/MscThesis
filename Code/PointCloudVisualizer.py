@@ -8,129 +8,75 @@ import open3d
 import numpy as np
 import time
 
-import commandline
-
-import StateManager
-
-import json
-
-
 from libs import *
 
 import sys
 
 import copy
+import open3d
 
-def main(argv):
+class PCViewer():
     
-    
-    freq=50
-    print("FRAME RATE IS: " +str(freq))
+    def __init__(self,poses,path,size,state):
+        
 
-    filename=""
-    if(len(argv)>1):
-        filename=argv[1]
-    else:
-        print("Scene File Needed")
-        quit()
+        self.count = 0
 
-    #create save folder path
-    myString=filename
-    names = myString.split("/")
-    myString = names[len(names)-1]
-    myString = myString[0:myString.find(".")]
-
-    scene = LoadScene(filename)
-    scene=list(scene)
-
-    camNames=scene[2]
-
-    #confirm cameras are plugged in
-    IRos.CheckCamArePluggedIn(camNames)
+        self.state=state
 
 
-    stateru = StateManager.State(len(camNames),camPoses=scene,PCPath=myString)
+        self.state.pc = open3d.PointCloud()
 
-    commandline.Start(stateru,rospy)
+        self.state.updated=False
 
-    #fetch K of existing cameras on the files
-    intrinsics = FileIO.getKDs(camNames)
+        self.freq=20
+        self.R=poses['R']
+        self.t=poses['t']
+        self.camNames=poses['camnames']
 
-    rospy.init_node('ora_ora_ora_ORAA', anonymous=True)
+        if len(self.camNames)==0:
+            self.camNames = IRos.getAllPluggedCameras()
 
-    pcer = PCGetter(camNames,intrinsics,stateru,scene)
-
-    camSub=[]
-    #getting subscirpters to use message fitlers on
-    for name in camNames:
-        camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
-        camSub.append(message_filters.Subscriber(name+"/depth_registered/image_raw", Image))
+        #fetch K of existing cameras on the files
+        self.intrinsics = FileIO.getKDs(self.camNames)
 
 
-    ts = message_filters.ApproximateTimeSynchronizer(camSub,10, 1.0/freq, allow_headerless=True)
-    ts.registerCallback(pcer.callback)
-    print("callbacks registered")
+
+        self.N_cams= len(self.camNames)
+
+        self.state.pcs = [open3d.PointCloud() for i in range(self.N_cams)]
+        print(len(self.state.pcs))
+
+        self.height=size[0]
+        self.width=size[1]
+
+        rospy.init_node('do_u_kno_di_wae', anonymous=True)
+        
+        camSub = []
+
+        #getting subscirpters to use message fitlers on
+        for name in self.camNames:
+            camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
+            camSub.append(message_filters.Subscriber(name+"/depth_registered/image_raw", Image))
 
 
 
 
-    try:
-        rospy.spin()
-    except KeyboardInterrupt:
-        print("shut")
+        ts = message_filters.ApproximateTimeSynchronizer(camSub,20, 1.0/self.freq, allow_headerless=True)
+        ts.registerCallback(self.callback)
 
+        
 
-def LoadJson(filename,mode="r"):
-    f=open(filename,mode)
-    scene = json.load(f)
-    f.close()
-
-    return scene
-
-def LoadScene(filename):
-
-    scene = LoadJson(filename)
-    print("load scene")
-
-    R=[]
-    t=[]
-    camNames=[]
-    for cam in  scene['cameras']:
-        R.append(np.asarray(cam['R'], dtype=np.float32))
-
-        tt  =np.asarray(cam['t'], dtype=np.float32)
-        if len(tt.shape)==1:
-            tt = np.expand_dims(tt, axis=1)
-        t.append(tt)
-
-        camNames.append(cam['name'])
-
-
-    
-
-    return R,t,camNames
-
-class PCGetter(object):
-
-    def __init__(self,camNames,intrinsics,stateru,scene):
-        print("initiated")
-
-        self.camNames = camNames
-        self.N_cams= len(camNames)
-
-        self.state = stateru
-
-        self.scene = scene
-
-        #intrinsic Params
-        self.intrinsics = intrinsics
 
     def callback(self,*args):
 
-        #print("Callbacktime")
+        self.count = self.count + 1
+        print(self.count)
+        
+
 
         pcs=[]
-        pcs2=[]
+
         
 
         #iterate throguh cameras
@@ -148,26 +94,25 @@ class PCGetter(object):
             points = mmnip.depthimg2xyz2(depth_reg,K)
             points = points.reshape((480*640, 3))
 
-            #print(points.shape)
-            
-
-
             #print(colors.shape)
             rgb1 = rgb.reshape((480*640, 3))#colors
             
-            pc = pointclouder.Points2Cloud(points,rgb1,clean=True)
+            pc = pointclouder.Points2Cloud(points,rgb1,clean=True,existingPc=self.state.pcs[camId])
 
             pcs.append(pc)
-            pctemp =copy.deepcopy(pc)
-            pctemp.transform(mmnip.Rt2Homo(self.scene[0][camId],self.scene[1][camId].T))
-            pcs2.append(pctemp)
 
-        self.state.pcs = pcs
 
-        self.state.pc = pointclouder.MergeClouds(pcs2)
+
+        #self.state.pcs = pcs
+        #self.state.updated=True
+
+        #self.state.rgb = np.asarray(pcs[0].colors)
+        #self.state.xyz = np.asarray(pcs[0].points)
+
+
+        #print(self.state.pcs)
+        #self.state.pc = pointclouder.MergeClouds(pcs2)
+
+
 
             
-
-
-if __name__ == '__main__':
-    main(sys.argv)

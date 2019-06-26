@@ -23,11 +23,8 @@ def plotImg(img):
     plt.waitforbuttonpress()
     plt.close(fig)
 
-def draw_non_blocking():
-    pass
 
-
-def draw_geometry(pcd,R=None,t=None,saveImg = False,saveName=None):
+def draw_geometry(pcd,saveImg = False,saveName=None):
     '''
     Draws an open3d geometry with a black bacground so that my eyes dont bleed out.
     Upon pressing Escape, the plot closes.

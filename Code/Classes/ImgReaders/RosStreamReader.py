@@ -36,6 +36,8 @@ class RosStreamReader(StreamReader.StreamReader):
 
         self.nextIsAvailable=False
 
+
+        self.count = 0
         
 
 
@@ -59,6 +61,8 @@ class RosStreamReader(StreamReader.StreamReader):
 
     def callback(self,*args):
 
+        self.count = self.count + 1
+        print(self.count)
         data={'names':self.camNames,'rgb':[],'depth':[]}
         #print("NEXTU DES")
         #print(self.N_cams)

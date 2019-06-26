@@ -255,7 +255,15 @@ def main(argv):
 
         FileIO.saveAsPickle("/recorded",recordeddata,posepipeline.folder,False,False)
     
-    FileIO.saveAsPickle("/poses",{"R":posepipeline.posescalculator.R,"t":posepipeline.posescalculator.t},posepipeline.folder,False,False)
+    datatosave= {"R":posepipeline.posescalculator.R,"t":posepipeline.posescalculator.t}
+    
+
+    if data['input']['type']=='ROS':
+
+        datatosave['camnames']=posepipeline.imgStream.camNames
+
+
+    FileIO.saveAsPickle("/poses",datatosave,posepipeline.folder,False,False)
     
  
 

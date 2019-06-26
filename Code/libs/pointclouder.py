@@ -2,7 +2,7 @@ import open3d
 import numpy as np
 import visu
 
-def Points2Cloud(points,rgb=None,clean=False):
+def Points2Cloud(points,rgb=None,clean=False,existingPc=None):
     '''
     Converts 3D points and colors into a pointcoud
     '''
@@ -14,7 +14,10 @@ def Points2Cloud(points,rgb=None,clean=False):
     
 
     #make point cloud    
-    cloud = open3d.PointCloud()
+    cloud = existingPc
+    if cloud is None:
+        print("had to create a new one")
+        cloud = open3d.PointCloud()
 
 
     cloud.points = open3d.Vector3dVector(points)
