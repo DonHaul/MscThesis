@@ -25,8 +25,12 @@ def worker(state):
 
     #boom = create_mesh_sphere(10)
     #print(type(boom))
-    #vis = Visualizer()
-    #vis.create_window()
+    vis = Visualizer()
+    vis.create_window()
+    vis.run()
+            
+    #vis.add_geometry(state.pcs[0])
+
     #print("EEERRRRR")
     #print(state.pcs)
     
@@ -38,7 +42,8 @@ def worker(state):
 
     
     while state.stop_threads==False:
-
+        time.sleep(1)
+        print(state.updated)
         if(state.updated==True):
 
 
@@ -51,13 +56,14 @@ def worker(state):
             #print(state.xyz)
             #print(state.rgb)
             #pc = pointclouder.Points2Cloud(state.xyz,state.rgb)
+            vis.add_geometry(state.pcs[0])
+            vis.update_geometry()
+            vis.poll_events()
+            vis.update_renderer()
             #print(pc)
             #visu.draw_geometry([state.pcs[0]])
             
-            #vis.add_geometry(state.pcs[0])
-            #vis.update_geometry()
-            #vis.poll_events()
-            #vis.update_renderer()
+
             
 
         

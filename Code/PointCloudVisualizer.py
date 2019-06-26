@@ -101,10 +101,8 @@ class PCViewer():
 
             pcs.append(pc)
 
-
-
-        #self.state.pcs = pcs
-        #self.state.updated=True
+        self.state.pcs = pcs
+        self.state.updated=True
 
         #self.state.rgb = np.asarray(pcs[0].colors)
         #self.state.xyz = np.asarray(pcs[0].points)
