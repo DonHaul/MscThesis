@@ -29,7 +29,8 @@ class ImgStreamReader(StreamReader.StreamReader):
 
     
     def next(self):
-        print("NEXT WAS CALLED")
+        
+        super(StreamReader,self).next()
 
         data={'names':self.camNames,'rgb':[],'depth':[]}
 

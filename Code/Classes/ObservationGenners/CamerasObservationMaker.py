@@ -25,13 +25,17 @@ class CamerasObservationMaker(ObservationsMaker.ObservationsMaker):
         self.arucoDetector =  data["innerpipeline"]['arucodetector']
 
 
+        print("CAMNAMES ARE")
+        print(self.camNames)
+
+
 
 
     def GetObservations(self,streamData):
         
+        
         #iterate throguh cameras
         for camId in range(0,self.N_objects):
-            
             streamsingle = {
                 'rgb':streamData['rgb'][camId],
                 'depth':streamData['depth'][camId]

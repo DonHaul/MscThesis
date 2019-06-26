@@ -26,12 +26,17 @@ class PosesCalculator(object):
         #A.T b initialized
         self.ATb = np.zeros((self.N_objects*3,1))
 
-
-        self.recordRT=data['record']
+        if 'record' in data:
+            self.recordRT=data['record']
+        else:
+            self.recordRT=False
 
 
         self.recordedRs=[]
         self.recordedTs=[]
+
+        self.R=None
+        self.t=None
         
     def AddObservations(self,obsR,obsT):
 

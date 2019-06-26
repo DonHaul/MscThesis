@@ -1,0 +1,1 @@
+{"input": {"type": "SYNTH"}, "model": {"noiset": 0.1, "model": "./static/fakecangalhos/Fake_4_crab_25-06-2019_18:44:35.pickle", "noise": 1.0, "type": "SYNTH_CANGALHO", "samples": 500}}

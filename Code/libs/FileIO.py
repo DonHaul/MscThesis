@@ -161,7 +161,8 @@ def getFromPickle(filename):
         p  =  pickle.load(f)
         f.close
     except IOError:
-        print("ERROR: No Such File")
+
+        raise Exception("No Such File")
 
         
     return p

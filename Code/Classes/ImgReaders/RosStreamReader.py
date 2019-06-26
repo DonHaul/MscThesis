@@ -34,6 +34,8 @@ class RosStreamReader(StreamReader.StreamReader):
 
         self.data={'names':self.camNames,'rgb':[],'depth':[]}
 
+        self.nextIsAvailable=False
+
         
 
 
@@ -58,7 +60,8 @@ class RosStreamReader(StreamReader.StreamReader):
     def callback(self,*args):
 
         data={'names':self.camNames,'rgb':[],'depth':[]}
-
+        #print("NEXTU DES")
+        #print(self.N_cams)
         for camId in range(0,self.N_cams):
             img = IRos.rosImg2RGB(args[camId*2])
             depth = IRos.rosImg2Depth(args[camId*2+1])
@@ -71,6 +74,11 @@ class RosStreamReader(StreamReader.StreamReader):
 
 
     def next(self):
+        
+
+        #print(type(RosStreamReadear))
+        self.nextIsAvailable=False # this should be replaced by the next line
+        #super(RosStreamReadear,self).next()
 
         return self.data      
 

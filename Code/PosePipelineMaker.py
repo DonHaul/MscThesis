@@ -15,7 +15,7 @@ import threading
 
 #pipeline classes
 from Classes.ImgReaders import RosStreamReader,ImgStreamReader,StreamReader
-from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker, CangalhoSynthObsMaker
+from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker, CangalhoSynthObsMaker, CameraSynthObsMaker
 from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
 from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator , PosesCalculatorSynth
 from Classes import PosePipeline
@@ -27,8 +27,7 @@ def worker(posepipe):
 
     #executes pipeline untill it is stopped
     while True:
-       
-       #while there are new images
+        #while there are new images
         if posepipe.imgStream.nextIsAvailable:
 
             #set input as consumed
@@ -37,23 +36,30 @@ def worker(posepipe):
             #gets next image
             streamData= posepipe.imgStream.next()
 
+
+
             #stop if there are no more images
-            #if streamData is None:
-            #    posepipe.Stop()
-            #    break
+            if streamData is None:
+                posepipe.Stop()
+                break
+            
 
             #generates observations
             img,ids,obsR,obsT = posepipe.ObservationMaker.GetObservations(streamData)
 
             #adds observations to matrices
             posepipe.posescalculator.AddObservations(obsR,obsT)
-        else
+        
+        
+        elif posepipe.imgStream.finished:
+            print("STOPPING")
             posepipe.Stop()
             break
 
 
 
         if posepipe.GetStop(): 
+            print("EXITING")
             break           
             
 
@@ -102,16 +108,32 @@ def main(argv):
         posepipeline.imgStream = RosStreamReader.RosStreamReader(camNames=camNames)
     elif data['input']['type']=='SYNTH':
         posepipeline.imgStream = StreamReader.StreamReader()
-        posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth()
+
+
+        state['synthmodel']=FileIO.getFromPickle(data['model']['model'])
+        if data['model']['type']=="SYNTH_CAMERA":
+            state['modelscene']=FileIO.getFromPickle(data['model']['modelscene'])
+            print(state['modelscene'])
+        
+        #print(state['synthmodel'][0])
+        #print(state['synthmodel'][1])
+        #visu.ViewRefs(state['synthmodel'][0],state['synthmodel'][1],refSize=1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
+    
+
+        posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth({"N_objects":len(state['synthmodel'][0])})
+
+        
     else:
         print("This Pipeline input is invalid")
 
 
 
-    #setting stuff on state
-    state['intrinsics'] = FileIO.getKDs(posepipeline.imgStream.camNames)
-    state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
-    state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
+    if data['input']['type']!='SYNTH':
+        #setting stuff on state
+        state['intrinsics'] = FileIO.getKDs(posepipeline.imgStream.camNames)
+        state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
+        state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
+    
 
 
     #Assigns observation maker and posecalculator
@@ -174,7 +196,20 @@ def main(argv):
             print("This pose calculator is invalid")
 
     elif data['model']['type']=='SYNTH_CANGALHO':
-        posepipeline.ObservationMaker=
+        
+        obsdata=data['model']
+        obsdata['synthmodel']=state['synthmodel']
+
+        posepipeline.ObservationMaker= CangalhoSynthObsMaker.CangalhoSynthObsMaker(obsdata)
+    elif data['model']['type']=='SYNTH_CAMERA':
+        
+        obsdata=data['model']
+        obsdata['synthmodel']=state['synthmodel']
+        obsdata['modelscene']=state['modelscene']
+
+        visu.ViewRefs(obsdata['modelscene'][0],obsdata['modelscene'][1])
+
+        posepipeline.ObservationMaker= CameraSynthObsMaker.CameraSynthObsMaker(obsdata)
         
     else:
         print("This Pipeline Model is invalid")
@@ -203,10 +238,12 @@ def main(argv):
     print("FINISHED ELEGANTLY")
 
     #see and save resulting scene
-    visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
+    print(posepipeline.posescalculator.R)
+    print(posepipeline.posescalculator.t)
+    visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
     
     #record r and t
-    if data["model"]["record"]==True:
+    if "record" in data["model"] and data["model"]["record"]==True:
         recordeddata={
             "R":posepipeline.posescalculator.recordedRs,
             "T":posepipeline.posescalculator.recordedTs

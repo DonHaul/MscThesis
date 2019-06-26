@@ -2,20 +2,28 @@ from libs import *
 import ObservationsMaker
 
 class CangalhoSynthObsMaker(ObservationsMaker.ObservationsMaker):
-    def __init__(self,arucoData,n_obs,noise):
+    def __init__(self,data):
 
-        self.R=arucoData(0)
-        self.t=arucoData(1)
-        self.n_obs = n_obs
-        self.noise = noise
-        pass
+        
+
+        self.R=data['synthmodel'][0]
+        self.t=data['synthmodel'][1]
+        
+
+        self.n_obs = data['samples'] 
+        self.noise = data['noise']
+        self.noiset = data['noiset']
+        
+
+        
 
 
-    def GetObservations(self,*args):
+
+    def GetObservations(self,streamData):
 
 
-        obsR,obst = synth.SampleGenerator(R,t,noise=self.noise,samples=self.n_obs)
+        obsR,obst = synth.SampleGenerator(self.R,self.t,noise=self.noise,samples=self.n_obs,noiset=self.noiset)
 
 
-        return _,_,obsR,obsT
+        return None,None,obsR,obst
         
