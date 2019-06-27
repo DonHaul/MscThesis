@@ -1,48 +1,59 @@
 import numpy as np
 import cv2
 from libs import *
-import plyreader
+
 import open3d as o3d
 import copy
 import sys
+
+import os
 
 voxel_size = 0.02
 max_correspondence_distance_coarse = voxel_size * 15
 max_correspondence_distance_fine = voxel_size * 1.5
 
 def main(argv):
-    pcs = plyreader.load_point_clouds(argv[1])
-    pcc = pointclouder.MergeClouds(pcs)
-    #o3d.draw_geometries(pcs)
+    
+
+    poses = FileIO.getFromPickle(argv[1]+"/../../poses.pickle")
+    print(poses)
+
+    pcs= [None for x in range(len(poses['camnames']))]
+    print(argv)
+
+
+
+    for filename in os.listdir(argv[1]):
+        if filename.endswith(".ply"): 
+            print(filename)
+
+            filenn = filename.split(".")
+            
+            pcs[poses['camnames'].index(filenn[0])] = o3d.read_point_cloud(argv[1]+"/"+filename)
+        else:
+            continue
+
     
 
 
-    R,T,camNames = FileIO.LoadScene(argv[2])
-    print(R,T,camNames)
-    Hs=[]
-    for  i in range(len(pcs)):
-
-        H = mmnip.Rt2Homo(R[i],T[i].T)
-
-        Hs.append(H)
-
+    visu.draw_geometry(pcs)
+    for i in range(len(pcs)):
+        H = mmnip.Rt2Homo(poses['R'][i],poses['t'][i].T)
         pcs[i].transform(H)
 
 
 
-
     visu.draw_geometry(pcs)
+
+
     print("simple")
     pc = simpleMultiICP(pcs)
     visu.draw_geometry([pc])
 
-    pcres = MultiICPv2(pcs)
+    #pcres = MultiICPv2(pcs)
     #pcres = MultiICPv2(pcres)
     #pcres = MultiICPv2(pcres)
 
-
-    print("Boom?")
-    visu.draw_geometry(pcres)
 
 
     
@@ -105,7 +116,7 @@ def simpleMultiICP(pcs,voxel_radius=[0.04],max_iter=[100],lambda_geometric=1):
 
         pccum= pointclouder.MergeClouds([pccum,pcs[i]])
 
-        visu.draw_geometry([pccum])
+
 
     return pccum
 

@@ -10,6 +10,22 @@ import matplotlib.pyplot as plt
 
 saveInc=0
 
+def CreateFolderIncremental(directory):
+    
+    count=1
+    path = directory  + str(count)
+
+    while os.path.exists(path):
+        count=count+1
+        path = directory + str(count)
+
+    os.makedirs(path)
+
+    return path
+
+
+
+
 def CreateFolder(directory,putDate=True):
 
     path=directory

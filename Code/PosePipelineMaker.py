@@ -19,7 +19,7 @@ from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservati
 from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
 from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator , PosesCalculatorSynth
 from Classes import PosePipeline
-
+from Classes.Commands import CommandsImporterPose
 import CommandLine
 
 
@@ -185,10 +185,14 @@ def main(argv):
         
         elif data['model']['mode']['type']=='OUTLIERREMOVE':
 
+
+            print("YOOO")
             #static parameters
             posedata['observations']=data['model']['mode']['observations']
             posedata['Rcutoff']=data['model']['mode']['Rcutoff']
             posedata['Tcutoff']=data['model']['mode']['Tcutoff']
+            print(posedata)
+            
 
             posepipeline.posescalculator = OutlierRemPoseCalculator.OulierRemovalPoseCalculator(posedata)
 
@@ -216,7 +220,7 @@ def main(argv):
 
 
     #sets thread for terminal window
-    CommandLine.Start(posepipeline)
+    CommandLine.Start(posepipeline,CommandsImporterPose.CommandsImporterPose)
 
     #sets thread for pipeline
     t1 = threading.Thread(target=worker,args=( posepipeline,))
@@ -240,7 +244,7 @@ def main(argv):
     #see and save resulting scene
     print(posepipeline.posescalculator.R)
     print(posepipeline.posescalculator.t)
-    visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
+    visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
     
     #record r and t
     if "record" in data["model"] and data["model"]["record"]==True:

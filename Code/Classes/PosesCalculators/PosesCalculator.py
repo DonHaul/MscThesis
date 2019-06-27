@@ -37,18 +37,33 @@ class PosesCalculator(object):
 
         self.R=None
         self.t=None
+
+    def Show(self):
+        print(self.ATAR)
+
+    def Clear(self):
+        #A.T A initialized
+        self.ATAR = np.zeros((self.N_objects*3,self.N_objects*3))
+
+        #A.T A initialized
+        self.ATAt = np.zeros((self.N_objects*3,self.N_objects*3))
+
+        #A.T b initialized
+        self.ATb = np.zeros((self.N_objects*3,1))
         
     def AddObservations(self,obsR,obsT):
 
-
+        #print("ADDING")
         if self.recordRT:
-
+            #print("RECORDING")
             for oT in obsT:
                 self.recordedTs.append(oT['t'])
 
             for oR in obsR:
                 
                 self.recordedRs.append(oR['R'])
+
+                #print("len is", len(self.recordedRs))
 
 
         #calculates rotations

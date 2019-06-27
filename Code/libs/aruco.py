@@ -255,7 +255,7 @@ def GetCangalhoFromMarkersProcrustes(ids,det_corners,K,arucoData,arucoModel,dept
 
     #the procrustes only works with 4 or more points
     if(points3D.shape[0]<4):
-        print("Procrustes could not be done")
+        #print("Procrustes could not be done")
         return None,None
     
 

@@ -21,13 +21,15 @@ import Classes.State as State
 import CommandLine
 from open3d import *
 
+import Classes.Commands.CommandsImporterPC as CommandsImporterPC 
+
 def worker(state):
 
     #boom = create_mesh_sphere(10)
     #print(type(boom))
     vis = Visualizer()
     vis.create_window()
-    vis.run()
+
             
     #vis.add_geometry(state.pcs[0])
 
@@ -42,8 +44,8 @@ def worker(state):
 
     
     while state.stop_threads==False:
-        time.sleep(1)
-        print(state.updated)
+        
+        time.sleep(0.5)
         if(state.updated==True):
 
 
@@ -52,23 +54,10 @@ def worker(state):
             state.updated=False
             #print(state.pcs)
 
-
-            #print(state.xyz)
-            #print(state.rgb)
-            #pc = pointclouder.Points2Cloud(state.xyz,state.rgb)
             vis.add_geometry(state.pcs[0])
             vis.update_geometry()
             vis.poll_events()
             vis.update_renderer()
-            #print(pc)
-            #visu.draw_geometry([state.pcs[0]])
-            
-
-            
-
-        
-
-            
 
 
 
@@ -77,17 +66,24 @@ def main(argv):
     poses = FileIO.getFromPickle(argv[0]+"/poses.pickle")
 
     state = State.State()
-    
+    state.path=argv[0]
+
+    state.camNames=poses['camnames']
+    state.R=poses['R']
+    state.t=poses['t']
+
     print(poses)
 
     print("YEET")
 
     PointCloudVisualizer.PCViewer(poses,argv[0],(480,640),state)
 
+    #sets thread for terminal window
+    CommandLine.Start(state,CommandsImporterPC.CommandsImporterPC)
 
     #sets thread for pipeline
-    t1 = threading.Thread(target=worker,args=( state,))
-    t1.start()
+    #t1 = threading.Thread(target=worker,args=( state,))
+    #t1.start()
     
     
 
@@ -99,7 +95,7 @@ def main(argv):
 
     state.Stop()
     
-    t1.join()
+    #t1.join()
 
     
 if __name__ == '__main__':

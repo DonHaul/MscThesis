@@ -74,11 +74,6 @@ class PCViewer():
         print(self.count)
         
 
-
-        pcs=[]
-
-        
-
         #iterate throguh cameras
         for camId in range(0,self.N_cams):
             
@@ -97,11 +92,8 @@ class PCViewer():
             #print(colors.shape)
             rgb1 = rgb.reshape((480*640, 3))#colors
             
-            pc = pointclouder.Points2Cloud(points,rgb1,clean=True,existingPc=self.state.pcs[camId])
+            self.state.pcs[camId] = pointclouder.Points2Cloud(points,rgb1,clean=True,existingPc=self.state.pcs[camId])
 
-            pcs.append(pc)
-
-        self.state.pcs = pcs
         self.state.updated=True
 
         #self.state.rgb = np.asarray(pcs[0].colors)

@@ -1,5 +1,6 @@
 import PosesCalculator
 import numpy as np
+import time
 
 class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
 
@@ -17,6 +18,8 @@ class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
         self.Rguess=[]
         self.Tguess=[]
 
+
+
         self.records = self.recordRT
         self.recordRT=False
 
@@ -24,6 +27,7 @@ class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
 
     def AddObservations(self,obsR,obsT):
         
+
         for o in obsR:
             self.n_obs[o['to']]=self.n_obs[o['to']]+1
             self.n_obs[o['from']]=self.n_obs[o['from']]+1
@@ -46,9 +50,14 @@ class OulierRemovalPoseCalculator(PosesCalculator.PosesCalculator):
                     
                     self.initialguess=False
                     self.estimating='R'
+                    print("STARTING CAPTURE NOW")
+                    time.sleep(1)
+                    
 
                     if self.records:
                         self.recordRT=True
+                    super(OulierRemovalPoseCalculator,self).Clear()
+                    
         else:
 
             obsRR=[]
