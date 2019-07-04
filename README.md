@@ -65,4 +65,7 @@ do modelo captado
 0.2921658037606405
 0.2959685667815067
 
+## kinect mode
+rosbag record --split --size=2048 -b 0 /camera/depth/points /camera/depth_registered/points /camera/rgb/raw /camera/depth/image_raw /camera/rgb/image_raw /tf_static
+
 

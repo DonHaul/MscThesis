@@ -20,6 +20,7 @@ def CheckCamArePluggedIn(camnames):
     
     return
 
+
 def getAllPluggedCameras():
     '''
     Find all the kinect cameras that are plugged into the computer 

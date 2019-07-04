@@ -80,7 +80,33 @@ def savePCs(filename,pcs,pc):
         open3d.write_point_cloud("./PC/"+filename+"/pointcloud"+str(i)+".ply", pcs[i])
 
 
+def getIntrinsics(camNames):
+    '''
+    Gets Intrinsics and Distortion parameters.
+    It locates the calibration files relative to the camera names passed
 
+    Args:
+        camNames [String]: list of all existing camera names
+    '''
+    
+    intrinsics={}
+
+
+    for name in camNames:
+
+        #fetches files
+        filedict = getFromPickle("./static/camcalib_"+name+".pickle")
+
+        #if file does not exist
+        if(filedict==None):
+            print("Calibration File Not Found")
+            filedict = getJsonFromFile("./static/camcalib_default.json")
+
+        #assigns parameters
+        intrinsics[name]=filedict
+
+
+    return intrinsics
 
 def getKDs(camNames):
     '''
