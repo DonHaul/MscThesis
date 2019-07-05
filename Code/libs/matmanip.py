@@ -290,7 +290,90 @@ def singlePixe2xyz(depth,coords,K):
 
     return xyz
 
-def depthimg2xyz2(depthimg,K):
+def xyz2rgbd(xyz, rgb, R, T, K_rgb):
+    
+    Kx=K_rgb[0,0]
+    Ky=K_rgb[1,1]
+    Cx=K_rgb[0,2]
+    Cy=K_rgb[1,2]
+
+    print(xyz.shape)
+    print(T)
+    T= np.expand_dims(T,0)
+    print(T)
+    xyz_rgb = (np.dot(R,xyz.T)).T #dont know if order is correct ERROR WRONG
+    xyz_rgb = xyz + T
+    xyz_rgb=xyz_rgb.T
+
+    x = xyz_rgb[0,:]
+    y = xyz_rgb[1,:]
+    z = xyz_rgb[2,:]
+
+    u = np.round(Kx * x/z + Cx)
+    v = np.round(Ky * y/z + Cy)
+
+    
+    u=u.astype(np.int)
+    v=v.astype(np.int)
+    
+
+    rgb_size = rgb.shape
+
+    n_pixels=rgb.shape[0]*rgb.shape[1]
+
+    #set to 1 elements out of bounds
+    v = np.where(v>=rgb_size[0],0,v) #it is set to 1 if mask is true else it is set to what it was befor v[i]
+    v = np.where(v<0,0,v)
+    
+    u=np.where(u>=rgb_size[1],1,u)
+    u = np.where(u<0,0,u)
+
+    print(type(u[0]))
+    print(type(v[0]))
+
+    print("RGBSHAAPE")
+    print(rgb_size[0:2])
+
+    print("invalids?")
+    print(u[u > rgb_size[1]])
+    print(v[v > rgb_size[0]])
+    print(u[u <0])
+    print(v[v <0])
+    
+    #for y1,y2 in zip(u,v):
+    #    print(y1,y2)
+
+    print(u.shape)
+    print(v.shape)
+
+    
+    #gets index of where point is
+    rgb_inds = np.ravel_multi_index((v,u),np.array(rgb_size[0:2],dtype=np.int)) #might be WRONG ORDER ERROR
+
+    print(rgb_inds.shape)
+    print(rgb_inds)
+    rgbd = np.zeros((n_pixels,3))
+    rgb_aux = rgb.reshape(480*640,3)
+
+    print(rgb_aux.shape)
+
+    for id in rgb_inds:
+        rgbd[id,:]=rgb_aux[id]
+    #colors corresponding to those pixels only on the ids that exist on the depth image
+    #rgbd = [0:n_pixels,:]= rgb_aux[rgb_inds]
+    #rgbd((1:n_pixels).T,:) = rgb_aux(rgb_inds,:);
+    
+    
+    #rgbd = np.where(xyz[:,2]==0,0,rgbd)
+    #gbd(xyz(:,1) == 0 & xyz(:,2) == 0 & xyz(:,3) == 0,:) = 0;
+
+    rgbd=rgbd.reshape(rgb_size).astype(np.uint8)
+
+    return rgbd
+
+
+
+def depthimg2xyz2(depthimg,K,size=(480,640)):
     '''
     Convert full depth image
     '''
@@ -300,9 +383,9 @@ def depthimg2xyz2(depthimg,K):
     cx=K[0,2]
     cy=K[1,2]
     
-    depthcoords = np.zeros((480, 640,3)) #height by width  by 3(X,Y,Z)
+    depthcoords = np.zeros((size[0], size[1],3)) #height by width  by 3(X,Y,Z)
 
-    u,v =np.indices((480,640))
+    u,v =np.indices((size[0], size[1]))
     u=u-cy
     v=v-cx
 

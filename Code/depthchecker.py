@@ -25,11 +25,11 @@ def main(argv):
     freq=1
 
     camNames = IRos.getAllPluggedCameras()
-    camName = camNames[0]
+    camName = "camera"
 
     
     #fetch K of existing cameras on the files
-    intrinsics = 1#FileIO.getIntrinsics(camNames)
+    intrinsics = FileIO.getIntrinsics(['speedwagon'])
 
     rospy.init_node('ora_ora_ora_ORAA', anonymous=True)
 
@@ -39,7 +39,7 @@ def main(argv):
     print(camName)
     camSub=[]
     #getting subscirpters to use message fitlers on
-    camSub.append(message_filters.Subscriber(camName+"/rgb/image_color", Image))
+    camSub.append(message_filters.Subscriber(camName+"/rgb/image_raw", Image))
     camSub.append(message_filters.Subscriber(camName+"/depth/image_raw", Image))
     camSub.append(message_filters.Subscriber(camName+"/depth_registered/points", PointCloud2))
     #camSub.append(message_filters.Subscriber(camName+"/depth/points", PointCloud2))
@@ -89,10 +89,38 @@ class PCGetter(object):
         cv2.destroyAllWindows()
 
 
+        points = mmnip.depthimg2xyz2(depth_reg,self.intrinsics['speedwagon']['depth']['K'],(360,480))
+        print(points.shape)
+        points = points.reshape((360*480, 3))
+        print(points.shape)
+
+        rgbd = mmnip.xyz2rgbd(points, rgb, self.intrinsics['speedwagon']['depth']['R'] , self.intrinsics['speedwagon']['depth']['P'][:,3] , self.intrinsics['speedwagon']['rgb']['K'])
+
+        cv2.imshow("wow",rgbd)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+        print("HOLA")
+        print(rgbd.shape)
+        rgbd=cv2.resize(rgbd,(480,360))
+        print(rgbd.shape)
+        cv2.imshow("wow",rgbd)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        rgb1=rgbd.reshape((360*480, 3))
+
+        pc1 = pointclouder.Points2Cloud(points,rgb1)
+
+        open3d.draw_geometries([pc1])
+
         
         #get matrix intrinsics
         #K = self.intrinsics[]['K'][self.camName]
         #D = self.intrinsics['D'][self.camName]
+
+
+
+
 
         pc = point_cloud2.read_points_list( args[2], skip_nans=True)
 
@@ -119,7 +147,7 @@ class PCGetter(object):
 
         pc = pointclouder.Points2Cloud(xyz.T)
 
-        visu.draw_geometry([pc])
+        visu.draw_geometry([pc,pc1])
 
         
 
