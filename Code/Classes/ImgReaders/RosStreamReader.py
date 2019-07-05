@@ -18,7 +18,7 @@ import StreamReader
 class RosStreamReader(StreamReader.StreamReader):
 
     
-    def __init__(self,camNames=None,freq=20):
+    def __init__(self,camNames=None,inputData=None,freq=2):
 
         StreamReader.StreamReader.__init__(self)
 
@@ -29,7 +29,8 @@ class RosStreamReader(StreamReader.StreamReader):
         if len(self.camNames)==0:
             self.camNames = IRos.getAllPluggedCameras()
 
-        
+
+
         self.N_cams = len(self.camNames)
 
         self.data={'names':self.camNames,'rgb':[],'depth':[]}
@@ -38,28 +39,37 @@ class RosStreamReader(StreamReader.StreamReader):
 
 
         self.count = 0
+
+        self.topicRGB=inputData['rgbtopic']
+        self.topicDepth=inputData['depthtopic']
+
         
 
 
-        rospy.init_node('do_u_kno_di_wae', anonymous=True)
+        rospy.init_node('do_u_kno_di_waedds', anonymous=True)
         
         camSub = []
 
         #getting subscirpters to use message fitlers on
         for name in self.camNames:
-            camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
-            camSub.append(message_filters.Subscriber(name+"/depth_registered/image_raw", Image))
+            print("topic",name + self.topicRGB)
+            print("topic",name + self.topicDepth)
+            camSub.append(message_filters.Subscriber(name + self.topicRGB, Image))
+            camSub.append(message_filters.Subscriber(name + self.topicDepth, Image))
 
 
 
 
         ts = message_filters.ApproximateTimeSynchronizer(camSub,20, 1.0/freq, allow_headerless=True)
+        print("CALLBACK")
         ts.registerCallback(self.callback)
 
         
 
 
     def callback(self,*args):
+
+
 
         self.count = self.count + 1
         #print(self.count)

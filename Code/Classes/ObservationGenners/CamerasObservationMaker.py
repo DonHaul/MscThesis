@@ -1,6 +1,8 @@
 from libs import *
 import ObservationsMaker
 
+import numpy as np
+
 class CamerasObservationMaker(ObservationsMaker.ObservationsMaker):
 
     def __init__(self,data):
@@ -15,7 +17,9 @@ class CamerasObservationMaker(ObservationsMaker.ObservationsMaker):
 
         self.estimating ="R"
 
-        self.N_objects = len(self.intrinsics['K'])
+
+
+        self.N_objects = len(self.intrinsics)
 
         self.arucoData['idmap'] = aruco.markerIdMapper(self.arucoData['ids'])
 
@@ -42,7 +46,7 @@ class CamerasObservationMaker(ObservationsMaker.ObservationsMaker):
             }
             
 
-            obs,img = self.arucoDetector.ArucoDetector(streamsingle,self.intrinsics['K'][self.camNames[camId]],self.intrinsics['D'][self.camNames[camId]])
+            obs,img = self.arucoDetector.ArucoDetector(streamsingle,self.intrinsics[self.camNames[camId]]['rgb']['K'],(0,0,0,0))
 
 
 

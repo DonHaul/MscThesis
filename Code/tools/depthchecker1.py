@@ -132,7 +132,7 @@ class PCGetter(object):
 
         #place where all geometries will be stores
         sphs = []
-
+        '''
         #3D WAY (Scaled Procrustes)
         if  ids is not None and len(ids)>0:
 
@@ -199,7 +199,7 @@ class PCGetter(object):
             
             
             DATApnp= (Rr,tt)
-
+        
 
         print(DATAprocrustes[1])
 
@@ -243,6 +243,35 @@ class PCGetter(object):
                 sphere.paint_uniform_color([1,0,1])
                 sphs.append(sphere)
                 pointsu=np.hstack((pointsu,point))
+
+        '''
+
+        #Marker-by-Marker WAY
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],K,D)
+    
+        tvecs=np.squeeze(tvecs)
+
+        #turn 0D into 1D
+        if len(tvecs.shape)==1:
+            tvecs = np.expand_dims(tvecs,axis=0)
+        
+
+        for i in range(0,tvecs.shape[0]):
+
+            sphere = open3d.create_mesh_sphere(0.016)
+
+            #converts in 3x3 rotation matrix
+            Rr,_ = cv2.Rodrigues(rvecs[i])
+
+            H = mmnip.Rt2Homo(Rr,tvecs[i,:])
+
+            #prints marker position estimates
+            refe = open3d.create_mesh_coordinate_frame(0.1, origin = [0, 0, 0])
+            refe.transform(H)
+            sphere.transform(H)
+            sphere.paint_uniform_color([0,0,1])
+            sphs.append(sphere)
+        sphs.append(refe)
 
 
         #converts image 2 depth

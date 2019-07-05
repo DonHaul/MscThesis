@@ -28,7 +28,10 @@ def worker(posepipe):
     #executes pipeline untill it is stopped
     while True:
         #while there are new images
+
+        #print(posepipe.imgStream.nextIsAvailable)
         if posepipe.imgStream.nextIsAvailable:
+            
 
             #set input as consumed
             posepipe.imgStream.nextIsAvailable=False
@@ -36,7 +39,7 @@ def worker(posepipe):
             #gets next image
             streamData= posepipe.imgStream.next()
 
-
+            posepipe.imgShower(streamData)       
 
             #stop if there are no more images
             if streamData is None:
@@ -58,15 +61,20 @@ def worker(posepipe):
 
 
 
+
         if posepipe.GetStop(): 
             print("EXITING")
-            break           
+            break    
+
+
             
 
 
 
 def main(argv):
    
+    if len(argv)==0:
+       raise Exception('Please specify a Pipeline File')
 
     #Reads the configuration file
     data =  FileIO.getJsonFromFile(argv[0])
@@ -105,7 +113,15 @@ def main(argv):
             camNames = data['model']['cameras'] 
 
         
-        posepipeline.imgStream = RosStreamReader.RosStreamReader(camNames=camNames)
+        posepipeline.imgStream = RosStreamReader.RosStreamReader(camNames=camNames,inputData = data['input'])
+
+        #setting stuff on state
+        state['intrinsics'] = FileIO.getIntrinsics(posepipeline.imgStream.camNames)
+        state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
+        state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
+    
+
+
     elif data['input']['type']=='SYNTH':
         posepipeline.imgStream = StreamReader.StreamReader()
 
@@ -127,13 +143,6 @@ def main(argv):
         print("This Pipeline input is invalid")
 
 
-
-    if data['input']['type']!='SYNTH':
-        #setting stuff on state
-        state['intrinsics'] = FileIO.getKDs(posepipeline.imgStream.camNames)
-        state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
-        state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
-    
 
 
     #Assigns observation maker and posecalculator

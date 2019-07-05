@@ -26,23 +26,33 @@ def main(argv):
     freq=1
 
     camNames = IRos.getAllPluggedCameras()
-    camName = "camera"
+    camName = "emperorcrimson"
 
     
     #fetch K of existing cameras on the files
-    intrinsics = FileIO.getIntrinsics(['speedwagon'])
+    intrinsics = FileIO.getIntrinsics(['emperorcrimson'])
 
     rospy.init_node('ora_ora_ora_ORAA', anonymous=True)
 
 
+    arucoData = FileIO.getJsonFromFile("./static/ArucoWand.json")
+
+    arucoData['idmap'] = aruco.markerIdMapper(arucoData['ids'])
+
+    #load aruco model
+    arucoModel = FileIO.getFromPickle("static/ArucoModel_0875_yak_25-05-2019_16:23:12.pickle")
+
     #initializes class
-    pcer = PCGetter(camName,intrinsics)
+    pcer = PCGetter(camName,intrinsics,arucoData,arucoModel)
     print(camName)
     camSub=[]
     #getting subscirpters to use message fitlers on
-    camSub.append(message_filters.Subscriber(camName+"/rgb/image_raw", Image))
-    camSub.append(message_filters.Subscriber(camName+"/depth/image_raw", Image))
+    print(camName+"/rgb/image_rect_color")
+    camSub.append(message_filters.Subscriber(camName+"/rgb/image_rect_color", Image))
+    camSub.append(message_filters.Subscriber(camName+"/depth_registered/sw_registered/image_rect_raw", Image))
     camSub.append(message_filters.Subscriber(camName+"/depth_registered/points", PointCloud2))
+    camSub.append(message_filters.Subscriber("speedwagon/depth_registered/sw_registered/image_rect_raw", Image))
+    camSub.append(message_filters.Subscriber("speedwagon/rgb/image_rect_color", Image))
     #camSub.append(message_filters.Subscriber(camName+"/depth/points", PointCloud2))
 
 
@@ -64,13 +74,22 @@ def main(argv):
 
 class PCGetter(object):
 
-    def __init__(self,camName,intrinsics):
+    def __init__(self,camName,intrinsics,arucoData,arucoModel):
         print("initiated")
 
         self.camName = camName
         
         #intrinsic Params
         self.intrinsics = intrinsics
+
+
+        #assigning the model
+        self.arucoModel = arucoModel
+
+        #assigning data
+        self.arucoData = arucoData
+
+        print(intrinsics['emperorcrimson'])
 
 
     def callback(self,*args):
@@ -81,6 +100,9 @@ class PCGetter(object):
         rgb = IRos.rosImg2RGB(args[0])
         depth_reg = IRos.rosImg2Depth(args[1])
 
+        print(rgb.shape)
+        print(depth_reg.shape)
+
 
         #copy image
         hello = rgb.astype(np.uint8).copy() 
@@ -90,10 +112,62 @@ class PCGetter(object):
         cv2.destroyAllWindows()
 
 
-        points = mmnip.depthimg2xyz2(depth_reg,self.intrinsics['speedwagon']['depth']['K'],(360,480))
+        #finds markers
+        det_corners, ids, rejected = aruco.FindMarkers(rgb,self.intrinsics['emperorcrimson']['rgb']['K'])
+
+        #draw maerkers
+        if ids is not None:
+            hello = cv2.aruco.drawDetectedMarkers(hello,det_corners,np.asarray(ids))
+
+        cv2.imshow("Detected Markers",hello)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+
+        #Marker-by-Marker WAY
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],self.intrinsics['emperorcrimson']['rgb']['K'],self.intrinsics['speedwagon']['depth']['D'])
+
+        
+        
+        tvecs=np.squeeze(tvecs)
+        Transl = self.intrinsics['emperorcrimson']['depth']['P'][:,3]
+        Transl = np.expand_dims(Transl,0)
+        print(tvecs.shape)
+
+        #turn 0D into 1D
+        if len(tvecs.shape)==1:
+            tvecs = np.expand_dims(tvecs,axis=0)
+        sphs = []
+
+        for i in range(0,tvecs.shape[0]):
+
+            sphere = open3d.create_mesh_sphere(0.016)
+
+            #converts in 3x3 rotation matrix
+            Rr,_ = cv2.Rodrigues(rvecs[i])
+
+            H = mmnip.Rt2Homo(Rr,tvecs[i,:])
+
+            #prints marker position estimates
+            refe = open3d.create_mesh_coordinate_frame(0.1, origin = [0, 0, 0])
+            refe.transform(H)
+            sphere.transform(H)
+            sphere.paint_uniform_color([0,0,1])
+            sphs.append(sphere)
+            sphs.append(refe)
+
+        
+        points = mmnip.depthimg2xyz2(depth_reg,self.intrinsics['emperorcrimson']['rgb']['K'],(480,640))
         print(points.shape)
-        points = points.reshape((360*480, 3))
+        points = points.reshape((480*640, 3))
         print(points.shape)
+        
+        pc1 = pointclouder.Points2Cloud(points,rgb.reshape((480*640,3)),clean=True)
+
+        '''
+        open3d.draw_geometries([pc1])
+
+        #pc1 = pointclouder.Points2Cloud(points,rgb=rgb.resha)
 
         rgbd = mmnip.xyz2rgbd(points, rgb, self.intrinsics['speedwagon']['depth']['R'] , self.intrinsics['speedwagon']['depth']['P'][:,3] , self.intrinsics['speedwagon']['rgb']['K'])
 
@@ -159,8 +233,12 @@ class PCGetter(object):
             
         print("jeff")
         pc = pointclouder.Points2Cloud(xyz.T,rgbb.T)
+        '''
 
-        visu.draw_geometry([pc,pc1])
+
+
+        
+        visu.draw_geometry([pc1]+sphs)
 
         
 

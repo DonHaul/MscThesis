@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 class SingleArucosDetector:
-    def __init__(self,arucodata):
+    def __init__(self,data):
 
 
         self.arucoData=data['arucodata']
