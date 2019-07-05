@@ -6,6 +6,7 @@ from sensor_msgs.msg import PointCloud2
 from sensor_msgs import point_cloud2
 
 import struct
+import ctypes
 
 import cv2
 import open3d
@@ -85,7 +86,7 @@ class PCGetter(object):
         hello = rgb.astype(np.uint8).copy() 
 
         cv2.imshow("wow",hello)
-        cv2.waitKey(1000)
+        cv2.waitKey(0)
         cv2.destroyAllWindows()
 
 
@@ -135,17 +136,29 @@ class PCGetter(object):
         b=[]
         for point in pc:
 
-            print(point)
+            #print(point)
 
             x.append(point[0])
             y.append(point[1])
             z.append(point[2])
 
+            # cast float32 to int so that bitwise operations are possible
+            s = struct.pack('>f' ,point[3])
+            i = struct.unpack('>l',s)[0]
+            # you can get back the float value by the inverse operations
+            pack = ctypes.c_uint32(i).value
+            r.append( (pack & 0x00FF0000)>> 16)
+            g.append((pack & 0x0000FF00)>> 8)
+            b.append((pack & 0x000000FF))
+
+            print(len(r))
 
         xyz = np.vstack([x,y,z])
+        rgbb = np.vstack([b,g,r])
         
-
-        pc = pointclouder.Points2Cloud(xyz.T)
+            
+        print("jeff")
+        pc = pointclouder.Points2Cloud(xyz.T,rgbb.T)
 
         visu.draw_geometry([pc,pc1])
 

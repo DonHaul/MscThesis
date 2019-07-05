@@ -11,6 +11,7 @@ This module is used to
 
 import math
 import numpy as np
+import cv2
 
 def CompareMatLists(matListA,matListB):
     '''
@@ -365,7 +366,7 @@ def xyz2rgbd(xyz, rgb, R, T, K_rgb):
     
     
     #rgbd = np.where(xyz[:,2]==0,0,rgbd)
-    #gbd(xyz(:,1) == 0 & xyz(:,2) == 0 & xyz(:,3) == 0,:) = 0;
+    #rgbd(xyz(:,1) == 0 & xyz(:,2) == 0 & xyz(:,3) == 0,:) = 0;
 
     rgbd=rgbd.reshape(rgb_size).astype(np.uint8)
 
