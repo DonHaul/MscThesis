@@ -32,7 +32,7 @@ def getAllPluggedCameras():
 
     for topic in topiclist:
         
-        if "/depth_registered/image_raw" in topic[0] or "/rgb/image_color" in topic[0]:
+        if "/depth_registered/image_raw" in topic[0] or "/rgb/image_color" in topic[0] or "/rgb/image_rect_color" in topic[0]:
             name = topic[0].split('/')[1]
 
             if name not in cameraNames:

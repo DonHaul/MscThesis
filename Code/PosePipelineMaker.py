@@ -32,6 +32,7 @@ def worker(posepipe):
         #print(posepipe.imgStream.nextIsAvailable)
         if posepipe.imgStream.nextIsAvailable:
             
+            print("CHIPS AHOY")
 
             #set input as consumed
             posepipe.imgStream.nextIsAvailable=False

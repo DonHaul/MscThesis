@@ -38,7 +38,7 @@ class PCViewer():
             self.camNames = IRos.getAllPluggedCameras()
 
         #fetch K of existing cameras on the files
-        self.intrinsics = FileIO.getKDs(self.camNames)
+        self.intrinsics = FileIO.getIntrinsics(self.camNames)
 
 
 
@@ -54,10 +54,10 @@ class PCViewer():
         
         camSub = []
 
-        #getting subscirpters to use message fitlers on
+        #getting subscirpters to use message fitlers on/speedwagon/rgb/image_rect_color
         for name in self.camNames:
-            camSub.append(message_filters.Subscriber(name+"/rgb/image_color", Image))
-            camSub.append(message_filters.Subscriber(name+"/depth_registered/image_raw", Image))
+            camSub.append(message_filters.Subscriber(name+"/rgb/image_rect_color", Image))
+            camSub.append(message_filters.Subscriber(name+"/depth_registered/sw_registered/image_rect_raw", Image))
 
 
 
@@ -69,6 +69,8 @@ class PCViewer():
 
 
     def callback(self,*args):
+
+        print("CB")
 
         self.count = self.count + 1
         print(self.count)
@@ -83,16 +85,18 @@ class PCViewer():
             #depth
             depth_reg = IRos.rosImg2Depth(args[camId*2+1])
 
-            K = self.intrinsics['K'][self.camNames[camId]]
-
+            K = self.intrinsics[self.camNames[camId]]['rgb']['K']
+            print(depth_reg.shape)
             #points,colors = mmnip.depthimg2xyz(depth_reg,rgb,self.intrinsics['K'][self.camNames[camId]])
-            points = mmnip.depthimg2xyz2(depth_reg,K)
+            points = mmnip.depthimg2xyz2(depth_reg,K,(480,640))
             points = points.reshape((480*640, 3))
 
             #print(colors.shape)
             rgb1 = rgb.reshape((480*640, 3))#colors
             
             self.state.pcs[camId] = pointclouder.Points2Cloud(points,rgb1,clean=True,existingPc=self.state.pcs[camId])
+
+        #visu.draw_geometry(self.state.pcs)
 
         self.state.updated=True
 

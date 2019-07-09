@@ -26,11 +26,11 @@ def main(argv):
     freq=1
 
     camNames = IRos.getAllPluggedCameras()
-    camName = "emperorcrimson"
+    camName = "speedwagon"
 
     
     #fetch K of existing cameras on the files
-    intrinsics = FileIO.getIntrinsics(['emperorcrimson'])
+    intrinsics = FileIO.getIntrinsics(['speedwagon'])
 
     rospy.init_node('ora_ora_ora_ORAA', anonymous=True)
 
@@ -89,7 +89,7 @@ class PCGetter(object):
         #assigning data
         self.arucoData = arucoData
 
-        print(intrinsics['emperorcrimson'])
+        print(intrinsics['speedwagon'])
 
 
     def callback(self,*args):
@@ -113,7 +113,7 @@ class PCGetter(object):
 
 
         #finds markers
-        det_corners, ids, rejected = aruco.FindMarkers(rgb,self.intrinsics['emperorcrimson']['rgb']['K'])
+        det_corners, ids, rejected = aruco.FindMarkers(rgb,self.intrinsics['speedwagon']['rgb']['K'])
 
         #draw maerkers
         if ids is not None:
@@ -125,14 +125,11 @@ class PCGetter(object):
 
 
         #Marker-by-Marker WAY
-        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],self.intrinsics['emperorcrimson']['rgb']['K'],self.intrinsics['speedwagon']['depth']['D'])
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(det_corners,self.arucoData['size'],self.intrinsics['speedwagon']['rgb']['K'],np.asarray([0,0,0,0]))
 
         
         
-        tvecs=np.squeeze(tvecs)
-        Transl = self.intrinsics['emperorcrimson']['depth']['P'][:,3]
-        Transl = np.expand_dims(Transl,0)
-        print(tvecs.shape)
+
 
         #turn 0D into 1D
         if len(tvecs.shape)==1:
@@ -156,8 +153,9 @@ class PCGetter(object):
             sphs.append(sphere)
             sphs.append(refe)
 
-        
-        points = mmnip.depthimg2xyz2(depth_reg,self.intrinsics['emperorcrimson']['rgb']['K'],(480,640))
+        print("DEPTH REG SHAPE IS")
+        print(depth_reg.shape)
+        points = mmnip.depthimg2xyz2(depth_reg,self.intrinsics['speedwagon']['rgb']['K'],(480,640))
         print(points.shape)
         points = points.reshape((480*640, 3))
         print(points.shape)

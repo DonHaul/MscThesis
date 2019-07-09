@@ -69,7 +69,7 @@ class RosStreamReader(StreamReader.StreamReader):
 
     def callback(self,*args):
 
-
+        print("NEW MESSAGE INCOMING")
 
         self.count = self.count + 1
         #print(self.count)
