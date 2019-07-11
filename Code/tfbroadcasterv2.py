@@ -52,10 +52,9 @@ def main(argv):
                             scene['camnames'][i],
                             "world")
 
-            br.sendTransform(tf.transformations.translation_from_matrix(np.eye(4)),
-                            tf.transformations.quaternion_from_matrix(np.eye(4)),
+            br.sendTransform(tf.transformations.translation_from_matrix(np.eye(4)),(0.5,-0.5,0.5,0.5),
                             rospy.Time.now(),
-                            scene['camnames'][i]+"_rgb_optical_frame",
+                            scene['camnames'][i]+"_link",
                             scene['camnames'][i])
             
             hello_str = "hello world %s" % rospy.get_time()

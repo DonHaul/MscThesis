@@ -14,7 +14,7 @@ import sys
 import threading
 
 #pipeline classes
-from Classes.ImgReaders import RosStreamReader,ImgStreamReader,StreamReader
+from Classes.ImgReaders import RosStreamReader,ImgStreamReader,StreamReader,RosGatherStreamReader
 from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker, CangalhoSynthObsMaker, CameraSynthObsMaker
 from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
 from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator , PosesCalculatorSynth
@@ -120,7 +120,27 @@ def main(argv):
         state['intrinsics'] = FileIO.getIntrinsics(posepipeline.imgStream.camNames)
         state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
         state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
-    
+
+
+    elif data['input']['type']=='ROS_GATHER':
+        
+        camNames = []
+
+        
+
+        #sets cameras if there are any
+        if "cameras" in data['model']:
+            camNames = data['model']['cameras']
+
+        
+
+        
+        posepipeline.imgStream = RosGatherStreamReader.RosGatherStreamReader(camNames=camNames,inputData = data['input'])
+
+        #setting stuff on state
+        state['intrinsics'] = FileIO.getIntrinsics(posepipeline.imgStream.camNames)
+        state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
+        state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
 
 
     elif data['input']['type']=='SYNTH':

@@ -1,0 +1,34 @@
+digraph G {
+"emperorcrimson_link" -> "emperorcrimson_rgb_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_rgb_frame" -> "emperorcrimson_rgb_optical_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_link" -> "emperorcrimson_depth_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_depth_frame" -> "emperorcrimson_depth_optical_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_link" -> "emperorcrimson_ir_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_ir_frame" -> "emperorcrimson_ir_optical_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_link" -> "emperorcrimson_ir2_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_ir2_frame" -> "emperorcrimson_ir2_optical_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_link" -> "emperorcrimson_fisheye_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_fisheye_frame" -> "emperorcrimson_fisheye_optical_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_link" -> "emperorcrimson_imu_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"emperorcrimson_imu_frame" -> "emperorcrimson_imu_optical_frame"[label="Broadcaster: /emperorcrimson/emperorcrimson_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_link" -> "speedwagon_rgb_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_rgb_frame" -> "speedwagon_rgb_optical_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_link" -> "speedwagon_depth_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_depth_frame" -> "speedwagon_depth_optical_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_link" -> "speedwagon_ir_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_ir_frame" -> "speedwagon_ir_optical_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_link" -> "speedwagon_ir2_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_ir2_frame" -> "speedwagon_ir2_optical_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_link" -> "speedwagon_fisheye_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_fisheye_frame" -> "speedwagon_fisheye_optical_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_link" -> "speedwagon_imu_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+"speedwagon_imu_frame" -> "speedwagon_imu_optical_frame"[label="Broadcaster: /speedwagon/speedwagon_nodelet_manager\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1562680501.847 sec old)\nBuffer length: 0.000 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1562680501.847"[ shape=plaintext ] ;
+ }->"emperorcrimson_link";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1562680501.847"[ shape=plaintext ] ;
+ }->"speedwagon_link";
+}

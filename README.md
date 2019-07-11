@@ -1,4 +1,9 @@
 # rosbag record commands
+rostopic echo /speedwagon/rgb/image_rect_color/header/stamp
+
+
+
+
 
 ### eveything
 rosbag record --split --size=1024 --duration=4 -b 0 -a
@@ -67,5 +72,9 @@ do modelo captado
 
 ## kinect mode
 rosbag record --split --size=2048 -b 0 /camera/depth/points /camera/depth_registered/points /camera/rgb/raw /camera/depth/image_raw /camera/rgb/image_raw /tf_static
+
+
+## 2 realsenseki2nect mode
+rosbag record --split --size=2048 -b 0 /speedwagon/rgb/image_rect_color /speedwagon/depth_registered/sw_registered/image_rect_raw /emperorcrimson/rgb/image_rect_color /emperorcrimson/depth_registered/sw_registered/image_rect_raw
 
 
