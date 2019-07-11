@@ -30,15 +30,15 @@ class RosGatherStreamReader(StreamReader.StreamReader):
 
               
         #number of camera
-        self.N_cams = N_cams
+        self.N_cams = len(self.camNames)
 
 
 
         #stasticial var with the total number of times it receives information for each camera
-        self.gatherCounter = [0]*N_cams
+        self.gatherCounter = [0] * self.N_cams
 
         #Array with 0 and 1 telling from which camera it received info from
-        self.gatherReady = np.zeros((N_cams),dtype=np.uint8)
+        self.gatherReady = np.zeros((self.N_cams),dtype=np.uint8)
 
 
 
@@ -60,7 +60,7 @@ class RosGatherStreamReader(StreamReader.StreamReader):
         for i in range(0,len(self.camNames)):
 
             #initialize class for each camera
-            ig = ReaderCallback(camNames[i],i,self,"rgb")
+            ig = ReaderCallback(self.camNames[i],i,self,"rgb")
 
             #saves it for some reason
             Readers.append(ig)
@@ -70,7 +70,7 @@ class RosGatherStreamReader(StreamReader.StreamReader):
 
 
             #initialize class for each camera
-            ig = ReaderCallback(camNames[i],i,self,"depth")
+            ig = ReaderCallback(self.camNames[i],i,self,"depth")
 
             #saves it for some reason
             Readers.append(ig)
@@ -96,8 +96,15 @@ class RosGatherStreamReader(StreamReader.StreamReader):
         #set is as fetched
         self.gatherReady[camId]=1
 
+        #print(self.gatherReady)
+
         #if all camera have sent something
         if(np.sum(self.gatherReady)== self.N_cams):
+
+            print("GATHERED")
+
+            print(self.data[imgtype][0].shape)
+            print(self.data[imgtype][1].shape)
 
             self.nextIsAvailable=True
 

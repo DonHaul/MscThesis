@@ -29,7 +29,8 @@ def worker(posepipe):
     while True:
         #while there are new images
 
-        #print(posepipe.imgStream.nextIsAvailable)
+        print("AVAILABILITY")
+        print(posepipe.imgStream.nextIsAvailable)
         if posepipe.imgStream.nextIsAvailable:
             
             print("CHIPS AHOY")
@@ -124,6 +125,8 @@ def main(argv):
 
     elif data['input']['type']=='ROS_GATHER':
         
+        print("ROS GATHER MODE")
+
         camNames = []
 
         
@@ -258,7 +261,7 @@ def main(argv):
 
 
     #spins ros if necessary
-    if data['input']['type']=='ROS':
+    if data['input']['type']=='ROS' or data['input']['type']=='ROS_GATHER':
         try:
             rospy.spin()
         except KeyboardInterrupt:
@@ -292,7 +295,7 @@ def main(argv):
     datatosave= {"R":posepipeline.posescalculator.R,"t":posepipeline.posescalculator.t}
     
 
-    if data['input']['type']=='ROS':
+    if data['input']['type']=='ROS' or data['input']['type']=='ROS_GATHER':
 
         datatosave['camnames']=posepipeline.imgStream.camNames
 
