@@ -21,6 +21,7 @@ from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator ,
 from Classes import PosePipeline
 from Classes.Commands import CommandsImporterPose
 import CommandLine
+from Classes import PC2Publisher
 
 
 def worker(posepipe):
@@ -41,19 +42,20 @@ def worker(posepipe):
             #gets next image
             streamData= posepipe.imgStream.next()
 
-            posepipe.imgShower(streamData)       
+            #posepipe.imgShower(streamData)       
 
             #stop if there are no more images
             if streamData is None:
                 posepipe.Stop()
                 break
             
-
+            posepipe.pcpublisher.PublishPC2(streamData)
+        
             #generates observations
-            img,ids,obsR,obsT = posepipe.ObservationMaker.GetObservations(streamData)
+            #img,ids,obsR,obsT = posepipe.ObservationMaker.GetObservations(streamData)
 
             #adds observations to matrices
-            posepipe.posescalculator.AddObservations(obsR,obsT)
+            #posepipe.posescalculator.AddObservations(obsR,obsT)
         
         
         elif posepipe.imgStream.finished:
@@ -140,10 +142,14 @@ def main(argv):
         
         posepipeline.imgStream = RosGatherStreamReader.RosGatherStreamReader(camNames=camNames,inputData = data['input'])
 
+        
+
         #setting stuff on state
         state['intrinsics'] = FileIO.getIntrinsics(posepipeline.imgStream.camNames)
         state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
         state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
+
+        posepipeline.pcpublisher = PC2Publisher.PC2Publisher(state['intrinsics'],posepipeline.imgStream.camNames)
 
 
     elif data['input']['type']=='SYNTH':

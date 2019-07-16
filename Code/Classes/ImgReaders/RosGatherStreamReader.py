@@ -17,7 +17,10 @@ import StreamReader
 
 class RosGatherStreamReader(StreamReader.StreamReader):
     
-    def __init__(self,camNames=None,inputData=None,freq=2):
+    def __init__(self,camNames=None,inputData=None,freq=2,mutex=None):
+
+
+        self.mutex=mutex
 
         StreamReader.StreamReader.__init__(self)
 
@@ -88,7 +91,13 @@ class RosGatherStreamReader(StreamReader.StreamReader):
         '''
         
         #set image
-        self.data[imgtype][camId] = img
+        if self.mutex is not None:
+
+            with self.mutex:
+                self.data[imgtype][camId] = img
+        else:
+            self.data[imgtype][camId] = img
+        print(self.data[imgtype][camId].shape)
         
         #increment statistic
         self.gatherCounter[camId] = self.gatherCounter[camId] +1

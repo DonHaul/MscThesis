@@ -63,10 +63,15 @@ def worker(state):
 
 def main(argv):
 
-    poses = FileIO.getFromPickle(argv[0]+"/poses.pickle")
+    poses = FileIO.getFromPickle(argv[0])
 
     state = State.State()
-    state.path=argv[0]
+
+    state.path=argv[0][0:argv[0].rfind('/')]
+    
+
+
+    print(state.path)
 
     state.camNames=poses['camnames']
     state.R=poses['R']

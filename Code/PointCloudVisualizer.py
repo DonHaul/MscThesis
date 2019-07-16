@@ -29,7 +29,7 @@ class PCViewer():
 
         self.state.updated=False
 
-        self.freq=20
+        self.freq=1
         self.R=poses['R']
         self.t=poses['t']
         self.camNames=poses['camnames']

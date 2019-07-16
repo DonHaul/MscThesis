@@ -100,7 +100,7 @@ def getIntrinsics(camNames):
         #if file does not exist
         if(filedict==None):
             print("Calibration File Not Found")
-            filedict = getJsonFromFile("./static/camcalib_default.json")
+            filedict = getFromPickle("./static/camcalib_default.pickle")
 
         #assigns parameters
         intrinsics[name]=filedict
@@ -203,8 +203,8 @@ def getFromPickle(filename):
         p  =  pickle.load(f)
         f.close
     except IOError:
-
-        raise Exception("No Such File")
+        return None
+    #raise Exception("No Such File")
 
         
     return p
