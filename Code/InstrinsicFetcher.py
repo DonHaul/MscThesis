@@ -23,7 +23,7 @@ def main(argv):
     freq=50
 
     camNames = IRos.getAllPluggedCameras()
-    camName = camNames[0]
+    camName = "mista"
 
     print(camNames)
     print(camName)
