@@ -145,3 +145,16 @@ def ViewRefs(R=None,t=None,refSize=10,showRef=False,view=True,zaWordu=False,save
         vis = draw_geometry(refs,saveImg=saveImg,saveName=saveName) #Draw them all
 
     return refs
+
+
+
+def SeePositions(positions):
+    
+    allpositions=[]
+    for i in range(positions.shape[0]):
+        mesh_sphere=open3d.create_mesh_sphere(radius = 0.003)
+        mesh_sphere.paint_uniform_color([0.8, 0.8, 0])
+        mesh_sphere.transform(mmnip.Rt2Homo(np.eye(3),np.squeeze(positions[i,:])))
+        allpositions.append(mesh_sphere)
+
+    draw_geometry(allpositions)

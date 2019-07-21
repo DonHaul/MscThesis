@@ -15,7 +15,7 @@ import threading
 
 #pipeline classes
 from Classes.ImgReaders import RosStreamReader,ImgStreamReader,StreamReader,RosGatherStreamReader
-from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker, CangalhoSynthObsMaker, CameraSynthObsMaker
+from Classes.ObservationGenners import CamerasObservationMaker,CangalhoObservationsMaker, CangalhoSynthObsMaker, CameraSynthObsMaker, CameraSynthObsMaker2
 from Classes.ArucoDetecc import CangalhoPnPDetector,CangalhoProcrustesDetector,SingleArucosDetector
 from Classes.PosesCalculators import PosesCalculator, OutlierRemPoseCalculator , PosesCalculatorSynth
 from Classes import PosePipeline
@@ -33,7 +33,7 @@ def worker(posepipe):
         #print(posepipe.imgStream.nextIsAvailable)
         if posepipe.imgStream.nextIsAvailable:
             
-            print("CHIPS AHOY")
+            
 
             #set input as consumed
             posepipe.imgStream.nextIsAvailable=False
@@ -84,13 +84,10 @@ def main(argv):
 
     posepipeline = PosePipeline.PosePipeline()
 
-    #holds
+    #holds stuff
     state={}
 
-    posepipeline.folder = FileIO.CreateFolder("./Logs/",suffix=FileIO.GetAnimalName())
 
-    #saves pipeline configuration on the outputfolder
-    FileIO.putFileWithJson(data,"pipeline",posepipeline.folder+"/")
 
 
 
@@ -161,7 +158,7 @@ def main(argv):
         posepipeline.imgStream = StreamReader.StreamReader()
 
 
-        state['synthmodel']=FileIO.getFromPickle(data['model']['model'])
+        state['synthmodel']=FileIO.getFromPickle(data['model']['arucomodel'])
         if data['model']['type']=="SYNTH_CAMERA" or data['model']['type']=="SYNTH_CAMERA2":
             state['modelscene']=FileIO.getFromPickle(data['model']['modelscene'])
             print(state['modelscene'])
@@ -171,7 +168,7 @@ def main(argv):
         #visu.ViewRefs(state['synthmodel'][0],state['synthmodel'][1],refSize=1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
     
 
-        posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth({"N_objects":len(state['synthmodel'][0])})
+        posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth({"N_objects":len(state['synthmodel']['R'])})
 
         
     else:
@@ -305,33 +302,57 @@ def main(argv):
     
     print("FINISHED ELEGANTLY")
 
-    #see and save resulting scene
-    print(posepipeline.posescalculator.R)
-    print(posepipeline.posescalculator.t)
-    visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
-    
-    #record r and t
-    if data["model"]["record"]==True:
-        recordeddata={
-            "R":posepipeline.posescalculator.recordedRs,
-            "T":posepipeline.posescalculator.recordedTs
-        }
+    #Only create log if full process was done
+    if posepipeline.posescalculator.t is not None:
 
-        print(len(recordeddata['R']))
+        #Create the folder
+        posepipeline.folder = FileIO.CreateFolder("./Logs/",suffix=FileIO.GetAnimalName())
 
-        print(len(recordeddata['T']))
-
-        FileIO.saveAsPickle("/recorded",recordeddata,posepipeline.folder,False,False)
-    
-    datatosave= {"R":posepipeline.posescalculator.R,"t":posepipeline.posescalculator.t}
-    
-
-    if data['input']['type']=='ROS' or data['input']['type']=='ROS_GATHER':
-
-        datatosave['camnames']=posepipeline.imgStream.camNames
+        #saves pipeline configuration on the outputfolder
+        FileIO.putFileWithJson(data,"pipeline",posepipeline.folder+"/")
 
 
-    FileIO.saveAsPickle("/poses",datatosave,posepipeline.folder,False,False)
+        datatosave= {"R":posepipeline.posescalculator.R,"t":posepipeline.posescalculator.t}
+        
+
+        #compute the corners of the cangalho
+        if data['model']['type']=='CANGALHO':
+
+            arucoModel = {"R":posepipeline.posescalculator.R,"T":posepipeline.posescalculator.t}
+
+            corners = aruco.ComputeCorners(state['arucodata'],arucoModel)
+
+            visu.SeePositions(corners)
+
+            datatosave['corners']=corners
+        
+
+        #see and save resulting scene
+        print(posepipeline.posescalculator.R)
+        print(posepipeline.posescalculator.t)
+        visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
+
+        #record r and t
+        if data["model"]["record"]==True:
+            recordeddata={
+                "R":posepipeline.posescalculator.recordedRs,
+                "T":posepipeline.posescalculator.recordedTs
+            }
+
+            print(len(recordeddata['R']))
+
+            print(len(recordeddata['T']))
+
+            FileIO.saveAsPickle("/recorded",recordeddata,posepipeline.folder,False,False)
+        
+        
+
+        if data['input']['type']=='ROS' or data['input']['type']=='ROS_GATHER':
+
+            datatosave['camnames']=posepipeline.imgStream.camNames
+
+
+        FileIO.saveAsPickle("/poses",datatosave,posepipeline.folder,False,False)
     
  
 

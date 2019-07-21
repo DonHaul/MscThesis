@@ -7,6 +7,33 @@ import cv2
 import numpy as np
 import matmanip as mmnip
 import algos
+import visu
+
+
+def ComputeCorners(arucoData,arucoModel):
+
+    arucoData['idmap'] = markerIdMapper(arucoData['ids'])
+
+    
+    #initialize corners array, each marker has 4 corners
+    #corners can be adressed by cornerid*4+markeridofcorner
+    allcorners= np.zeros((len(arucoData['ids']*4),3))
+
+    #allpositions = visu.ViewRefs(R,T,refSize=0.1,view=False)
+
+    count = 0
+    for i in arucoData['ids']:
+
+        aa = Get3DCorners(i,arucoData,arucoModel)
+        aa = np.asarray(aa)
+
+        allcorners[count*4:count*4+4,:]=aa
+        count = count + 1
+    
+
+
+
+    return allcorners
 
 
 
