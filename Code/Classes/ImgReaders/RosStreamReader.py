@@ -41,7 +41,13 @@ class RosStreamReader(StreamReader.StreamReader):
         self.count = 0
 
         self.topicRGB=inputData['rgbtopic']
-        self.topicDepth=inputData['depthtopic']
+
+        
+        if 'depthtopic' in inputData:
+            self.topicDepth=inputData['depthtopic']
+        else:
+            self.topicDepth=None
+            print("No Depth Topic")
 
         
 
@@ -52,10 +58,12 @@ class RosStreamReader(StreamReader.StreamReader):
 
         #getting subscirpters to use message fitlers on
         for name in self.camNames:
-            print("topic",name + self.topicRGB)
-            print("topic",name + self.topicDepth)
+
             camSub.append(message_filters.Subscriber(name + self.topicRGB, Image))
-            camSub.append(message_filters.Subscriber(name + self.topicDepth, Image))
+
+            if self.topicDepth is not None:
+                print("Depth Topic Not Being Captured")
+                camSub.append(message_filters.Subscriber(name + self.topicDepth, Image))
 
 
 
@@ -77,11 +85,14 @@ class RosStreamReader(StreamReader.StreamReader):
         #print("NEXTU DES")
         #print(self.N_cams)
         for camId in range(0,self.N_cams):
-            img = IRos.rosImg2RGB(args[camId*2])
-            depth = IRos.rosImg2Depth(args[camId*2+1])
 
+            img = IRos.rosImg2RGB(args[camId*2])
             data['rgb'].append(img)
-            data['depth'].append(depth)
+
+           
+            if self.topicDepth is not None:
+                depth = IRos.rosImg2Depth(args[camId*2+1])
+                data['depth'].append(depth)
     
         self.data=data
         self.nextIsAvailable=True

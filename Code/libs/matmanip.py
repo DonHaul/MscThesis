@@ -374,6 +374,8 @@ def xyz2rgbd(xyz, rgb, R, T, K_rgb):
 
 
 
+
+
 def depthimg2xyz2(depthimg,K,size=(480,640)):
     '''
     Convert full depth image

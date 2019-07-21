@@ -87,7 +87,7 @@ def main(argv):
     #holds
     state={}
 
-    posepipeline.folder = FileIO.CreateFolder("./PipelineLogs/"+FileIO.GetAnimalName())
+    posepipeline.folder = FileIO.CreateFolder("./Logs/",suffix=FileIO.GetAnimalName())
 
     #saves pipeline configuration on the outputfolder
     FileIO.putFileWithJson(data,"pipeline",posepipeline.folder+"/")
@@ -99,14 +99,26 @@ def main(argv):
         'singular':SingleArucosDetector.SingleArucosDetector,
         'allforone':CangalhoPnPDetector.CangalhoPnPDetector,
         'depthforone':CangalhoProcrustesDetector.CangalhoProcrustesDetector        }
-    
+
+
+    #In case we want to get the cameras we need the arucomodel    
+    if "CAMERA" in data['model']['type']:
+        state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
+
+    if "record" not in data["model"]:
+        data["model"]['record']=False
+
+
+
 
     #Assigns the InputStream
     if data['input']['type']=='IMG':
-
+        
         #must set path where images are
         posepipeline.imgStream = ImgStreamReader.ImgStreamReader(data['input']['path'])
     elif data['input']['type']=='ROS':
+
+ 
 
         camNames = []
 
@@ -120,7 +132,6 @@ def main(argv):
         #setting stuff on state
         state['intrinsics'] = FileIO.getIntrinsics(posepipeline.imgStream.camNames)
         state['arucodata'] = FileIO.getJsonFromFile(data['model']['arucodata'])
-        state['arucomodel'] = FileIO.getFromPickle(data['model']['arucomodel'])
 
 
     elif data['input']['type']=='ROS_GATHER':
@@ -151,7 +162,7 @@ def main(argv):
 
 
         state['synthmodel']=FileIO.getFromPickle(data['model']['model'])
-        if data['model']['type']=="SYNTH_CAMERA":
+        if data['model']['type']=="SYNTH_CAMERA" or data['model']['type']=="SYNTH_CAMERA2":
             state['modelscene']=FileIO.getFromPickle(data['model']['modelscene'])
             print(state['modelscene'])
         
@@ -173,20 +184,29 @@ def main(argv):
     if data['model']['type']=='CANGALHO':
         
 
+        
         #static parameters
         singlecamData={
-            "K":state['intrinsics']['K'][imgStream.camNames[0]],
-            "D":state['intrinsics']['D'][imgStream.camNames[0]],
+            "K":state['intrinsics'][posepipeline.imgStream.camNames[0]]['rgb']['K'],
+            "D":state['intrinsics'][posepipeline.imgStream.camNames[0]]['rgb']['D'],
             "arucodata":state['arucodata']}
 
         #sets observation maker
         posepipeline.ObservationMaker =  CangalhoObservationsMaker.CangalhoObservationMaker(singlecamData)
 
+
+
         #sets pose calculator
         posedata={
             "N_objects":len(state['arucodata']['ids']),
-            "record":data["model"]["record"]
             }
+
+        if 'record' in data["model"]:
+            posedata["record"]=data["model"]["record"]
+        else:
+            posedata["record"]=False
+
+
         posepipeline.posescalculator = PosesCalculator.PosesCalculator(posedata)
 
 
@@ -247,6 +267,17 @@ def main(argv):
         visu.ViewRefs(obsdata['modelscene'][0],obsdata['modelscene'][1])
 
         posepipeline.ObservationMaker= CameraSynthObsMaker.CameraSynthObsMaker(obsdata)
+  
+
+    elif data['model']['type']=='SYNTH_CAMERA2':
+        
+        obsdata=data['model']
+        obsdata['synthmodel']=state['synthmodel']
+        obsdata['modelscene']=state['modelscene']
+
+        visu.ViewRefs(obsdata['modelscene'][0],obsdata['modelscene'][1])
+
+        posepipeline.ObservationMaker= CameraSynthObsMaker2.CameraSynthObsMaker2(obsdata)
         
     else:
         print("This Pipeline Model is invalid")
@@ -280,7 +311,7 @@ def main(argv):
     visu.ViewRefs(posepipeline.posescalculator.R,posepipeline.posescalculator.t,refSize=0.1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
     
     #record r and t
-    if "record" in data["model"] and data["model"]["record"]==True:
+    if data["model"]["record"]==True:
         recordeddata={
             "R":posepipeline.posescalculator.recordedRs,
             "T":posepipeline.posescalculator.recordedTs

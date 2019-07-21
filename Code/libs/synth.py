@@ -83,7 +83,8 @@ def SampleGenerator(R,t,samples=1000,noise = 0.00001,noiset=0.0001):
     return obsR,obst
 
 
-
+def MultiCamSampleGeneratorMoving(Rcam,tcam,R,t,):
+    pass
 
 
 def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
