@@ -1,0 +1,1 @@
+{"input": {"type": "SYNTH"}, "model": {"noiset": 0.5, "pixelnoisestd": 0.3, "record": false, "K": [460, 0, 240, 0, 460, 180, 0, 0, 1], "arucomodel": "./static/arucoModelNEW.pickle", "modelscene": "./static/fakecangalhos/LookingCenterNoisy.pickle", "samples": 500, "n_poses": 50, "type": "SYNTH_CAMERA2"}}

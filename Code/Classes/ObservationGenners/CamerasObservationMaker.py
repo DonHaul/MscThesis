@@ -54,10 +54,16 @@ class CamerasObservationMaker(ObservationsMaker.ObservationsMaker):
             #get new observations of that camera
             self.Allobs[camId]=obs  # WRONG SHOULD IT BE concantenate lists OR =?
 
+        #obs and arucomodel T is
+        #[[]
+        #[]
+        #[]]
 
         #Generate Pairs from all of the camera observations
         obsR , obsT = obsgen.GenerateCameraPairObs(self.Allobs,self.arucoModel['R'],self.arucoModel['T'])
 
+        #obsT is
+        #[,,]
 
         #clear observations
         self.Allobs = [ [] for i in range(self.N_objects) ]

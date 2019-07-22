@@ -56,16 +56,18 @@ class RosStreamReader(StreamReader.StreamReader):
         
         camSub = []
 
+        print("Subscribed Topics")
         #getting subscirpters to use message fitlers on
         for name in self.camNames:
 
             camSub.append(message_filters.Subscriber(name + self.topicRGB, Image))
 
             if self.topicDepth is not None:
-                print("Depth Topic Not Being Captured")
+                print("Depth Topic Is Being Captured")
                 camSub.append(message_filters.Subscriber(name + self.topicDepth, Image))
+                print(name + self.topicDepth)
 
-
+            print(name + self.topicRGB)
 
 
         ts = message_filters.ApproximateTimeSynchronizer(camSub,20, 1.0/freq, allow_headerless=True)

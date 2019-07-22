@@ -5,18 +5,23 @@ import numpy as np
 class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
     def __init__(self,data):
 
-        self.noiset=data['noiset']
+        self.noiset=data['noiset'] #in meters
 
-        self.Rcangalho=data['synthmodel'][0]
-        self.tcangalho=data['synthmodel'][1]
+        self.Rcangalho=data['synthmodel']['R']
+        self.tcangalho=data['synthmodel']['t']
 
-        self.Rcam=data['modelscene'][0]
-        self.tcam=data['modelscene'][1]
+
+        visu.ViewRefs(data['synthmodel']['R'],data['synthmodel']['t'],refSize=0.1)
+        visu.ViewRefs(data['modelscene']['R'],data['modelscene']['t'],refSize=0.1)
+
+        print(len(data['modelscene']['R']))
+        self.Rcam=data['modelscene']['R']
+        self.tcam=data['modelscene']['t']
         
 
         self.n_obs = data['samples'] 
         self.noise = 0
-        self.noiset = data['noiset']
+
 
         self.n_poses = data['n_poses']
         
@@ -25,7 +30,6 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
 
 
     def GetObservations(self,streamData):
-
 
         
 
@@ -37,13 +41,13 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
         print("tmean")
         print(tmean)
 
-        Rs=[]
-        Ts=[]
-        for i in range(len(self.n_poses)):
-            Rs.append(mmnip.genRandRotMatrix(360))
-            Ts.append(tmean+np.random.rand(3,1)*self.noiset)
+        #Rs=[]
+        #Ts=[]
+        #for i in range(len(self.n_poses)):
+        #    Rs.append(mmnip.genRandRotMatrix(360))
+        #    Ts.append(tmean+np.random.rand(3,1)*self.noiset)
 
-        
+  
 
         obsR, obsT = obsgen.GenerateCameraPairObs(camsObs,self.Rcangalho,self.tcangalho)
 

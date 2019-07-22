@@ -6,9 +6,10 @@
         "pixelnoisestd":0.3,
         "K":[460,0,240,0,460,180,0,0,1],
         "n_poses":50,
+        "noiset":0.5,
         "samples":500,
         "arucomodel":"./static/arucoModelNEW.pickle",
-        "modelscene":"./static/fakecangalhos/TestScene_51_penguin_25-06-2019_18:45:32.pickle"
+        "modelscene":"./static/fakecangalhos/LookingCenterNoisy.pickle"
 
     }
         

@@ -373,7 +373,17 @@ def xyz2rgbd(xyz, rgb, R, T, K_rgb):
     return rgbd
 
 
+def coords2img(K,Rs,Ts):
 
+    if len(Rs)!=len(Ts):
+         raise Exception('Rs and Ts must have the same lenght')
+
+    coords=[]
+
+    for R,T in zip(Rs,Ts):
+        coords=K.dot(np.concatenate((R,t),axis=1))
+
+    
 
 
 def depthimg2xyz2(depthimg,K,size=(480,640)):

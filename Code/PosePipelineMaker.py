@@ -12,6 +12,7 @@ from shutil import copyfile
 from libs import *
 import sys
 import threading
+import copy
 
 #pipeline classes
 from Classes.ImgReaders import RosStreamReader,ImgStreamReader,StreamReader,RosGatherStreamReader
@@ -41,16 +42,22 @@ def worker(posepipe):
             #gets next image
             streamData= posepipe.imgStream.next()
 
-            posepipe.imgShower(streamData)       
+            if streamData is not None:
+                posepipe.imgShower(streamData)               
 
             #stop if there are no more images
-            if streamData is None:
-                posepipe.Stop()
-                break
+            #if streamData is None:
+            #    posepipe.Stop()
+            #    break
             
 
             #generates observations
             img,ids,obsR,obsT = posepipe.ObservationMaker.GetObservations(streamData)
+
+            #print("RR")
+            #print(obsR)
+            #print("TT")
+            #print(obsT)
 
             #adds observations to matrices
             posepipe.posescalculator.AddObservations(obsR,obsT)
@@ -161,14 +168,16 @@ def main(argv):
         state['synthmodel']=FileIO.getFromPickle(data['model']['arucomodel'])
         if data['model']['type']=="SYNTH_CAMERA" or data['model']['type']=="SYNTH_CAMERA2":
             state['modelscene']=FileIO.getFromPickle(data['model']['modelscene'])
-            print(state['modelscene'])
-        
+
         #print(state['synthmodel'][0])
         #print(state['synthmodel'][1])
         #visu.ViewRefs(state['synthmodel'][0],state['synthmodel'][1],refSize=1,showRef=True,saveImg=True,saveName=posepipeline.folder+"/screenshot.jpg")
     
+        if "CAMERA" in data['model']['type']:
+            posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth({"N_objects":len(state['modelscene']['R'])})
 
-        posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth({"N_objects":len(state['synthmodel']['R'])})
+        else:
+            posepipeline.posescalculator=PosesCalculatorSynth.PosesCalculatorSynth({"N_objects":len(state['synthmodel']['R'])})
 
         
     else:
@@ -251,13 +260,16 @@ def main(argv):
 
     elif data['model']['type']=='SYNTH_CANGALHO':
         
-        obsdata=data['model']
+        #in order to not copy by reference https://stackoverflow.com/questions/3975376/understanding-dict-copy-shallow-or-deep
+        obsdata=copy.deepcopy(data['model'])
         obsdata['synthmodel']=state['synthmodel']
 
         posepipeline.ObservationMaker= CangalhoSynthObsMaker.CangalhoSynthObsMaker(obsdata)
     elif data['model']['type']=='SYNTH_CAMERA':
         
-        obsdata=data['model']
+        #in order to not copy by reference https://stackoverflow.com/questions/3975376/understanding-dict-copy-shallow-or-deep
+        obsdata=copy.deepcopy(data['model'])
+
         obsdata['synthmodel']=state['synthmodel']
         obsdata['modelscene']=state['modelscene']
 
@@ -268,11 +280,16 @@ def main(argv):
 
     elif data['model']['type']=='SYNTH_CAMERA2':
         
-        obsdata=data['model']
+        #in order to not copy by reference https://stackoverflow.com/questions/3975376/understanding-dict-copy-shallow-or-deep
+        obsdata=copy.deepcopy(data['model'])
         obsdata['synthmodel']=state['synthmodel']
         obsdata['modelscene']=state['modelscene']
 
-        visu.ViewRefs(obsdata['modelscene'][0],obsdata['modelscene'][1])
+        print("DAATAAAA")
+        print(data['model'])
+
+    
+        #visu.ViewRefs(obsdata['modelscene']['R'],obsdata['modelscene']['t'])
 
         posepipeline.ObservationMaker= CameraSynthObsMaker2.CameraSynthObsMaker2(obsdata)
         
@@ -286,6 +303,8 @@ def main(argv):
     #sets thread for pipeline
     t1 = threading.Thread(target=worker,args=( posepipeline,))
     t1.start()
+
+
 
 
     #spins ros if necessary
@@ -308,6 +327,8 @@ def main(argv):
         #Create the folder
         posepipeline.folder = FileIO.CreateFolder("./Logs/",suffix=FileIO.GetAnimalName())
 
+        #print("DATA IS")
+        #print(data)
         #saves pipeline configuration on the outputfolder
         FileIO.putFileWithJson(data,"pipeline",posepipeline.folder+"/")
 
