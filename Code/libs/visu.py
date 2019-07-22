@@ -65,16 +65,16 @@ def draw_geometry(pcd,saveImg = False,saveName=None):
     return vis
 
 def paintImage(img,point2paint,offset = 5,color = [255,0,255]):
-    print("Painting shape")
+    #print("Painting shape")
     
-    print(img.shape)
+    #print(img.shape)
     #print(img[point2paint[0],point2paint[1],:].shape)
     img[int(point2paint[0]),int(point2paint[1]),:]= color
-    print(int(point2paint[1]))
-    print("WOW")
-    print("OFSSET IS",offset)
+    #print(int(point2paint[1]))
+    #print("WOW")
+    #print("OFSSET IS",offset)
     for ii in  range(int(point2paint[1])-offset,int(point2paint[1])+offset+1): #its like this due to the python indexing (-1,+2)
-        print(ii)
+        #print(ii)
         for jj in range(int(point2paint[0])-offset,int(point2paint[0])+offset+1):  #its like this due to the python indexing (-1,+2)
             img[jj,ii,:]= color
 
@@ -158,3 +158,4 @@ def SeePositions(positions):
         allpositions.append(mesh_sphere)
 
     draw_geometry(allpositions)
+

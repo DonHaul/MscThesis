@@ -87,7 +87,7 @@ def MultiCamSampleGeneratorMoving(Rcam,tcam,R,t,):
     pass
 
 
-def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
+def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 0.0,noiset = 0.0):
     '''
     Simulates one single time instance and generates Synthetic Observations
     between a Set of Referantials(Cameras) that are observing another set (Aruco)
@@ -117,7 +117,7 @@ def MultiCamSampleGeneratorFixed(Rcam,tcam,R,t,nObs=5,noise = 1,noiset = 0.01):
     for i in range(0,len(Rcam)):
         
         #pick random aruco markers, #noBs of them
-        rnds = random.sample(range(1, len(R)), nObs)
+        rnds = random.sample(range(0, len(R)), nObs)
 
         obs=[]  #list of Observations
         
