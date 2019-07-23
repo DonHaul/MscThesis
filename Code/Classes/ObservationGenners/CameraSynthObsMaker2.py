@@ -21,6 +21,9 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
 
         self.Rcam=data['modelscene']['R']
         self.tcam=data['modelscene']['t']
+
+
+        self.pixelnoisestd = data['pixelnoisestd']
         
         self.K = np.asarray(data['K']).reshape((3,3))
 
@@ -112,6 +115,10 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
                 #get po
 
                 pts2D = pts2D[0:2,:].astype(np.float)
+
+
+
+                pts2D=pts2D+np.random.randn(pts2D.shape[0],pts2D.shape[1])*self.pixelnoisestd
                 #print(pts2D.shape)
                 #print(detectedcorns.shape)
                 #print(type(pts2D[0,0]))
