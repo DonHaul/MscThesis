@@ -32,7 +32,7 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
 
 
 
-        self.frames=1 #data['samples']
+        self.frames=data['samples']
         
 
         
@@ -40,7 +40,9 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
 
     def GetObservations(self,streamData):
 
-
+        
+        observationsR=[]
+        observationsT=[]
 
 
 
@@ -52,9 +54,9 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
         print("tmean")
         print(tmean)
         
-        allObs = [ [] for z in range(len(self.Rcam)) ]
+        allObs = []#[ [] for z in range(len(self.Rcam)) ]
 
-        for k in range(3):
+        for k in range(self.frames):
 
             #generate a random position for the aruco
             Rfull = mmnip.genRandRotMatrix(360)
@@ -135,11 +137,19 @@ class CameraSynthObsMaker2(ObservationsMaker.ObservationsMaker):
 
                 allObs.append(obs)
 
-                #generate observations between cameras for a specific frame
-                obsR, obsT = obsgen.GenerateCameraPairObs(allObs,self.Rcangalho,self.tcangalho)
 
+            print(len(allObs))
 
+            #generate observations between cameras for a specific frame
+            obsR, obsT = obsgen.GenerateCameraPairObs(allObs,self.Rcangalho,self.tcangalho)
 
+            
+            
 
-        return None,None,obsR,obsT
+            observationsR = observationsR + obsR
+            observationsT = observationsT + obsT
+
+            allObs = []
+
+        return None,None,observationsR, observationsT
         
