@@ -1,6 +1,12 @@
 import libs.FileIO as FileIO
 
 
-ola = FileIO.getFromPickle("./Logs/2019-07-22_00:40:53_sparrow/poses.pickle")
+location="./Logs/2019-07-25_16:26:25_pigeon/"
+
+ola = FileIO.getFromPickle(location + "poses.pickle")
 
 print(ola)
+
+
+FileIO.SaveAsMat(ola,location + "poses.mat")
+

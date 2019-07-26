@@ -7,6 +7,8 @@ import open3d
 import pickle
 import pointclouder
 import matplotlib.pyplot as plt
+import scipy.io
+import pickle, sys
 
 saveInc=0
 
@@ -78,6 +80,13 @@ def savePCs(filename,pcs,pc):
     for i in range(len(pcs)):
         print(pcs[i])
         open3d.write_point_cloud("./PC/"+filename+"/pointcloud"+str(i)+".ply", pcs[i])
+
+
+
+def SaveAsMat(data,dest_name):
+ 
+	scipy.io.savemat(dest_name, mdict=data)
+    #print("Data successfully converted to .mat " + dest_name)
 
 
 def getIntrinsics(camNames):

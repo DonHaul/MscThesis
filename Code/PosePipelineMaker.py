@@ -42,8 +42,8 @@ def worker(posepipe):
             #gets next image
             streamData= posepipe.imgStream.next()
 
-            if streamData is not None:
-                posepipe.imgShower(streamData)               
+            #if streamData is not None:
+            #    posepipe.imgShower(streamData)               
 
             #stop if there are no more images
             #if streamData is None:

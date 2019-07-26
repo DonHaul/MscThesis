@@ -24,7 +24,7 @@ def main(argv):
 
 
     for filename in os.listdir(argv[1]):
-        if filename.endswith(".ply"): 
+        if filename.endswith(".ply") or filename.endswith(".pcd"): 
             print(filename)
 
             filenn = filename.split(".")
@@ -44,6 +44,7 @@ def main(argv):
 
 
     visu.draw_geometry(pcs)
+    quit()
 
 
     print("simple")

@@ -56,6 +56,7 @@ class PCViewer():
 
         #getting subscirpters to use message fitlers on/speedwagon/rgb/image_rect_color
         for name in self.camNames:
+            print(name)
             camSub.append(message_filters.Subscriber(name+"/rgb/image_rect_color", Image))
             camSub.append(message_filters.Subscriber(name+"/depth_registered/sw_registered/image_rect_raw", Image))
 
