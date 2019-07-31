@@ -1,7 +1,7 @@
 import libs.FileIO as FileIO
 
 
-location="./Logs/2019-07-25_16:26:25_pigeon/"
+location="./Logs/2019-07-31_19:56:31_weasel/"
 
 ola = FileIO.getFromPickle(location + "poses.pickle")
 
