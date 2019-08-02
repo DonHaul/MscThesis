@@ -1,4 +1,4 @@
-
+load("./pcs-31-Jul-20191.mat")
 
 
 
@@ -13,13 +13,15 @@ for i=1:4
 
   %virginpcs{end+1}=ptCloud
    
-  Rcell{end+1}= generatenoiseR(0.1)
+  Rcell{end+1}= eye(3) %generatenoiseR(0.1)
   tcell{end+1}=[0 0 0 ]'
   
   
   count=count+1
   
 end
+%%
+%virgincopy=pcs
 %%
 %pcs = virgincopy
 %%
