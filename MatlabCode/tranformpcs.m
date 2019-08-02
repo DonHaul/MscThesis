@@ -1,13 +1,14 @@
 function [transformedpcs] = tranformpcs(pcs,R,t)
 
-transformedpcs={}
+transformedpcs={};
 
-for i =1:size(pcs,2)
+for i =1:max(size(pcs))
+
     pts = pcs{i}.Location;
     color = pcs{i}.Color; 
 
     pts = R{i} * pts'+t{i};
-    
+    disp("spps")
     transformedpcs{i} = pointCloud(pts','Color',color);
 
 

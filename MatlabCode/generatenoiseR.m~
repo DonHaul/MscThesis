@@ -1,0 +1,24 @@
+%function [R] = genRandRotMatrix(noise)
+    %generate noise
+    a = rand(3,1)*noise
+
+    %make it have 0 mean
+    b =ones(3,1)*(noise/2)
+    angle=a-b
+
+    %convert to radians
+    degtorad(angle)
+    
+
+    %x angle rotation matrix
+    Rx = [1,0,0;0,cos(angle(0)),-sin(angle(0));0,sin(angle(0)),cos(angle(0))]
+    %y angle rotation matrix
+    Ry = [cos(angle(1)),0,sin(angle(1));0,1,0;-sin(angle(1)),0,cos(angle(1))]
+    %z angle rotation matrix
+    Rz = [cos(angle(2)),-sin(angle(2)),0;sin(angle(2)),cos(angle(2)),0;0,0,1]] 
+
+    %mount the final rotation
+    aux = np.dot(Rx,Ry)
+    return np.dot(aux,Rz)
+
+    end
