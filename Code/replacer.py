@@ -7,8 +7,8 @@ ola = os.listdir('./Logs')
 
 for o in ola:
     
-    newO =  o.replace(":", "|")
-
+    newO =  o.replace("|", "_")
+    print(newO)
     if newO == o:
         continue
     
