@@ -2,3 +2,4 @@
 *.ply
 /ImageSets/
 PipelineLogs
+/dist
