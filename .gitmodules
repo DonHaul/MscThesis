@@ -1,0 +1,3 @@
+[submodule "MultiCamCalAruco"]
+	path = MultiCamCalAruco
+	url = https://github.com/DonHaul/MultiCamCalAruco
