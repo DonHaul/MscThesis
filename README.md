@@ -1,8 +1,9 @@
 # rosbag record commands
 rostopic echo /speedwagon/rgb/image_rect_color/header/stamp
 
-
-
+Reference this pacckages somewhere:
+https://pypi.org/project/MultiCamCalAruco/ this link has python project, update prepared package later
+https://github.com/DonHaul/MultiCamCalAruco
 
 
 ### eveything
