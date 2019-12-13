@@ -4,6 +4,9 @@ mojombo/github-flavored-markdown@16c999e8c71134401a78d4d46435517b2271d6ac
 
 a5c3785ed8d6a35868bc169f07e40e889087fd2e
 
+
+Visit https://github.com
+
 Commit 6c92e66
 
 rostopic echo /speedwagon/rgb/image_rect_color/header/stamp
