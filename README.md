@@ -5,7 +5,7 @@
 
 ### Objectives:
 * Obtain the transformations and Rotations 
-* Acquisition of More Complete Models:
+* Acquisition of More Complete Models
 
 ### Description:
 This Msc Thesis has 2 main repositories:
@@ -22,11 +22,11 @@ On top of these, the present repository contains matlab code developed by R. Tol
 <br>
 
 ### Thesis Documents
-- ~~Master Thesis - [Not yet available](after6monthsputlinkhere)~~
+~~Master Thesis - [Not yet available](after6monthsputlinkhere)~~
 
-- ~~Extended Abstract - [Not yet available](after6monthsputlinkhere)~~
+~~Extended Abstract - [Not yet available](after6monthsputlinkhere)~~
 
-- Presentation - [Link](https://mega.nz/#F!8MBxFSAB!aoKIWGMDL75TqNgwubL_qA)
+Presentation - [Link](https://mega.nz/#F!8MBxFSAB!aoKIWGMDL75TqNgwubL_qA)
 
 <br>
 <br>
