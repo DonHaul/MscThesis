@@ -1,8 +1,0 @@
-prefix=/home/mario/ros_ws/install
-
-Name: multiple_kinects_launch
-Description: Description of multiple_kinects_launch
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/mario/ros_ws/install/lib 
-Requires: 
