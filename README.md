@@ -1,8 +1,7 @@
 
-# RGB-D Camera Network Calibration for 3D Model Reconstruction
+## RGB-D Camera Network Calibration for 3D Model Reconstruction
 
 **Keywords:** Camera networks, 3D reconstruction, RGB-D data, Multi Cloud Registration
-mojombo/github-flavored-markdown@16c999e8c71134401a78d4d46435517b2271d6ac
 
 ### Objectives:
 * Obtain the transformations and Rotations 
@@ -24,11 +23,14 @@ On top of these, the present repository contains matlab code developed by R. Tol
 
 ### Thesis Documents
 ~~Master Thesis - [Not yet available](after6monthsputlinkhere)~~
+
 ~~Extended Abstract - [Not yet available](after6monthsputlinkhere)~~
+
 Presentation - [Link](https://mega.nz/#F!8MBxFSAB!aoKIWGMDL75TqNgwubL_qA)
 
 <br>
 <br>
 
 **Author:** João Ramiro
+
 **Supervisors:** Manuel Marques, João Paulo Costeira
