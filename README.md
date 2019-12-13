@@ -8,7 +8,7 @@ mojombo/github-flavored-markdown@16c999e8c71134401a78d4d46435517b2271d6ac
 * Obtain the transformations and Rotations 
 * Acquisition of More Complete Models:
 
-### Description
+### Description:
 This Msc Thesis has 2 main repositories:
  - [MultiCamCalAruco](https://github.com/DonHaul/MultiCamCalAruco/tree/master):
 In this repo, a method was developed, that does two things:
@@ -17,37 +17,18 @@ In this repo, a method was developed, that does two things:
 	More information  about it and instructions about its installation and use can be found on the repo.
   - [Rvidere](https://github.com/DonHaul/Rvidere)
   This repository is responsible for launching a multi camera RGB-D network that can be found in LRM in IST.
-### 
-Here is some text.[^fn] [^fn]: And the footnote!a
-On top of these, the present repository contains matlab code developed by
+
+
+On top of these, the present repository contains matlab code developed by R. Toldo et. al. ([Link](https://www.researchgate.net/publication/228959196)), to register multiple point clouds simultaneously.
+<br>
+
+### Thesis Documents
+~~Master Thesis - [Not yet available](after6monthsputlinkhere)~~
+~~Extended Abstract - [Not yet available](after6monthsputlinkhere)~~
+Presentation - [Link](https://mega.nz/#F!8MBxFSAB!aoKIWGMDL75TqNgwubL_qA)
+
+<br>
+<br>
 
 **Author:** João Ramiro
 **Supervisors:** Manuel Marques, João Paulo Costeira
-
-
-```
-git clone --recurse-submodules git://github.com/foo/bar.git
-cd bar
-```
-
-
-rostopic echo /speedwagon/rgb/image_rect_color/header/stamp
-
-Reference this pacckages somewhere:
-https://pypi.org/project/MultiCamCalAruco/ this link has python project, update prepared package later
-https://github.com/DonHaul/MultiCamCalAruco
-
-
-
-
-## 5 realsenseki2nect mode 5cams rgb+depth
-rosbag record --split --size=4096 -b 0 /speedwagon/rgb/image_rect_color /speedwagon/depth_registered/sw_registered/image_rect_raw /emperorcrimson/rgb/image_rect_color /emperorcrimson/depth_registered/sw_registered/image_rect_raw /mista/rgb/image_rect_color /mista/depth_registered/sw_registered/image_rect_raw /killerqueen/rgb/image_rect_color /killerqueen/depth_registered/sw_registered/image_rect_raw /diavolo/rgb/image_rect_color /diavolo/depth_registered/sw_registered/image_rect_raw
-
-## 4 realsenseki2nect mode 5cams rgb+depth
-rosbag record --split --size=4096 -b 0 /speedwagon/rgb/image_rect_color /speedwagon/depth_registered/sw_registered/image_rect_raw /emperorcrimson/rgb/image_rect_color /emperorcrimson/depth_registered/sw_registered/image_rect_raw /mista/rgb/image_rect_color /mista/depth_registered/sw_registered/image_rect_raw image_rect_raw /diavolo/rgb/image_rect_color /diavolo/depth_registered/sw_registered/image_rect_raw
-
-
-## 4 realsenseki2nect mode 5cams rgb+depth
-rosbag record --split --size=4096 -b 0 /speedwagon/rgb/image_rect_color /speedwagon/depth_registered/sw_registered/image_rect_raw /emperorcrimson/rgb/image_rect_color /emperorcrimson/depth_registered/sw_registered/image_rect_raw /mista/rgb/image_rect_color /mista/depth_registered/sw_registered/image_rect_raw image_rect_raw /diavolo/rgb/image_rect_color /diavolo/depth_registered/sw_registered/image_rect_raw
-
-
