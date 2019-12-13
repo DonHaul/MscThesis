@@ -1,4 +1,9 @@
-# rosbag record commands
+# RGB-D Camera Network Calibration for 3D ModelReconstruction
+
+
+
+a5c3785ed8d6a35868bc169f07e40e889087fd2e
+
 rostopic echo /speedwagon/rgb/image_rect_color/header/stamp
 
 Reference this pacckages somewhere:
