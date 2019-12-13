@@ -1,4 +1,4 @@
-function [newspocs] = untitled2(pcs,threshold)
+function [newspocs] = croppc(pcs,threshold)
 
 
 newpcs={};
