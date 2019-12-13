@@ -14,24 +14,12 @@ This Msc Thesis has 2 main repositories:
 In this repo, a method was developed, that does two things:
 	1. Obtain the positions and rotations of Aruco markers, in a calibration  object.
 	2. Use that calibration object, to find calibrate a multi-camera RGB network
-	More usaibdsa
-	osuahduasd
-	asibdsaui
-soadhasiodh
-soiahdoiashd
-		sioadjioasd	sjaodiajsd
-		asopdasokdp
-spaokdopsakd
-opksapodk	saopdk
-
-
- 
- - sadsad
-   - sadsadsd
-  -
-  -
+	More information  about it and instructions about its installation and use can be found on the repo.
   - [Rvidere](https://github.com/DonHaul/Rvidere)
-### siaojdoia
+  This repository is responsible for launching a multi camera RGB-D network that can be found in LRM in IST.
+### 
+Here is some text.[^fn] [^fn]: And the footnote!a
+On top of these, the present repository contains matlab code developed by
 
 **Author:** João Ramiro
 **Supervisors:** Manuel Marques, João Paulo Costeira
