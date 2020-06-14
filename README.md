@@ -20,11 +20,12 @@ In this repo, a method was developed, that does two things:
 
 On top of these, the present repository contains matlab code developed by R. Toldo et. al. ([Link](https://www.researchgate.net/publication/228959196)), to register multiple point clouds simultaneously.
 <br>
-
+https://github.com/DonHaul/MscThesis/blob/master/MsC_Thesis.pdf
+Ma
 ### Thesis Documents
-~~Master Thesis - [Not yet available](after6monthsputlinkhere)~~
+- [Master Thesis these](https://github.com/DonHaul/MscThesis/blob/master/MsC_Thesis.pdf)
 
-~~Extended Abstract - [Not yet available](after6monthsputlinkhere)~~
+- [Extended Abstract](https://github.com/DonHaul/MscThesis/blob/master/Extended_Abstract.pdf)
 
 Presentation - [Link](https://mega.nz/#F!8MBxFSAB!aoKIWGMDL75TqNgwubL_qA)
 
