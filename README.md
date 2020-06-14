@@ -23,7 +23,7 @@ On top of these, the present repository contains matlab code developed by R. Tol
 
 
 ### Thesis Documents
-- [Master Thesis these](https://github.com/DonHaul/MscThesis/blob/master/MsC_Thesis.pdf)
+- [Master Thesis](https://github.com/DonHaul/MscThesis/blob/master/MsC_Thesis.pdf)
 
 - [Extended Abstract](https://github.com/DonHaul/MscThesis/blob/master/Extended_Abstract.pdf)
 
